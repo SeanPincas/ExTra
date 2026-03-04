@@ -6,6 +6,8 @@ import morgan from "morgan"
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import financeRoutes from "./routes/financeRoutes.js";
+
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
@@ -25,6 +27,8 @@ app.use(morgan("dev"));
 // Auth Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/finance", financeRoutes);
+
 // Temporary root route
 app.get("/", (req, res) => {
   res.json({

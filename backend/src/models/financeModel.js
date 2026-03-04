@@ -52,7 +52,7 @@ const financeSchema = new mongoose.Schema(
                 validator: function (items) {
                     return items.length > 0;
                 },
-                message: "Finance entry must container at least one item"
+                message: "Finance entry must contain at least one item"
             }
         },
 
@@ -63,7 +63,7 @@ const financeSchema = new mongoose.Schema(
         }
     },
     {
-            timestamps: true
+        timestamps: true
     }
 );
 
@@ -77,11 +77,14 @@ financeSchema.index({ user: 1, createdAt: -1 });
 // PRE-SAVE HOOK
 // Always compute totalAmount from items
 // ===============================================================
-financeSchema.pre("save", function () {
-    const total = this.items.reduceRight((sum, item) => {
+financeSchema.pre("validate", function () {
+
+    // Add all item amounts together
+    const total = this.items.reduce((sum, item) => {
         return sum + item.amount;
     }, 0);
 
+    // Prevent saving entries with total <= 0
     if (total <= 0) {
         throw new Error("Total amount must be greater than zero");
     }
@@ -89,5 +92,5 @@ financeSchema.pre("save", function () {
     this.totalAmount = total;
 });
 
-const finance = mongoose.model("Finance", financeSchema);
-export default financeSchema;
+const Finance = mongoose.model("Finance", financeSchema);
+export default Finance;

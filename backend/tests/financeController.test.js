@@ -33,7 +33,7 @@ beforeAll(async () => {
     user = await User.create({
         name: "TestUser",
         email: "test@email.com",
-        password: "123456"
+        password: "1234567890"
     });
 
     token = generateToken(user._id);
