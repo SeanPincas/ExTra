@@ -7,6 +7,9 @@ import morgan from "morgan"
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import financeRoutes from "./routes/financeRoutes.js";
+import statsRoutes from "./routes/statsRoutes.js";
+import reminderRoutes from "./routes/reminderRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 import { errorHandler } from "./middleware/error.middleware.js";
 
@@ -28,6 +31,9 @@ app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/finance", financeRoutes);
+app.use("/api/stats", statsRoutes);
+app.use("/api/reminders", reminderRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 // Temporary root route
 app.get("/", (req, res) => {
