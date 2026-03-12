@@ -2,7 +2,10 @@
 
 import express from "express";
 import cors from "cors";
-import morgan from "morgan"
+import morgan from "morgan";
+import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
+import rateLimiter from "express-rate-limit";
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -14,11 +17,33 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
+
+// --------------------------------------------------
+// API RATE LIMITER
+// Limits repeated requests to public APIs
+// --------------------------------------------------
+const apiLimiter = rateLimiter({
+
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per window
+    message: {
+        error: "Too many requests. Please try again later."
+    },
+    standardHeaders: true, // returns rate limit info in headers
+    legacyHeaders: false
+});
+
 // --------------------------------------------------
 // Core Middlewares
 // --------------------------------------------------
 // Parse incoming JSON bodies
 app.use(express.json());
+// Security Header
+app.use(helmet());
+// Rate Limiter
+app.use("/api", apiLimiter);
+// Sanitize mongoDB queries
+app.use(mongoSanitize());
 // Enable CORS
 app.use(cors());
 // HTTP request logger

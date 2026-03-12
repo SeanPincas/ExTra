@@ -77,6 +77,11 @@ const financeSchema = new mongoose.Schema(
 financeSchema.index({ user: 1, createdAt: -1 });
 
 // ================================================================
+// TEXT INDEX FOR SEARCHING TITLES
+// Enables fast full-text search on entry titles
+// ================================================================
+financeSchema.index({ title: "text" });
+// ================================================================
 // PRE-SAVE HOOK
 // Always compute totalAmount from items
 // ===============================================================

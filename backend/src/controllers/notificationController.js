@@ -3,7 +3,7 @@
 import Reminder from "../models/reminderModel.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { successResponse } from "../utils/response.js";
-import { isReminderDue } from "../utils/reminderLogic.js";
+import { isReminderDue } from "../utils/dateLogic.js";
 import { shouldShowPaydayPopup } from "../services/paydayService.js";
 import {
     getIncomeThisWeek,
@@ -42,7 +42,8 @@ export const getNotifications = asyncHandler(async (req, res) => {
 
     reminders.forEach(reminder => {
 
-        if (isReminderDue(reminder.dueDay)) {
+        const leadTime = req.user.preferences?.reminderLeadTime || 3;
+        if (isReminderDue(reminder.dueDay, leadTime)) {
             notifications.push({
                 type: "reminder",
                 title: reminder.title,
@@ -56,17 +57,33 @@ export const getNotifications = asyncHandler(async (req, res) => {
     // FINANCIAL STAT NOTIFICATIONS
     // --------------------------------------------------
 
-    // Call service to compute "Income This Week"
-    const incomeWeekStat = await getIncomeThisWeek(userId);
-    if (incomeWeekStat.amount > 0) {
+    const [
+        incomeWeekStat,
+        incomeMonthStat,
+        expenseWeekStat,
+        expenseMonthStat,
+        yesterdayStats
+    ] = await Promise.all([
+        getIncomeThisWeek(userId),
+        getIncomeThisMonth(userId),
+        getExpenseThisWeek(userId),
+        getExpenseThisMonth(userId),
+        getYesterdayStats(userId)
+    ]);
 
+    // --------------------------------------------------
+    // INCOME THIS WEEK
+    // --------------------------------------------------
+    if (incomeWeekStat.amount > 0) {
         notifications.push({
             type: incomeWeekStat.type,
             amount: incomeWeekStat.amount
         });
     }
 
-    const incomeMonthStat = await getIncomeThisMonth(userId);
+    // --------------------------------------------------
+    // INCOME THIS MONTH
+    // --------------------------------------------------
     if (incomeMonthStat.amount > 0) {
         notifications.push({
             type: incomeMonthStat.type,
@@ -74,7 +91,9 @@ export const getNotifications = asyncHandler(async (req, res) => {
         });
     }
 
-    const expenseWeekStat = await getExpenseThisWeek(userId);
+    // --------------------------------------------------
+    // EXPENSE THIS WEEK
+    // --------------------------------------------------
     if (expenseWeekStat.amount > 0) {
         notifications.push({
             type: expenseWeekStat.type,
@@ -82,7 +101,9 @@ export const getNotifications = asyncHandler(async (req, res) => {
         });
     }
 
-    const expenseMonthStat = await getExpenseThisMonth(userId);
+    // --------------------------------------------------
+    // EXPENSE THIS MONTH
+    // --------------------------------------------------
     if (expenseMonthStat.amount > 0) {
         notifications.push({
             type: expenseMonthStat.type,
@@ -90,9 +111,9 @@ export const getNotifications = asyncHandler(async (req, res) => {
         });
     }
 
+    // --------------------------------------------------
     // YESTERDAY STATS
-    const yesterdayStats = await getYesterdayStats(userId);
-
+    // --------------------------------------------------
     // Yesterday income
     if (yesterdayStats.income > 0) {
         notifications.push({

@@ -1,8 +1,8 @@
 // statsRoutes.js
 
 import express from "express";
-import { getDashboardStats } from "../controllers/statsController";
-import { protect } from "../middleware/auth.middleware";
+import { getDashboardStats } from "../controllers/statsController.js";
+import { protect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
