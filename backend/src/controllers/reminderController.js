@@ -1,7 +1,11 @@
 // reminderController.js
 import Reminder from "../models/reminderModel.js";
+import Finance from "../models/financeModel.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { successResponse } from "../utils/response.js";
+import { validateReminder } from "../utils/requestValidation.js";
+import { ENTRY_TYPES } from "../utils/financeConstants.js";
+import { CATEGORIES } from "../utils/financeConstants.js";
 
 // ================================================================
 // CREATE REMINDER
@@ -9,6 +13,7 @@ import { successResponse } from "../utils/response.js";
 export const createReminder = asyncHandler(async (req, res) => {
 
     const { title, type, amount, dueDay, category, notes } = req.body;
+    validateReminder({ title, type, amount, dueDay, category });
     const reminder = await Reminder.create({
         user: req.user._id,
         title,
@@ -28,8 +33,10 @@ export const createReminder = asyncHandler(async (req, res) => {
 export const getReminders = asyncHandler(async (req, res) => {
 
     const reminders = await Reminder.find({
-        user: req.user._id,
-        active: true
+        user: req.user._id
+    }).sort({
+        active: -1,   // active reminders first
+        dueDay: 1     // nearest due day first
     });
 
     successResponse(res, reminders);
@@ -49,9 +56,7 @@ export const updateReminder = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error("Reminder not found");
     }
-
     Object.assign(reminder, req.body);
-
     await reminder.save();
 
     successResponse(res, reminder, "Reminder updated");
@@ -70,7 +75,6 @@ export const deleteReminder = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error("Reminder not found");
     }
-
     await reminder.deleteOne();
 
     successResponse(res, null, "Reminder deleted");
@@ -90,12 +94,22 @@ export const payReminder = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error("Reminder not found");
     }
+    // --------------------------------------------------
+    // PREVENT DUPLICATE PAYMENTS
+    // --------------------------------------------------
+    const today = new Date();
+    const todayStart = new Date(today.setHours(0, 0, 0, 0));
+
+    if (reminder.lastPaidDate && reminder.lastPaidDate >= todayStart) {
+        res.status(400);
+        throw new Error("Reminder already marked as paid today");
+    }
 
     // --------------- STEP 2: CREATE FINANCE ENTRY ---------------
     const financeEntry = await Finance.create({
         user: req.user._id,
         title: reminder.title,
-        type: reminder.type,
+        type: ENTRY_TYPES.EXPENSE,
         category: reminder.category,
         items: [
             {
