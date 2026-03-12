@@ -30,9 +30,17 @@ const userSchema = new mongoose.Schema(
                 type: Number,
                 default: 0
             },
+            salary: {
+                type: Number,
+                default: 0
+            },
             currency: {
                 type: String,
                 default: "PHP"
+            },
+            savingsGoal: {
+                type: Number,
+                default: 0
             }
         }
     },

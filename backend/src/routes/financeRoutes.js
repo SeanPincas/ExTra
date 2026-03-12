@@ -1,4 +1,4 @@
-// backend/src/routes/financeRoutes.js
+// financeRoutes.js
 
 import express from "express";
 import {

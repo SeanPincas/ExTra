@@ -1,5 +1,4 @@
 // financeModel.js
-
 import mongoose from "mongoose";
 
 // --------------------------------------------------
@@ -16,7 +15,7 @@ const itemSchema = new mongoose.Schema(
         amount: {
             type: Number,
             required: true,
-            min: 0              // ❗ No negative numbers allowed
+            min: 0              // No negative numbers allowed
         }
     },
     { _id: false}               // Items don’t need their own Mongo ID
@@ -40,12 +39,17 @@ const financeSchema = new mongoose.Schema(
             trim: true,
             maxlength: 60
         },
+        type: {
+            type: String,
+            enum: ["income", "expense"],
+            required: true,
+            index: true
+        },
         category: {
             type: String,
             required: true,
             trim: true
         },
-
         items: {
             type: [itemSchema],
             validate: {
@@ -55,7 +59,6 @@ const financeSchema = new mongoose.Schema(
                 message: "Finance entry must contain at least one item"
             }
         },
-
         totalAmount: {
             type: Number,
             required: true,

@@ -16,7 +16,7 @@ export const getDateRangeFilter = (range) => {
         const end = new Date();
         end.setHours(23, 59, 59, 999);
 
-        return { createAt: { $gte: start, $lte: end } };
+        return { createdAt: { $gte: start, $lte: end } };
     }
 
     // --------------------------------------------------

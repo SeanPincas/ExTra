@@ -7,7 +7,6 @@ export const sumByType = (finances, type) => {
 
   // finances = array of finance entries from DB
   // type = "income" OR "expense"
-
   return finances
 
     // Step 1: keep only entries of this type
@@ -27,16 +26,12 @@ export const sumIncome = (finances) => {
   return sumByType(finances, "income");
 };
 
-
-
 // ================================================================
 // TOTAL EXPENSE
 // ================================================================
 export const sumExpense = (finances) => {
   return sumByType(finances, "expense");
 };
-
-
 
 // ================================================================
 // BALANCE
@@ -93,12 +88,8 @@ export const getTopCategories = (finances, type, limit = 5) => {
   return entries.slice(0, limit);
 };
 
-
-
 // ================================================================
 // LAST N DAYS TREND
-// Returns array like:
-// [{date:"2026-02-10", income:1000, expense:500}]
 // ================================================================
 export const getLastNDaysTrend = (finances, days = 7) => {
 
@@ -110,11 +101,11 @@ export const getLastNDaysTrend = (finances, days = 7) => {
     // Create start of the day
     const dayStart = new Date();
     dayStart.setDate(dayStart.getDate() - i);
-    dayStart.setHours(0,0,0,0);
+    dayStart.setHours(0, 0, 0, 0);
 
     // Create end of the day
     const dayEnd = new Date(dayStart);
-    dayEnd.setHours(23,59,59,999);
+    dayEnd.setHours(23, 59, 59, 999);
 
     // Filter finances inside this day
     const dayFinances = finances.filter(f =>
@@ -128,7 +119,7 @@ export const getLastNDaysTrend = (finances, days = 7) => {
 
     // Save result
     trend.push({
-      date: dayStart.toISOString().slice(0,10),
+      date: dayStart.toISOString().slice(0, 10),
       income,
       expense
     });
