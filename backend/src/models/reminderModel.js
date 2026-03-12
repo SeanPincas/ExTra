@@ -1,5 +1,7 @@
 // reminderModel.js
 import mongoose from "mongoose";
+import { ENTRY_TYPES } from "../utils/financeConstants.js";
+
 
 const reminderSchema = new mongoose.Schema(
     {
@@ -16,8 +18,8 @@ const reminderSchema = new mongoose.Schema(
         },
         type: {
             type: String,
-            enum: ["income", "expense"],
-            default: "expense",
+            enum: Object.values(ENTRY_TYPES),
+            default: ENTRY_TYPES.EXPENSE,
             required: true
         },
         amount: {

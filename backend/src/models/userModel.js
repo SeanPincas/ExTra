@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema(
             savingsGoal: {
                 type: Number,
                 default: 0
+            },
+            reminderLeadTime: {
+                type: Number,
+                default: 3
             }
         }
     },
