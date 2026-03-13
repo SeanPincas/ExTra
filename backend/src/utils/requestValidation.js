@@ -1,4 +1,5 @@
 // requestValidation.js
+import { ENTRY_TYPES, CATEGORIES } from "./financeConstants.js";
 
 // --------------------------------------------------
 // USERNAME VALIDATION
@@ -72,6 +73,12 @@ export const validateFinanceEntry = ({ title, type, category, items }) => {
   }
 
   if (!category) throw new Error("Category is required");
+  // CATEGORY VALIDATION USING SINGLE SOURCE
+  const allowedCategories = CATEGORIES[type.toUpperCase()];
+
+  if (!allowedCategories.includes(category)) {
+    throw new Error("Invalid category for this type");
+  }
 
   if (!items || items.length === 0) {
     throw new Error("Finance entry must have at least one item");
@@ -79,8 +86,6 @@ export const validateFinanceEntry = ({ title, type, category, items }) => {
 
   return true;
 };
-
-
 
 // --------------------------------------------------
 // CATEGORY VALIDATION
@@ -90,6 +95,42 @@ export const validateCategory = (category) => {
 
   if (!category) {
     throw new Error("Category is required");
+  }
+
+  return true;
+};
+
+// --------------------------------------------------
+// REMINDER VALIDATION
+// Ensures reminder data follows system rules
+// --------------------------------------------------
+export const validateReminder = ({ title, type, amount, dueDay, category }) => {
+
+  // Reminder must have a title
+  if (!title) {
+    throw new Error("Reminder title is required");
+  }
+
+  // Type must match allowed entry types
+  if (!Object.values(ENTRY_TYPES).includes(type)) {
+    throw new Error("Invalid reminder type");
+  }
+
+  // Amount must be positive
+  if (amount < 0) {
+    throw new Error("Amount must be positive");
+  }
+
+  // dueDay must be valid day of month
+  if (dueDay < 1 || dueDay > 31) {
+    throw new Error("dueDay must be between 1 and 31");
+  }
+
+  // Category validation using single source
+  const allowedCategories = CATEGORIES[type.toUpperCase()];
+
+  if (category && !allowedCategories.includes(category)) {
+    throw new Error("Invalid category for reminder type");
   }
 
   return true;
