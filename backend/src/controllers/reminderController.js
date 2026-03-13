@@ -5,7 +5,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { successResponse } from "../utils/response.js";
 import { validateReminder } from "../utils/requestValidation.js";
 import { ENTRY_TYPES } from "../utils/financeConstants.js";
-import { CATEGORIES } from "../utils/financeConstants.js";
 
 // ================================================================
 // CREATE REMINDER
