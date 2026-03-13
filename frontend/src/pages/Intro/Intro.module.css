@@ -1,0 +1,90 @@
+/* ===============================
+   INTRO SCREEN
+================================*/
+
+.introScreen {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: black;
+}
+
+/* ===============================
+   BACKGROUND
+================================*/
+
+.bg {
+    position: fixed;
+    /* attach to viewport */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    /* full viewport width */
+    height: 100vh;
+    /* full viewport height */
+    object-fit: cover;
+    /* stretch without distortion */
+    z-index: 0;
+    opacity: 0.4;
+}
+
+/* ===============================
+   COIN
+================================*/
+
+.coin {
+    width: 260px;
+    z-index: 3;
+}
+
+/* ===============================
+   SPARK EFFECT
+================================*/
+
+.sparks {
+
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    bottom: 38%;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, gold 30%, transparent 60%);
+    animation: spark 0.25s ease-out;
+}
+
+@keyframes spark {
+
+    0% {
+        transform: scale(0.3);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.7);
+        opacity: 0;
+    }
+
+}
+
+/* ===============================
+   POPUP TITLE TEXT
+================================*/
+
+.popupText {
+    position: absolute;
+    bottom: 29%;
+    font-size: 50px;
+    letter-spacing: 3px;
+    font-weight: 600;
+    color: goldenrod;
+    text-shadow:
+        0px 0px 10px rgba(7, 7, 7, 0.3);
+
+}

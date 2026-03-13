@@ -1,0 +1,60 @@
+/* =====================================================
+   GLOBAL RESET
+   ===================================================== */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html, body, #root{
+  width:100%;
+  height:100%;
+}
+
+
+/* =====================================================
+   EXTRa THEME VARIABLES
+   ===================================================== */
+
+:root{
+
+  /* Primary Background */
+  --bg-main: #0e0e0f;          /* matte black */
+
+  /* Secondary Panels */
+  --bg-leather: #2b1e16;       /* brown leather tone */
+
+  /* Accent Color (money actions) */
+  --accent-green: #3cb371;
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #b8b8b8;
+
+  /* Borders */
+  --border-soft: rgba(255,255,255,0.08);
+
+}
+
+
+/* =====================================================
+   BASE BODY STYLE
+   ===================================================== */
+
+body{
+
+  font-family:
+  system-ui,
+  -apple-system,
+  Segoe UI,
+  Roboto,
+  sans-serif;
+
+  background: var(--bg-main);
+  color: var(--text-primary);
+
+  overflow:hidden;
+
+}
