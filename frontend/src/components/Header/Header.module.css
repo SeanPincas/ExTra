@@ -1,0 +1,93 @@
+/* =====================================================
+   HEADER CONTAINER
+===================================================== */
+
+.headerContainer {
+
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+
+    align-items: center;
+
+    height: 60px;
+}
+
+/* =====================================================
+   SECTIONS
+===================================================== */
+
+.leftSection {
+    display: flex;
+    align-items: center;
+}
+
+.centerSection {
+    display: flex;
+    justify-content: center;
+}
+
+.rightSection {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.logo {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-accent);
+}
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.iconButton {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+/* ADD ENTRY BUTTON */
+.addButton {
+    padding: 6px 12px;
+    border-radius: 6px;
+
+    border: none;
+    cursor: pointer;
+
+    background: var(--btn-success);
+    color: white;
+
+    font-weight: 500;
+}
+
+/* AUTH BUTTON */
+.authButton {
+    padding: 6px 10px;
+    border-radius: 6px;
+
+    background: transparent;
+    border: 1px solid var(--border-soft);
+
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+
+    .addButton {
+        display: none; /* 🔥 hide on small screens */
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+}

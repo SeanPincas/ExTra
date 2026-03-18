@@ -2,39 +2,95 @@
    GLOBAL RESET
    ===================================================== */
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-html, body, #root{
-  width:100%;
-  height:100%;
+html,
+body,
+#root {
+    width: 100%;
+    height: 100%;
 }
 
 
 /* =====================================================
-   EXTRa THEME VARIABLES
+   EXTRA THEME VARIABLES
    ===================================================== */
 
-:root{
+:root {
 
-  /* Primary Background */
-  --bg-main: #0e0e0f;          /* matte black */
+    /* ===============================
+     BACKGROUND COLORS
+  =============================== */
 
-  /* Secondary Panels */
-  --bg-leather: #2b1e16;       /* brown leather tone */
+    --bg-main: #0e0e0f;
+    /* matte black base */
+    --bg-dark: #181818;
+    /* container gradient dark */
+    --bg-light: #414146;
+    /* container gradient light */
 
-  /* Accent Color (money actions) */
-  --accent-green: #3cb371;
+    /* Leather Surface */
+    --bg-leather: #2b1e16;
 
-  /* Text */
-  --text-primary: #ffffff;
-  --text-secondary: #b8b8b8;
+    /* ===============================
+     TEXT COLORS
+  =============================== */
 
-  /* Borders */
-  --border-soft: rgba(255,255,255,0.08);
+    --text-primary: #ffffff;
+    --text-secondary: #b8b8b8;
+
+    /* Financial text colors */
+    --text-income: #3ddc84;
+    /* green */
+    --text-expense: #ff5c5c;
+    /* red */
+
+    /* Accent text */
+    --text-accent: goldenrod;
+
+    /* ===============================
+     ACCENT COLORS
+  =============================== */
+
+    --accent-green: #3cb371;
+    --accent-red: #ff4d4d;
+
+    /* brand accent */
+    --accent-gold: goldenrod;
+
+    /* ===============================
+     BUTTON COLORS
+  =============================== */
+
+    --btn-success: #3cb371;
+    --btn-danger: #ff4d4d;
+
+    /* ===============================
+     BORDER COLORS
+  =============================== */
+
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --border-gold: goldenrod;
+
+    /* ===============================
+     PANEL TEXTURE SYSTEM
+  =============================== */
+
+    --panel-texture: url("/src/assets/panel-texture.jpg");
+
+    --panel-gradient:
+        linear-gradient(130deg,
+            var(--bg-light),
+            var(--bg-dark));
+
+    /* 🔥 combined system */
+    --panel-bg:
+        var(--panel-texture),
+        var(--panel-gradient);
 
 }
 
@@ -43,18 +99,18 @@ html, body, #root{
    BASE BODY STYLE
    ===================================================== */
 
-body{
+body {
 
-  font-family:
-  system-ui,
-  -apple-system,
-  Segoe UI,
-  Roboto,
-  sans-serif;
+    font-family:
+        system-ui,
+        -apple-system,
+        Segoe UI,
+        Roboto,
+        sans-serif;
 
-  background: var(--bg-main);
-  color: var(--text-primary);
+    background: var(--bg-main);
+    color: var(--text-primary);
 
-  overflow:hidden;
+    overflow: hidden;
 
 }

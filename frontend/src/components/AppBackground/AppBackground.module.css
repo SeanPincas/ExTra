@@ -1,0 +1,94 @@
+/* =====================================================
+   BACKGROUND IMAGE
+===================================================== */
+
+.appBackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),
+        var(--bg-image);
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    z-index: 0;
+}
+
+
+/* =====================================================
+   LIGHT SWEEP EFFECT
+===================================================== */
+
+.lightSweep {
+
+    position: fixed;
+    top: 0;
+    left: -30%;
+
+    width: 20%;
+    height: 100vh;
+
+    pointer-events: none;
+
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.06),
+            rgba(255, 255, 255, 0.12),
+            rgba(255, 255, 255, 0.06),
+            transparent);
+
+    filter: blur(25px);
+
+    /* 🔥 NEW ANIMATION */
+    animation: sweepPingPong 45s ease-in-out infinite;
+
+    z-index: 0;
+
+    will-change: transform;
+    transform: translateX(0);
+}
+
+
+/* =====================================================
+   PING-PONG SWEEP (LEFT ⇄ RIGHT WITH PAUSE)
+===================================================== */
+
+@keyframes sweepPingPong {
+
+    /* START LEFT */
+    0% {
+        transform: translateX(-30vw);
+    }
+
+    /* MOVE → RIGHT */
+    25% {
+        transform: translateX(130vw);
+    }
+
+    /* PAUSE RIGHT */
+    35% {
+        transform: translateX(130vw);
+    }
+
+    /* MOVE ← LEFT */
+    60% {
+        transform: translateX(-30vw);
+    }
+
+    /* PAUSE LEFT */
+    70% {
+        transform: translateX(-30vw);
+    }
+
+    /* HOLD BEFORE LOOP */
+    100% {
+        transform: translateX(-30vw);
+    }
+
+}
