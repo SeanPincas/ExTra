@@ -9,7 +9,9 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             trim: true,
-            maxlength: 16
+            minlength: 3,
+            maxlength: 24,
+            match: [/^[A-Za-z0-9]+$/, "Username must contain letters and numbers only"]
         },
         email: {
             type: String,
@@ -23,7 +25,8 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
             minlength: 8,
-            maxlength: 16
+            maxlength: 16,
+            match: [/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)\S{8,16}$/, "Password must include uppercase, lowercase, and a number"]
         },
         preferences: {
             payDay: {

@@ -1,0 +1,66 @@
+.profileCard {
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    background:
+        radial-gradient(circle at center, rgba(92, 92, 92, 0.18) 0%, rgba(18, 18, 18, 0.9) 78%),
+        var(--panel-texture);
+    background-size: cover, 900px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.profileTopRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatarBadge {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--text-primary);
+    background: radial-gradient(circle at 35% 30%, rgba(147, 209, 255, 0.55), rgba(37, 45, 54, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.profileCopy {
+    display: grid;
+    gap: 2px;
+}
+
+.greeting {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.username {
+    font-size: 1.35rem;
+    line-height: 1.1;
+    color: var(--text-primary);
+}
+
+.dateRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+}
+
+.dateDivider {
+    opacity: 0.65;
+}
+
+@media (max-width: 900px) {
+    .profileCard {
+        padding: 12px;
+    }
+}

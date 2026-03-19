@@ -5,7 +5,7 @@ services:
   backend:
     build: ./backend
     ports:
-      - "3500:3500"
+      - "3501:3501"
     volumes:
       - ./backend:/app
       - /app/node_modules

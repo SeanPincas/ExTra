@@ -1,37 +1,64 @@
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-
-import Intro from "./pages/Intro/Intro"
+import { useState } from "react";
+import AppIntro from "./components/AppIntro/AppIntro";
+import MainLayout from "./layout/MainLayout/MainLayout"
+import Header from "./components/Header/Header"
+import AppBackground from "./components/AppBackground/AppBackground";
+import Footer from "./components/Footer/Footer";
+import LeftPanel from "./components/LeftPanel/LeftPanel";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import { useAuth } from "./context/AuthContext";
 
 function App() {
+    const [authView, setAuthView] = useState<"register" | "login">("register")
+    const { token, user, isAuthLoading } = useAuth()
+    const showDashboard = Boolean(token && user)
 
-  const [introDone,setIntroDone] = useState(false)
+    return (
 
-  return (
+        <div style={{ position: "relative", zIndex: 0 }}>
 
-    <AnimatePresence>
+            <AppBackground />
+            <AppIntro>
+                {showDashboard ? (
+                    <MainLayout
+                        header={<Header />}
+                        content={
+                            <div style={{ display: "contents" }}>
+                                {/* LEFT */}
+                                <LeftPanel />
 
-      {!introDone && (
-        <Intro onFinish={() => setIntroDone(true)} />
-      )}
+                                {/* CENTER */}
+                                <div style={{ background: "#1a1a1a", borderRadius: "8px" }}>
+                                    CENTER PANEL
+                                </div>
 
-      {introDone && (
+                                {/* RIGHT */}
+                                <div style={{ background: "#111", borderRadius: "8px" }}>
+                                    RIGHT PANEL
+                                </div>
+                            </div>
+                        }
+                        footer={<Footer />}
+                    />
+                ) : (
+                    <div style={{ position: "absolute", inset: 0 }}>
+                        {/* While auth is bootstrapping we keep the same page frame,
+                           so the screen does not jump between layouts. */}
+                        {isAuthLoading ? (
+                            <RegisterPage onLoginClick={() => setAuthView("login")} />
+                        ) : authView === "login" ? (
+                            <LoginPage onRegisterClick={() => setAuthView("register")} />
+                        ) : (
+                            <RegisterPage onLoginClick={() => setAuthView("login")} />
+                        )}
+                    </div>
+                )}
+            </AppIntro>
+        </div>
 
-        <motion.div
-          initial={{ opacity:0, y:40 }}
-          animate={{ opacity:1, y:0 }}
-          transition={{ duration:0.6 }}
-        >
-          <h1 style={{color:"white",textAlign:"center"}}>
-            Dashboard Loading
-          </h1>
-        </motion.div>
+    )
 
-      )}
-
-    </AnimatePresence>
-
-  )
 }
 
 export default App

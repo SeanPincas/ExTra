@@ -1,0 +1,45 @@
+.filterWrapper {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filterLabel {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.filterOptions {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+}
+
+.filterOption {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.filterOption + .filterOption {
+    margin-left: 8px;
+}
+
+.active {
+    color: var(--accent-gold);
+}
+
+.optionDivider {
+    color: rgba(255, 255, 255, 0.28);
+}
