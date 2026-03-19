@@ -1,4 +1,4 @@
-// backend/src/routes/financeRoutes.js
+// financeRoutes.js
 
 import express from "express";
 import {
@@ -6,9 +6,9 @@ import {
     getFinance,
     deleteFinance,
     updateFinance
-} from "../controllers/financeController";
+} from "../controllers/financeController.js";
 
-import { protect } from "../middleware/auth.middleware";
+import { protect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 

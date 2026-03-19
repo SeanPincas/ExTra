@@ -1,0 +1,91 @@
+/* =====================================================
+   WRAPPER
+===================================================== */
+
+.dashboardWrapper {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
+.dashboardContainer {
+
+    position: relative;
+
+    width: 95%;
+    max-width: 1400px;
+    height: 95vh;
+
+    display: grid;
+
+    /* 🔥 GRID STRUCTURE */
+    grid-template-rows: auto 1fr auto;
+
+    background: var(--panel-bg);
+
+    background-size: 1500px, cover;
+    background-repeat: repeat, no-repeat;
+
+    background-blend-mode: overlay;
+
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+
+    overflow: hidden;
+    z-index: 10;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.headerArea {
+    padding: 1px 5px;
+    background: radial-gradient(circle at 50% 80%,
+            rgba(161, 161, 161, 0.3),
+            /* bright center */
+            rgba(56, 55, 55, 0.3),
+            /* mid fade */
+            rgba(19, 19, 19, 0.6)
+            /* edges */
+        );
+    border-bottom: 1px solid var(--border-soft);
+}
+
+/* =====================================================
+   MAIN GRID (LEFT / CENTER / RIGHT)
+===================================================== */
+
+.mainGrid {
+    display: grid;
+    /* 🔥 3 COLUMNS */
+    grid-template-columns: 280px 1fr 320px;
+    gap: 16px;
+    padding: 16px;
+    overflow: hidden;
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footerArea {
+    padding: 1px;
+    background: radial-gradient(circle at 50% 30%,
+            rgba(161, 161, 161, 0.3),
+            /* bright center */
+            rgba(56, 55, 55, 0.3),
+            /* mid fade */
+            rgba(19, 19, 19, 0.6)
+            /* edges */
+        );
+    border-top: 1px solid var(--border-soft);
+
+}

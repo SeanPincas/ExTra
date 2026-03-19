@@ -1,8 +1,4 @@
-// backend/src/routes/user.routes.js
-// --------------------------------------------------
-// PURPOSE:
-// Defines user profile routes.
-// --------------------------------------------------
+// userRoutes.js
 
 import express from 'express';
 import { protect } from '../middleware/auth.middleware.js';

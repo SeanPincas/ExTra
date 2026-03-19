@@ -34,19 +34,78 @@ export const createFinance = asyncHandler(async (req, res) => {
 // ================================================================
 export const getFinance = asyncHandler(async (req, res) => {
 
-    const { range } = req.query;
+    const { range, date, search } = req.query;
+    // page validation
+    let page = Number(req.query.page) || 1;
+    // Prevent negative pages
+    if (page < 1) {
+        page = 1;
+    }
+    // ----------- Pagination ----------------
+    const limit = 20; // entries per page
+    const skip = (page - 1) * limit;
 
-    // STEP 1 — GET DATE FILTER FROM HELPER
-    const dateFilter = getDateRangeFilter(range);
+    // ----------- Date Filter -------------
+    let dateFilter = {};
 
-    // STEP 2 — QUERY DATABASE
+    if (date) {
+        const parsedDate = new Date(date);
+        // Validate date
+        if (!isNaN(parsedDate)) {
+
+            const start = new Date(parsedDate);
+            start.setHours(0, 0, 0, 0);
+
+            const end = new Date(parsedDate);
+            end.setHours(23, 59, 59, 999);
+
+            dateFilter = {
+                createdAt: { $gte: start, $lte: end }
+            };
+        }
+    }
+
+    // ----------- Range Filter -------------
+    const allowedRanges = ["today", "week", "month", "year"];
+    if (range && allowedRanges.includes(range)) {
+        dateFilter = getDateRangeFilter(range);
+    }
+
+    // ----------- Search Filter -------------
+    let searchFilter = {};
+    if (search) {
+
+        searchFilter = {
+            $text: { $search: search }
+        };
+    }
+
+    // ----------- Fetching Finance Entries -----------------
     const finances = await Finance.find({
         user: req.user._id,
-        ...dateFilter
-    }).sort({ createdAt: -1 });
+        ...dateFilter,
+        ...searchFilter
+    })
+        .sort({ createdAt: -1, _id: -1 }) // newest first
+        .skip(skip)
+        .limit(limit);
 
-    // STEP 3 — SEND RESPONSE
-    successResponse(res, { count: finances.length, finances });
+    // ---------- Total Count for Page Circulation ----------
+    const totalEntries = await Finance.countDocuments({
+        user: req.user._id,
+        ...dateFilter,
+        ...searchFilter
+    });
+
+    // --------------------------------------------------
+    // RESPONSE
+    // --------------------------------------------------
+    successResponse(res, {
+        finances,
+        page: Number(page),
+        totalPages: Math.ceil(totalEntries / limit),
+        totalEntries
+    });
 });
 
 // ================================================================

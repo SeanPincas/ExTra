@@ -1,0 +1,143 @@
+/* =====================================================
+   HEADER CONTAINER
+===================================================== */
+
+.headerContainer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(8px, 2vw, 18px);
+    min-height: 60px;
+    padding-inline: clamp(10px, 2vw, 20px);
+}
+
+/* =====================================================
+   SECTIONS
+===================================================== */
+
+.leftSection {
+    display: flex;
+    align-items: center;
+    justify-self: start;
+}
+
+.centerSection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+}
+
+.rightSection {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-self: end;
+    min-width: 0;
+}
+
+/* =====================================================
+   LOGO WRAPPER
+===================================================== */
+
+.logoWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Increase or decrease the horizontal padding values here to change capsule length. */
+    padding: 5px clamp(90px, 5vw, 100px);
+    border-radius: 999px;
+    background: linear-gradient(180deg, #2b261e 0%, #100d0a 100%);
+    border: 1px solid rgba(128, 99, 19, 0.14);
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.05),
+        0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+/* =====================================================
+   LOGO IMAGE
+===================================================== */
+
+.logoImage {
+    height: clamp(28px, 4vw, 42px);
+    width: auto;
+    object-fit: contain;
+}
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.iconButton {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.buttonLabelCompact {
+    display: none;
+}
+
+.buttonIconOnly {
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 900px) {
+
+    .headerContainer {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
+}
+
+@media (max-width: 640px) {
+
+    .headerContainer {
+        gap: 8px;
+        padding-inline: 8px;
+    }
+
+    .rightSection {
+        gap: 8px;
+    }
+
+    .logoWrapper {
+        /* Mobile capsule length can be tuned here. */
+        padding: 7px 22px;
+    }
+
+    .buttonLabelFull {
+        display: none;
+    }
+
+    .buttonLabelCompact {
+        display: inline;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .headerContainer {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
+    .logoWrapper {
+        /* Small-screen capsule length can be tuned here. */
+        padding-inline: 50px;
+    }
+
+    /* Phones use icons only so the actions stay compact and readable. */
+    .buttonLabelFull,
+    .buttonLabelCompact,
+    .authLabelFull {
+        display: none;
+    }
+
+    .buttonIconOnly {
+        display: inline-flex;
+    }
+
+}

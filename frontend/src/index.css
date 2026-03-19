@@ -1,0 +1,140 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap");
+@import "./utils/buttonUtils.css";
+
+/* =====================================================
+   GLOBAL RESET
+   ===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    width: 100%;
+    height: 100%;
+}
+
+
+/* =====================================================
+   EXTRA THEME VARIABLES
+   ===================================================== */
+
+:root {
+
+    /* ===============================
+     TYPOGRAPHY
+  =============================== */
+
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-display: "Cormorant Garamond", Georgia, serif;
+
+    /* ===============================
+     BACKGROUND COLORS
+  =============================== */
+
+    --bg-main: #0e0e0f;
+    /* matte black base */
+    --bg-dark: #181818;
+    /* container gradient dark */
+    --bg-light: #414146;
+    /* container gradient light */
+
+    /* Leather Surface */
+    --bg-leather: #2b1e16;
+
+    /* ===============================
+     TEXT COLORS
+  =============================== */
+
+    --text-primary: #ffffff;
+    --text-secondary: #b8b8b8;
+
+    /* Financial text colors */
+    --text-income: #3ddc84;
+    /* green */
+    --text-expense: #ff5c5c;
+    /* red */
+
+    /* Accent text */
+    --text-accent: goldenrod;
+
+    /* ===============================
+     ACCENT COLORS
+  =============================== */
+
+    --accent-green: #4f944f;
+    --accent-money-green: #173c32;
+    --accent-red: #ff4d4d;
+
+    /* brand accent */
+    --accent-gold: goldenrod;
+
+    /* ===============================
+     BUTTON COLORS
+  =============================== */
+
+    --btn-success: #3cb371;
+    --btn-success-dark: #173c32;
+    --btn-danger: #ff4d4d;
+
+    /* ===============================
+     BORDER COLORS
+  =============================== */
+
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --border-gold: goldenrod;
+
+    /* ===============================
+     PANEL TEXTURE SYSTEM
+  =============================== */
+
+    --panel-texture: url("/src/assets/panel-texture.jpg");
+
+    --panel-gradient:
+        radial-gradient(circle at center,
+            var(--bg-light) 0%,
+            var(--bg-light) 30%,
+            var(--bg-dark) 80%);
+
+    /* 🔥 combined system */
+    --panel-bg:
+        var(--panel-texture),
+        var(--panel-gradient);
+}
+
+/* =====================================================
+   BASE BODY STYLE
+   ===================================================== */
+
+body {
+
+    font-family: var(--font-body);
+
+    background: var(--bg-main);
+    color: var(--text-primary);
+
+    overflow: hidden;
+
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}

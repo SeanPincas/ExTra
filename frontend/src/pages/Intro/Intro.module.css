@@ -1,0 +1,124 @@
+/* ===============================
+   INTRO SCREEN
+================================*/
+
+.introScreen {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+
+    /* ✅ BACKGROUND IMAGE HERE */
+    background-image: url("../../assets/bg-intro.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    z-index: 5;
+}
+
+.introScreen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.6); /* 🔥 this is your blend */
+
+    z-index: 1;
+}
+
+/* ===============================
+   BACKGROUND
+================================*/
+
+.bg {
+    position: absolute;   /* 🔥 NOT fixed */
+    inset: 0;             /* shorthand: top/left/right/bottom = 0 */
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    z-index: 0;
+
+    /* 🔥 prevents layout jump */
+    display: block;
+}
+
+.coinWrapper {
+    position: relative; /* 🔥 THIS IS THE KEY */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===============================
+   COIN
+================================*/
+
+.coin {
+    width: clamp(230px, 18vw, 260px);
+    z-index: 7;
+}
+
+/* ===============================
+   SPARK EFFECT
+================================*/
+
+.sparks {
+    position: absolute;
+    bottom: -10px; /* 🔥 relative to coin */
+    left: 15%;
+    transform: translate(-50%, -50%);
+    width: clamp(180px, 12vw, 200px);
+    height: clamp(180px, 12vw, 200px);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(circle, gold 40%, transparent 60%);
+    animation: spark 0.25s ease-out;
+    z-index: 6;
+}
+
+@keyframes spark {
+
+    0% {
+        transform: scale(0.3);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.7);
+        opacity: 0;
+    }
+
+}
+
+/* ===============================
+   POPUP TITLE TEXT
+================================*/
+
+.popupText {
+    margin-top: 10px; /* 🔥 naturally below coin */
+
+    font-size: clamp(40px, 3vw, 50px);
+
+    letter-spacing: 3px;
+    font-weight: 600;
+
+    color: goldenrod;
+    text-align: center;
+
+    text-shadow: 0px 0px 10px rgba(7, 7, 7, 0.3);
+
+    z-index: 7;
+}

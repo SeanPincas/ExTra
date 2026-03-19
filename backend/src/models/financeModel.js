@@ -1,5 +1,4 @@
 // financeModel.js
-
 import mongoose from "mongoose";
 
 // --------------------------------------------------
@@ -16,7 +15,7 @@ const itemSchema = new mongoose.Schema(
         amount: {
             type: Number,
             required: true,
-            min: 0              // ❗ No negative numbers allowed
+            min: 0              // No negative numbers allowed
         }
     },
     { _id: false}               // Items don’t need their own Mongo ID
@@ -40,22 +39,26 @@ const financeSchema = new mongoose.Schema(
             trim: true,
             maxlength: 60
         },
+        type: {
+            type: String,
+            enum: ["income", "expense"],
+            required: true,
+            index: true
+        },
         category: {
             type: String,
             required: true,
             trim: true
         },
-
         items: {
             type: [itemSchema],
             validate: {
                 validator: function (items) {
                     return items.length > 0;
                 },
-                message: "Finance entry must container at least one item"
+                message: "Finance entry must contain at least one item"
             }
         },
-
         totalAmount: {
             type: Number,
             required: true,
@@ -63,7 +66,7 @@ const financeSchema = new mongoose.Schema(
         }
     },
     {
-            timestamps: true
+        timestamps: true
     }
 );
 
@@ -74,14 +77,22 @@ const financeSchema = new mongoose.Schema(
 financeSchema.index({ user: 1, createdAt: -1 });
 
 // ================================================================
+// TEXT INDEX FOR SEARCHING TITLES
+// Enables fast full-text search on entry titles
+// ================================================================
+financeSchema.index({ title: "text" });
+// ================================================================
 // PRE-SAVE HOOK
 // Always compute totalAmount from items
 // ===============================================================
-financeSchema.pre("save", function () {
-    const total = this.items.reduceRight((sum, item) => {
+financeSchema.pre("validate", function () {
+
+    // Add all item amounts together
+    const total = this.items.reduce((sum, item) => {
         return sum + item.amount;
     }, 0);
 
+    // Prevent saving entries with total <= 0
     if (total <= 0) {
         throw new Error("Total amount must be greater than zero");
     }
@@ -89,5 +100,5 @@ financeSchema.pre("save", function () {
     this.totalAmount = total;
 });
 
-const finance = mongoose.model("Finance", financeSchema);
-export default financeSchema;
+const Finance = mongoose.model("Finance", financeSchema);
+export default Finance;
