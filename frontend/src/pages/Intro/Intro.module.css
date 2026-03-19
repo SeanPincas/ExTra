@@ -51,12 +51,21 @@
     display: block;
 }
 
+.coinWrapper {
+    position: relative; /* 🔥 THIS IS THE KEY */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 /* ===============================
    COIN
 ================================*/
 
 .coin {
-    width: 260px;
+    width: clamp(230px, 18vw, 260px);
     z-index: 7;
 }
 
@@ -66,14 +75,18 @@
 
 .sparks {
     position: absolute;
-    width: 200px;
-    height: 200px;
-    bottom: 38%;
+    bottom: -10px; /* 🔥 relative to coin */
+    left: 15%;
+    transform: translate(-50%, -50%);
+    width: clamp(180px, 12vw, 200px);
+    height: clamp(180px, 12vw, 200px);
+
     border-radius: 50%;
+
     background:
         radial-gradient(circle, gold 40%, transparent 60%);
     animation: spark 0.25s ease-out;
-    z-index: 7;
+    z-index: 6;
 }
 
 @keyframes spark {
@@ -95,12 +108,17 @@
 ================================*/
 
 .popupText {
-    position: absolute;
-    bottom: 29%;
-    font-size: 50px;
+    margin-top: 10px; /* 🔥 naturally below coin */
+
+    font-size: clamp(40px, 3vw, 50px);
+
     letter-spacing: 3px;
     font-weight: 600;
+
     color: goldenrod;
+    text-align: center;
+
     text-shadow: 0px 0px 10px rgba(7, 7, 7, 0.3);
+
     z-index: 7;
 }

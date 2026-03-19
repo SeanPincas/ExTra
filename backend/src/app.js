@@ -17,6 +17,13 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
+const allowedOrigins = ["http://localhost:5173"];
+const corsOptions = {
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+};
 
 // --------------------------------------------------
 // API RATE LIMITER
@@ -36,16 +43,37 @@ const apiLimiter = rateLimiter({
 // --------------------------------------------------
 // Core Middlewares
 // --------------------------------------------------
+// Enable CORS early so browser preflight requests succeed
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 // Parse incoming JSON bodies
 app.use(express.json());
 // Security Header
 app.use(helmet());
 // Rate Limiter
 app.use("/api", apiLimiter);
-// Sanitize mongoDB queries
-app.use(mongoSanitize());
-// Enable CORS
-app.use(cors());
+// Sanitize request payloads without reassigning req.query.
+// express-mongo-sanitize@2.x mutates req.query by reassigning it,
+// which conflicts with the current Express stack.
+app.use((req, res, next) => {
+    if (req.body) {
+        mongoSanitize.sanitize(req.body);
+    }
+
+    if (req.params) {
+        mongoSanitize.sanitize(req.params);
+    }
+
+    if (req.headers) {
+        mongoSanitize.sanitize(req.headers);
+    }
+
+    if (req.query) {
+        mongoSanitize.sanitize(req.query);
+    }
+
+    next();
+});
 // HTTP request logger
 app.use(morgan("dev"));
 

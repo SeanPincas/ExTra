@@ -20,7 +20,10 @@ import {
     BarChart3,
     PieChart,
     Settings,
-    LogOut
+    LogOut,
+    SquareCheck,
+    Eye,
+    EyeOff
 } from "lucide-react"
 
 // ======================================================
@@ -44,6 +47,9 @@ export const Icons = {
     user: User,
     logout: LogOut,
     settings: Settings,
+    checkSquare: SquareCheck,
+    eye: Eye,
+    eyeOff: EyeOff,
 
     // FINANCE
     wallet: Wallet,

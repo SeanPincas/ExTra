@@ -30,10 +30,16 @@ export const updateProfile = asyncHandler(async (req, res) => {
   const { name, preferences } = req.body;
 
   if (name) {
-    if (name.length > 16) {
+    if (name.length < 3 || name.length > 24) {
       res.status(400);
-      throw new Error('Username must not exceed 16 characters');
+      throw new Error('Username must be between 3 and 24 characters');
     }
+
+    if (!/^[A-Za-z0-9]+$/.test(name)) {
+      res.status(400);
+      throw new Error('Username must contain letters and numbers only');
+    }
+
     user.name = name;
   }
 

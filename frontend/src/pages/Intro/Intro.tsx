@@ -83,29 +83,31 @@ function Intro({ onFinish }: IntroProps) {
             transition={{ duration: 0.5, ease: "easeInOut" }}
         >
 
-            {/* Coin */}
-            <motion.img
-                src={coin}
-                className={styles.coin}
-                initial={{ y: -800 }}
-                animate={controls}
-            />
+            <div className={styles.coinWrapper}>
 
-            {/* Sparks */}
-            {showSparks && <div className={styles.sparks} />}
+                {/* Coin */}
+                <motion.img
+                    src={coin}
+                    className={styles.coin}
+                    initial={{ y: -800 }}
+                    animate={controls}
+                />
 
-            {/* Text */}
-            {showText && (
-                <motion.div
-                    className={styles.popupText}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.25 }}
-                >
-                    Expense Tracker
-                </motion.div>
-            )}
+                {/* Sparks */}
+                {showSparks && <div className={styles.sparks} />}
 
+                {/* Text */}
+                {showText && (
+                    <motion.div
+                        className={styles.popupText}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                    >
+                        Expense Tracker
+                    </motion.div>
+                )}
+            </div>
         </motion.div>
     )
 }

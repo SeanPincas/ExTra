@@ -1,0 +1,309 @@
+import { useEffect, useState } from "react"
+import { registerUser } from "../../api/authAPI"
+import { useAuth } from "../../context/AuthContext"
+import { Icons } from "../../utils/iconLibrary"
+import {
+    validateConfirmPassword,
+    validateEmail,
+    validatePassword,
+    validateUsername,
+} from "../../utils/authValidation"
+import styles from "./RegisterPage.module.css"
+import logo from "../../assets/logo.png"
+import saveMoney from "../../assets/save-money.jpg"
+
+interface RegisterPageProps {
+    onLoginClick: () => void
+}
+
+function RegisterPage({ onLoginClick }: RegisterPageProps) {
+    const { setAuthToken } = useAuth()
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+    })
+    const [fieldErrors, setFieldErrors] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+    })
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+    useEffect(() => {
+        if (!errorMessage) {
+            return
+        }
+
+        const timeoutId = window.setTimeout(() => {
+            setErrorMessage("")
+        }, 2800)
+
+        return () => {
+            window.clearTimeout(timeoutId)
+        }
+    }, [errorMessage])
+
+    const handleChange = (field: keyof typeof formData, value: string) => {
+        setFormData((current) => ({
+            ...current,
+            [field]: value,
+        }))
+
+        setFieldErrors((current) => ({
+            ...current,
+            [field]: "",
+        }))
+
+        // Let users type naturally, then warn instead of silently stripping
+        // characters so the field doesn't feel broken.
+        if (field === "name" && /[^A-Za-z0-9]/.test(value)) {
+            const warning = "Username must contain letters and numbers only."
+
+            setFieldErrors((current) => ({
+                ...current,
+                name: warning,
+            }))
+
+            setErrorMessage(warning)
+        }
+    }
+
+    const handleBlur = (field: keyof typeof formData) => {
+        let message = ""
+
+        if (field === "name") {
+            message = validateUsername(formData.name) || ""
+        }
+
+        if (field === "email") {
+            message = validateEmail(formData.email) || ""
+        }
+
+        if (field === "password") {
+            message = validatePassword(formData.password) || ""
+        }
+
+        if (field === "confirmPassword") {
+            message = validateConfirmPassword(formData.password, formData.confirmPassword) || ""
+        }
+
+        setFieldErrors((current) => ({
+            ...current,
+            [field]: message,
+        }))
+
+        if (message) {
+            setErrorMessage(message)
+        }
+    }
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+
+        const nextErrors = {
+            name: validateUsername(formData.name) || "",
+            email: validateEmail(formData.email) || "",
+            password: validatePassword(formData.password) || "",
+            confirmPassword: validateConfirmPassword(formData.password, formData.confirmPassword) || "",
+        }
+
+        setFieldErrors(nextErrors)
+
+        if (Object.values(nextErrors).some(Boolean)) {
+            setErrorMessage("Please fix the highlighted fields.")
+            return
+        }
+
+        setIsSubmitting(true)
+        setErrorMessage("")
+
+        try {
+            const authData = await registerUser({
+                name: formData.name.trim(),
+                email: formData.email.trim(),
+                password: formData.password,
+            })
+
+            setAuthToken(authData.token)
+        } catch (error: any) {
+            const message =
+                error?.response?.data?.message ||
+                error?.message ||
+                "Registration failed. Please try again."
+
+            setErrorMessage(message)
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
+    return (
+        <main className={styles.registerPage}>
+            <section className={styles.registerShell}>
+                <div className={styles.logoCapsule}>
+                    <img
+                        src={logo}
+                        alt="ExTra Logo"
+                        className={styles.logoImage}
+                    />
+                </div>
+
+                <div className={styles.panelGrid}>
+                <div className={styles.brandPanel}>
+                    <div className={styles.brandCopy}>
+                        <h1 className={styles.pageTitle}>Create Your ExTra Account</h1>
+                        <p className={styles.pageSubtitle}>
+                            Build your expense tracking workspace to record spending,
+                            review financial summaries, manage reminders, and stay in
+                            control of your daily money flow.
+                        </p>
+                    </div>
+
+                    <ul className={styles.featureList}>
+                        <li>Track income and expenses with structured entries</li>
+                        <li>Review totals, balance, and upcoming reminders in one place</li>
+                        <li>Grow into the full ExTra dashboard after sign up</li>
+                    </ul>
+
+                    <div className={styles.brandIllustration}>
+                        <img
+                            src={saveMoney}
+                            alt="Saving money illustration"
+                            className={styles.illustrationImage}
+                        />
+                    </div>
+                </div>
+
+                <section className={styles.formPanel}>
+                    <div className={styles.formHeader}>
+                        <h2>Register</h2>
+                        <p>Start with your core account details.</p>
+                    </div>
+
+                    <form className={styles.formBody} onSubmit={handleSubmit}>
+                        {/* Register now submits to the backend auth API
+                           and stores the returned token in shared auth context. */}
+                        <label className={styles.fieldGroup}>
+                            <span>Username</span>
+                            <input
+                                className={`${styles.fieldInput} ${fieldErrors.name ? styles.inputError : ""}`}
+                                type="text"
+                                placeholder="Enter a username"
+                                value={formData.name}
+                                maxLength={24}
+                                onChange={(event) => handleChange("name", event.target.value)}
+                                onBlur={() => handleBlur("name")}
+                                disabled={isSubmitting}
+                            />
+                        {fieldErrors.name && (
+                            null
+                        )}
+                        </label>
+
+                        <label className={styles.fieldGroup}>
+                            <span>Email</span>
+                            <input
+                                className={`${styles.fieldInput} ${fieldErrors.email ? styles.inputError : ""}`}
+                                type="email"
+                                placeholder="Enter your email"
+                                value={formData.email}
+                                onChange={(event) => handleChange("email", event.target.value)}
+                                onBlur={() => handleBlur("email")}
+                                disabled={isSubmitting}
+                            />
+                        {fieldErrors.email && (
+                            null
+                        )}
+                        </label>
+
+                        <label className={styles.fieldGroup}>
+                            <span>Password</span>
+                            <div className={styles.passwordField}>
+                                <input
+                                    className={`${styles.fieldInput} ${styles.passwordInput} ${fieldErrors.password ? styles.inputError : ""}`}
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Create a password"
+                                    value={formData.password}
+                                    onChange={(event) => handleChange("password", event.target.value)}
+                                    onBlur={() => handleBlur("password")}
+                                    disabled={isSubmitting}
+                                />
+                                <button
+                                    className={styles.passwordToggle}
+                                    type="button"
+                                    onMouseDown={() => setShowPassword(true)}
+                                    onMouseUp={() => setShowPassword(false)}
+                                    onMouseLeave={() => setShowPassword(false)}
+                                    onTouchStart={() => setShowPassword(true)}
+                                    onTouchEnd={() => setShowPassword(false)}
+                                    onTouchCancel={() => setShowPassword(false)}
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
+                                >
+                                    <Icons.eye size={16} />
+                                </button>
+                            </div>
+                        </label>
+
+                        <label className={styles.fieldGroup}>
+                            <span>Confirm Password</span>
+                            <div className={styles.passwordField}>
+                                <input
+                                    className={`${styles.fieldInput} ${styles.passwordInput} ${fieldErrors.confirmPassword ? styles.inputError : ""}`}
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    placeholder="Confirm your password"
+                                    value={formData.confirmPassword}
+                                    onChange={(event) => handleChange("confirmPassword", event.target.value)}
+                                    onBlur={() => handleBlur("confirmPassword")}
+                                    disabled={isSubmitting}
+                                />
+                                <button
+                                    className={styles.passwordToggle}
+                                    type="button"
+                                    onMouseDown={() => setShowConfirmPassword(true)}
+                                    onMouseUp={() => setShowConfirmPassword(false)}
+                                    onMouseLeave={() => setShowConfirmPassword(false)}
+                                    onTouchStart={() => setShowConfirmPassword(true)}
+                                    onTouchEnd={() => setShowConfirmPassword(false)}
+                                    onTouchCancel={() => setShowConfirmPassword(false)}
+                                    aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                                >
+                                    <Icons.eye size={16} />
+                                </button>
+                            </div>
+                        </label>
+
+                        <button className="btnBase btnGreenSolid" type="submit">
+                            {isSubmitting ? "Creating Account..." : "Create Account"}
+                        </button>
+                    </form>
+
+                    <p className={styles.helperText}>
+                        Already have an account?{" "}
+                        <button
+                            className={styles.helperLink}
+                            type="button"
+                            onClick={onLoginClick}
+                        >
+                            Login here
+                        </button>
+                    </p>
+
+                    {errorMessage && (
+                        <div className={styles.warningCloud} role="alert">
+                            {errorMessage}
+                        </div>
+                    )}
+                </section>
+                </div>
+            </section>
+        </main>
+    )
+}
+
+export default RegisterPage

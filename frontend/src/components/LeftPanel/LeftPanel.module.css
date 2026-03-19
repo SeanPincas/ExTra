@@ -1,0 +1,12 @@
+.leftPanel {
+    display: grid;
+    grid-template-rows: auto auto auto 1fr;
+    gap: 10px;
+    min-height: 0;
+}
+
+@media (max-width: 900px) {
+    .leftPanel {
+        gap: 8px;
+    }
+}

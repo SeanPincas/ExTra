@@ -1,0 +1,59 @@
+.btnBase {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 8px 18px;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        background-color 180ms ease,
+        border-color 180ms ease;
+    box-shadow:
+        0 8px 18px rgba(0, 0, 0, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.btnBase:hover {
+    transform: translateY(-1px);
+}
+
+.btnMatteDark {
+    background: var(--bg-main);
+    border-color: var(--border-soft);
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.btnGreenSolid {
+    background: var(--accent-green);
+    border-color: color-mix(in srgb, var(--accent-money-green) 70%, #0f0f0f);
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 640px) {
+
+    .btnBase {
+        min-height: 34px;
+        padding-inline: 14px;
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .btnBase {
+        padding-inline: 12px;
+        font-size: 0.8rem;
+    }
+}
