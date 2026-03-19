@@ -1,37 +1,44 @@
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-
-import Intro from "./pages/Intro/Intro"
+import AppIntro from "./components/AppIntro/AppIntro";
+import MainLayout from "./layout/MainLayout/MainLayout"
+import Header from "./components/Header/Header"
+import AppBackground from "./components/AppBackground/AppBackground";
+import Footer from "./components/Footer/Footer";
 
 function App() {
 
-  const [introDone,setIntroDone] = useState(false)
+    return (
 
-  return (
+        <div style={{ position: "relative", zIndex: 0 }}>
 
-    <AnimatePresence>
+            <AppBackground />
+            <AppIntro>
+                <MainLayout
+                    header={<Header />}
+                    content={
+                        <div style={{ display: "contents" }}>
+                            {/* LEFT */}
+                            <div style={{ background: "#111", borderRadius: "8px" }}>
+                                LEFT PANEL
+                            </div>
 
-      {!introDone && (
-        <Intro onFinish={() => setIntroDone(true)} />
-      )}
+                            {/* CENTER */}
+                            <div style={{ background: "#1a1a1a", borderRadius: "8px" }}>
+                                CENTER PANEL
+                            </div>
 
-      {introDone && (
+                            {/* RIGHT */}
+                            <div style={{ background: "#111", borderRadius: "8px" }}>
+                                RIGHT PANEL
+                            </div>
+                        </div>
+                    }
+                    footer={<Footer />}
+                />
+            </AppIntro>
+        </div>
 
-        <motion.div
-          initial={{ opacity:0, y:40 }}
-          animate={{ opacity:1, y:0 }}
-          transition={{ duration:0.6 }}
-        >
-          <h1 style={{color:"white",textAlign:"center"}}>
-            Dashboard Loading
-          </h1>
-        </motion.div>
+    )
 
-      )}
-
-    </AnimatePresence>
-
-  )
 }
 
 export default App
