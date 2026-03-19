@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap");
+@import "./utils/buttonUtils.css";
+
 /* =====================================================
    GLOBAL RESET
    ===================================================== */
@@ -21,6 +24,13 @@ body,
    ===================================================== */
 
 :root {
+
+    /* ===============================
+     TYPOGRAPHY
+  =============================== */
+
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-display: "Cormorant Garamond", Georgia, serif;
 
     /* ===============================
      BACKGROUND COLORS
@@ -56,7 +66,8 @@ body,
      ACCENT COLORS
   =============================== */
 
-    --accent-green: #3cb371;
+    --accent-green: #4f944f;
+    --accent-money-green: #173c32;
     --accent-red: #ff4d4d;
 
     /* brand accent */
@@ -67,6 +78,7 @@ body,
   =============================== */
 
     --btn-success: #3cb371;
+    --btn-success-dark: #173c32;
     --btn-danger: #ff4d4d;
 
     /* ===============================
@@ -83,17 +95,16 @@ body,
     --panel-texture: url("/src/assets/panel-texture.jpg");
 
     --panel-gradient:
-        linear-gradient(130deg,
-            var(--bg-light),
-            var(--bg-dark));
+        radial-gradient(circle at center,
+            var(--bg-light) 0%,
+            var(--bg-light) 30%,
+            var(--bg-dark) 80%);
 
     /* 🔥 combined system */
     --panel-bg:
         var(--panel-texture),
         var(--panel-gradient);
-
 }
-
 
 /* =====================================================
    BASE BODY STYLE
@@ -101,16 +112,29 @@ body,
 
 body {
 
-    font-family:
-        system-ui,
-        -apple-system,
-        Segoe UI,
-        Roboto,
-        sans-serif;
+    font-family: var(--font-body);
 
     background: var(--bg-main);
     color: var(--text-primary);
 
     overflow: hidden;
 
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.01em;
 }

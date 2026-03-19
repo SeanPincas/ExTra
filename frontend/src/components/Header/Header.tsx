@@ -3,7 +3,8 @@
 // ======================================================
 
 import styles from "./Header.module.css"
-import { Icons } from "../../utils/iconLibrary" // you said you use this
+import { Icons } from "../../utils/iconLibrary"
+import logo from "../../assets/logo.png";
 
 function Header() {
 
@@ -20,20 +21,44 @@ function Header() {
 
             {/* CENTER: LOGO */}
             <div className={styles.centerSection}>
-                <span className={styles.logo}>ExTra</span>
+                <span className={styles.logoWrapper}>
+                    <img
+                        src={logo}
+                        alt="Extra Logo"
+                        className={styles.logoImage}
+                    />
+                </span>
             </div>
 
             {/* RIGHT: ACTIONS */}
             <div className={styles.rightSection}>
 
                 {/* Add Entry */}
-                <button className={styles.addButton}>
-                    + Add Entry
+                <button
+                    className={`btnBase btnGreenSolid ${styles.addButton}`}
+                    aria-label="Add Entry"
+                >
+                    {/* Full label for larger screens. */}
+                    <span className={styles.buttonLabelFull}>+ Add Entry</span>
+                    {/* Compact label for smaller tablets. */}
+                    <span className={styles.buttonLabelCompact}>+ Entry</span>
+                    {/* Icon-only version for phones. */}
+                    <span className={styles.buttonIconOnly} aria-hidden="true">
+                        <Icons.add size={18} />
+                    </span>
                 </button>
 
                 {/* Auth */}
-                <button className={styles.authButton}>
-                    Sign In
+                <button
+                    className={`btnBase btnMatteDark ${styles.authButton}`}
+                    aria-label="Sign In"
+                >
+                    {/* Full label for larger screens. */}
+                    <span className={styles.authLabelFull}>Sign In</span>
+                    {/* Icon-only version for phones. */}
+                    <span className={styles.buttonIconOnly} aria-hidden="true">
+                        <Icons.user size={18} />
+                    </span>
                 </button>
 
             </div>
