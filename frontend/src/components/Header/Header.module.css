@@ -21,6 +21,11 @@
     justify-self: start;
 }
 
+.leftSpacer {
+    width: 38px;
+    height: 38px;
+}
+
 .centerSection {
     display: flex;
     align-items: center;
@@ -68,19 +73,27 @@
    BUTTONS
 ===================================================== */
 
-.iconButton {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--text-primary);
-}
-
 .buttonLabelCompact {
     display: none;
 }
 
 .buttonIconOnly {
     display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.userButton {
+    gap: 8px;
+}
+
+.userLabel {
+    display: inline-flex;
+    align-items: center;
+}
+
+.userIcon {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 }
@@ -132,12 +145,16 @@
     /* Phones use icons only so the actions stay compact and readable. */
     .buttonLabelFull,
     .buttonLabelCompact,
-    .authLabelFull {
+    .userLabel {
         display: none;
     }
 
     .buttonIconOnly {
         display: inline-flex;
+    }
+
+    .userButton {
+        gap: 0;
     }
 
 }

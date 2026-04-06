@@ -5,18 +5,18 @@
 import styles from "./Header.module.css"
 import { Icons } from "../../utils/iconLibrary"
 import logo from "../../assets/logo.png";
+import { useAuth } from "../../context/AuthContext";
 
 function Header() {
+    const { user } = useAuth()
 
     return (
 
         <div className={styles.headerContainer}>
 
-            {/* LEFT: BURGER */}
+            {/* LEFT: Spacer kept for true logo centering while the left panel remains visible. */}
             <div className={styles.leftSection}>
-                <button className={styles.iconButton}>
-                    <Icons.menu size={22} />
-                </button>
+                <span className={styles.leftSpacer} aria-hidden="true" />
             </div>
 
             {/* CENTER: LOGO */}
@@ -48,15 +48,16 @@ function Header() {
                     </span>
                 </button>
 
-                {/* Auth */}
+                {/* Logged-in user action:
+                   this replaces the old sign-in CTA because the dashboard only renders after auth. */}
                 <button
-                    className={`btnBase btnMatteDark ${styles.authButton}`}
-                    aria-label="Sign In"
+                    className={`btnBase btnMatteDark ${styles.userButton}`}
+                    aria-label="Open user settings"
+                    title={user ? `${user.name} account actions` : "Account actions"}
                 >
-                    {/* Full label for larger screens. */}
-                    <span className={styles.authLabelFull}>Sign In</span>
-                    {/* Icon-only version for phones. */}
-                    <span className={styles.buttonIconOnly} aria-hidden="true">
+                    {/* The dashboard now uses a user action button instead of a sign-in CTA. */}
+                    <span className={styles.userLabel}>{user?.name ?? "Account"}</span>
+                    <span className={styles.userIcon} aria-hidden="true">
                         <Icons.user size={18} />
                     </span>
                 </button>
