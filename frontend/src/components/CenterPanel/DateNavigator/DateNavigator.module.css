@@ -1,0 +1,112 @@
+.navigatorShell {
+    position: relative;
+    width: min(340px, calc(100% - 24px));
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px;
+    padding: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0 0 12px 12px;
+    background:
+        radial-gradient(circle at 50% 10%, rgba(128, 99, 19, 0.1), transparent 38%),
+        linear-gradient(180deg, rgba(26, 28, 29, 0.96), rgba(15, 15, 16, 0.96)),
+        var(--panel-texture);
+    background-size: auto, cover, 900px;
+    box-shadow:
+        0 12px 24px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.navButton,
+.dateTrigger {
+    min-height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+}
+
+.navButton {
+    width: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    border-radius: 10px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition:
+        color 160ms ease,
+        background-color 160ms ease,
+        transform 160ms ease;
+}
+
+.navButton:hover:not(:disabled) {
+    color: var(--accent-gold);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.navButton:disabled {
+    opacity: 0.34;
+    cursor: not-allowed;
+}
+
+.dateTrigger {
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition:
+        color 160ms ease,
+        background-color 160ms ease;
+}
+
+.dateTrigger:hover {
+    color: var(--accent-gold);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.dateLabel {
+    min-width: 0;
+    color: var(--text-primary);
+    font-size: 0.76rem;
+    line-height: 1.2;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hiddenDateInput {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+@media (max-width: 640px) {
+    .navigatorShell {
+        width: min(100%, 320px);
+        padding: 3px;
+        gap: 4px;
+    }
+
+    .navButton,
+    .dateTrigger {
+        min-height: 26px;
+    }
+
+    .navButton {
+        width: 26px;
+    }
+
+    .dateLabel {
+        font-size: 0.72rem;
+    }
+}

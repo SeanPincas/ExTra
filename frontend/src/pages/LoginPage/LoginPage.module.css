@@ -157,6 +157,21 @@
     line-height: 1.45;
 }
 
+.helperRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.helperText {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
 .helperLink {
     border: none;
     background: transparent;
@@ -165,6 +180,30 @@
     font: inherit;
     cursor: pointer;
     text-decoration: underline;
+}
+
+.forgotPasswordLink {
+    margin-left: auto;
+    font-size: 0.8rem;
+    line-height: 1.45;
+}
+
+.legalConsent {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+    line-height: 1.45;
+}
+
+.legalConsent input {
+    accent-color: var(--accent-green);
+    margin-top: 2px;
+}
+
+.legalConsent span {
+    min-width: 0;
 }
 
 .formBody {
@@ -326,7 +365,21 @@
 
     .pageSubtitle,
     .featureList,
-    .helperText {
+    .helperText,
+    .legalConsent {
+        font-size: 0.68rem;
+        line-height: 1.3;
+    }
+
+    .helperRow {
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .forgotPasswordLink {
+        width: 100%;
+        margin-left: 0;
+        text-align: left;
         font-size: 0.68rem;
         line-height: 1.3;
     }

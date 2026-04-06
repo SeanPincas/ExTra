@@ -13,6 +13,7 @@ import {
     Filter,
     ChevronLeft,
     ChevronRight,
+    ChevronDown,
     RefreshCcw,
     Wallet,
     TrendingUp,
@@ -23,7 +24,10 @@ import {
     LogOut,
     SquareCheck,
     Eye,
-    EyeOff
+    EyeOff,
+    X,
+    Recycle,
+    CalendarDays
 } from "lucide-react"
 
 // ======================================================
@@ -36,12 +40,16 @@ export const Icons = {
     menu: Menu,
     back: ChevronLeft,
     forward: ChevronRight,
+    down: ChevronDown,
 
     // ACTIONS
     add: Plus,
     refresh: RefreshCcw,
     filter: Filter,
     search: Search,
+    close: X,
+    reset: Recycle,
+    today: CalendarDays,
 
     // USER
     user: User,
