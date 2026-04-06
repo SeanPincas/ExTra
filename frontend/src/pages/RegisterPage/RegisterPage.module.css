@@ -157,6 +157,13 @@
     line-height: 1.45;
 }
 
+.helperText {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
 .helperLink {
     border: none;
     background: transparent;
@@ -165,6 +172,24 @@
     font: inherit;
     cursor: pointer;
     text-decoration: underline;
+}
+
+.legalConsent {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+    line-height: 1.45;
+}
+
+.legalConsent input {
+    accent-color: var(--accent-green);
+    margin-top: 2px;
+}
+
+.legalConsent span {
+    min-width: 0;
 }
 
 .formBody {
@@ -330,7 +355,8 @@
 
     .pageSubtitle,
     .featureList,
-    .helperText {
+    .helperText,
+    .legalConsent {
         font-size: 0.68rem;
         line-height: 1.3;
     }

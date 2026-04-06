@@ -34,7 +34,7 @@ export const createFinance = asyncHandler(async (req, res) => {
 // ================================================================
 export const getFinance = asyncHandler(async (req, res) => {
 
-    const { range, date, search } = req.query;
+    const { range, date, search, startDate, endDate } = req.query;
     // page validation
     let page = Number(req.query.page) || 1;
     // Prevent negative pages
@@ -63,11 +63,20 @@ export const getFinance = asyncHandler(async (req, res) => {
                 createdAt: { $gte: start, $lte: end }
             };
         }
+    } else if (startDate && endDate) {
+        const parsedStartDate = new Date(startDate);
+        const parsedEndDate = new Date(endDate);
+
+        if (!isNaN(parsedStartDate) && !isNaN(parsedEndDate)) {
+            dateFilter = {
+                createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
+            };
+        }
     }
 
     // ----------- Range Filter -------------
     const allowedRanges = ["today", "week", "month", "year"];
-    if (range && allowedRanges.includes(range)) {
+    if (!date && !(startDate && endDate) && range && allowedRanges.includes(range)) {
         dateFilter = getDateRangeFilter(range);
     }
 

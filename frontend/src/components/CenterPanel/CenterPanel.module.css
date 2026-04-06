@@ -1,0 +1,104 @@
+.centerPanel {
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at center, rgba(88, 88, 88, 0.12), rgba(17, 17, 17, 0.92) 78%),
+        var(--panel-texture);
+    background-size: cover, 1000px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.centerPanel > * + * {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.filterStack + * {
+    border-top: none;
+}
+
+.filterStack {
+    display: grid;
+    gap: 0;
+}
+
+.navigatorSlot {
+    display: flex;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 14px;
+    margin-top: -1px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.navigatorShell,
+.notchShell {
+    min-width: 0;
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 0;
+    width: 100%;
+}
+
+.navigatorShellExpanded {
+    animation: navigatorExpand 180ms ease;
+    transform-origin: top center;
+}
+
+.navigatorConnector,
+.notchConnector {
+    width: 0;
+    height: 0;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 10px solid rgba(66, 66, 66, 0.9);
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.16));
+}
+
+.navigatorConnector {
+    margin-top: -1px;
+}
+
+.notchShell {
+    border: none;
+    background: transparent;
+    align-content: center;
+    cursor: pointer;
+    transition: transform 160ms ease, filter 160ms ease;
+}
+
+.notchShell:hover {
+    transform: translateY(1px);
+    filter: brightness(1.08);
+}
+
+.notchConnector {
+    border-left-width: 8px;
+    border-right-width: 8px;
+    border-top-width: 8px;
+}
+
+@keyframes navigatorExpand {
+    from {
+        opacity: 0;
+        transform: scaleX(0.78) translateY(-2px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scaleX(1) translateY(0);
+    }
+}
+
+@media (max-width: 640px) {
+    .navigatorSlot {
+        min-height: 24px;
+        padding: 0 10px;
+    }
+}

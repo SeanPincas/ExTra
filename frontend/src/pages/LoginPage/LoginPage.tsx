@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
 import { loginUser } from "../../api/authAPI"
+import LegalModal from "../../components/reusableComp/LegalModal/LegalModal"
 import { useAuth } from "../../context/AuthContext"
 import { Icons } from "../../utils/iconLibrary"
+import type { LegalDocumentKey } from "../../utils/legalDocuments"
 import styles from "./LoginPage.module.css"
 import logo from "../../assets/logo.png"
 import saveMoney from "../../assets/save-money.jpg"
@@ -19,6 +21,8 @@ function LoginPage({ onRegisterClick }: LoginPageProps) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
     const [showPassword, setShowPassword] = useState(false)
+    const [acceptedLegal, setAcceptedLegal] = useState(false)
+    const [activeLegalDocument, setActiveLegalDocument] = useState<LegalDocumentKey | null>(null)
 
     useEffect(() => {
         if (!errorMessage) {
@@ -43,6 +47,12 @@ function LoginPage({ onRegisterClick }: LoginPageProps) {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+
+        if (!acceptedLegal) {
+            setErrorMessage("Please accept the Privacy Policy and Terms and Conditions first.")
+            return
+        }
+
         setIsSubmitting(true)
         setErrorMessage("")
 
@@ -150,21 +160,58 @@ function LoginPage({ onRegisterClick }: LoginPageProps) {
                                 </div>
                             </label>
 
-                            <button className="btnBase btnGreenSolid" type="submit">
-                                {isSubmitting ? "Logging In..." : "Login"}
-                            </button>
-                        </form>
+                        <button className="btnBase btnGreenSolid" type="submit">
+                            {isSubmitting ? "Logging In..." : "Login"}
+                        </button>
+                    </form>
 
-                        <p className={styles.helperText}>
-                            Need an account?{" "}
+                        <div className={styles.helperRow}>
+                            <p className={styles.helperText}>
+                                Need an account?{" "}
+                                <button
+                                    className={styles.helperLink}
+                                    type="button"
+                                    onClick={onRegisterClick}
+                                >
+                                    Register here
+                                </button>
+                            </p>
+
                             <button
-                                className={styles.helperLink}
                                 type="button"
-                                onClick={onRegisterClick}
+                                className={`${styles.helperLink} ${styles.forgotPasswordLink}`}
+                                onClick={() => setErrorMessage("Forgot password flow is coming soon.")}
                             >
-                                Register here
+                                Forgot password?
                             </button>
-                        </p>
+                        </div>
+
+                        <label className={styles.legalConsent}>
+                            <input
+                                type="checkbox"
+                                checked={acceptedLegal}
+                                onChange={(event) => setAcceptedLegal(event.target.checked)}
+                                disabled={isSubmitting}
+                            />
+                            <span>
+                                I agree to the{" "}
+                                <button
+                                    type="button"
+                                    className={styles.helperLink}
+                                    onClick={() => setActiveLegalDocument("privacy")}
+                                >
+                                    Data Privacy Policy
+                                </button>
+                                {" "}and{" "}
+                                <button
+                                    type="button"
+                                    className={styles.helperLink}
+                                    onClick={() => setActiveLegalDocument("terms")}
+                                >
+                                    Terms and Conditions
+                                </button>
+                            </span>
+                        </label>
 
                         {errorMessage && (
                             <div className={styles.warningCloud} role="alert">
@@ -174,6 +221,13 @@ function LoginPage({ onRegisterClick }: LoginPageProps) {
                     </section>
                 </div>
             </section>
+
+            {activeLegalDocument && (
+                <LegalModal
+                    documentKey={activeLegalDocument}
+                    onClose={() => setActiveLegalDocument(null)}
+                />
+            )}
         </main>
     )
 }

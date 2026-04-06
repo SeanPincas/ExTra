@@ -5,6 +5,7 @@ import Header from "./components/Header/Header"
 import AppBackground from "./components/AppBackground/AppBackground";
 import Footer from "./components/Footer/Footer";
 import LeftPanel from "./components/LeftPanel/LeftPanel";
+import CenterPanel from "./components/CenterPanel/CenterPanel";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import { useAuth } from "./context/AuthContext";
@@ -14,6 +15,10 @@ function App() {
     const { token, user, isAuthLoading } = useAuth()
     const showDashboard = Boolean(token && user)
 
+    const handleLogoutView = () => {
+        setAuthView("login")
+    }
+
     return (
 
         <div style={{ position: "relative", zIndex: 0 }}>
@@ -22,16 +27,14 @@ function App() {
             <AppIntro>
                 {showDashboard ? (
                     <MainLayout
-                        header={<Header />}
+                        header={<Header onLogout={handleLogoutView} />}
                         content={
                             <div style={{ display: "contents" }}>
                                 {/* LEFT */}
                                 <LeftPanel />
 
                                 {/* CENTER */}
-                                <div style={{ background: "#1a1a1a", borderRadius: "8px" }}>
-                                    CENTER PANEL
-                                </div>
+                                <CenterPanel />
 
                                 {/* RIGHT */}
                                 <div style={{ background: "#111", borderRadius: "8px" }}>
