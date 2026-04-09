@@ -24,9 +24,25 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: true,
-            minlength: 8,
-            maxlength: 16,
-            match: [/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)\S{8,16}$/, "Password must include uppercase, lowercase, and a number"]
+            validate: {
+                validator: function (value) {
+                    if (!this.isModified("password")) {
+                        return true
+                    }
+
+                    const normalized = String(value ?? "")
+                    if (normalized.length < 8 || normalized.length > 16) {
+                        return false
+                    }
+
+                    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)\S{8,16}$/.test(normalized)
+                },
+                message: "Password must be 8–16 chars and include uppercase, lowercase, and a number"
+            }
+        },
+        profilePicture: {
+            type: String,
+            default: ""
         },
         preferences: {
             payDay: {

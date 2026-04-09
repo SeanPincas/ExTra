@@ -16,7 +16,7 @@ export const getProfile = asyncHandler(async (req, res) => {
 });
 
 // --------------------------------------------------
-// UPDATE PROFILE (name + preferences only)
+// UPDATE PROFILE (profile + preferences)
 // PUT /api/users/me
 // --------------------------------------------------
 export const updateProfile = asyncHandler(async (req, res) => {
@@ -27,7 +27,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 
-  const { name, preferences } = req.body;
+  const { name, preferences, profilePicture } = req.body;
 
   if (name) {
     if (name.length < 3 || name.length > 24) {
@@ -43,13 +43,36 @@ export const updateProfile = asyncHandler(async (req, res) => {
     user.name = name;
   }
 
+  if (profilePicture !== undefined) {
+    const normalizedPicture = String(profilePicture ?? "");
+
+    if (normalizedPicture.length > 700_000) {
+      res.status(400);
+      throw new Error("Profile picture is too large");
+    }
+
+    user.profilePicture = normalizedPicture;
+  }
+
   if (preferences) {
     if (preferences.payDay !== undefined) {
-      user.preferences.payDay = preferences.payDay;
+      user.preferences.payDay = Number(preferences.payDay);
+    }
+
+    if (preferences.salary !== undefined) {
+      user.preferences.salary = Number(preferences.salary);
     }
 
     if (preferences.currency) {
       user.preferences.currency = preferences.currency;
+    }
+
+    if (preferences.savingsGoal !== undefined) {
+      user.preferences.savingsGoal = Number(preferences.savingsGoal);
+    }
+
+    if (preferences.reminderLeadTime !== undefined) {
+      user.preferences.reminderLeadTime = Number(preferences.reminderLeadTime);
     }
 
     if (preferences.quoteChangeHours !== undefined) {
