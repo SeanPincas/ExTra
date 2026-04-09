@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react"
 import { Icons } from "../../../utils/iconLibrary"
 import styles from "./CenterHeaderArea.module.css"
 
@@ -7,6 +8,33 @@ interface CenterHeaderAreaProps {
 }
 
 function CenterHeaderArea({ searchDraft, onSearchChange }: CenterHeaderAreaProps) {
+    const [isSearchOpen, setIsSearchOpen] = useState(Boolean(searchDraft))
+    const searchInputRef = useRef<HTMLInputElement | null>(null)
+
+    useEffect(() => {
+        if (searchDraft) {
+            setIsSearchOpen(true)
+        }
+    }, [searchDraft])
+
+    useEffect(() => {
+        if (!isSearchOpen) {
+            return
+        }
+
+        searchInputRef.current?.focus()
+    }, [isSearchOpen])
+
+    const handleOpenSearch = () => {
+        setIsSearchOpen(true)
+    }
+
+    const handleSearchBlur = () => {
+        if (!searchDraft.trim()) {
+            setIsSearchOpen(false)
+        }
+    }
+
     return (
         <div className={styles.headerArea}>
             {/* The header now only gives the panel identity.
@@ -14,16 +42,28 @@ function CenterHeaderArea({ searchDraft, onSearchChange }: CenterHeaderAreaProps
                title-left / search-right dashboard structure. */}
             <h2 className={styles.title}>Entry List</h2>
 
-            <label className={styles.searchShell}>
-                <Icons.search size={15} />
-                <input
-                    type="search"
-                    className={styles.searchInput}
-                    value={searchDraft}
-                    placeholder="Search entries"
-                    onChange={(event) => onSearchChange(event.target.value)}
-                />
-            </label>
+            <div className={`${styles.searchShell} ${isSearchOpen ? styles.searchShellOpen : ""}`}>
+                <button
+                    type="button"
+                    className={styles.searchButton}
+                    aria-label={isSearchOpen ? "Search entries" : "Open search"}
+                    onClick={handleOpenSearch}
+                >
+                    <Icons.search size={15} />
+                </button>
+
+                {isSearchOpen && (
+                    <input
+                        ref={searchInputRef}
+                        type="search"
+                        className={styles.searchInput}
+                        value={searchDraft}
+                        placeholder="Search entries"
+                        onChange={(event) => onSearchChange(event.target.value)}
+                        onBlur={handleSearchBlur}
+                    />
+                )}
+            </div>
         </div>
     )
 }

@@ -13,6 +13,7 @@ import financeRoutes from "./routes/financeRoutes.js";
 import statsRoutes from "./routes/statsRoutes.js";
 import reminderRoutes from "./routes/reminderRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import quoteRoutes from "./routes/quoteRoutes.js";
 
 import { errorHandler } from "./middleware/error.middleware.js";
 
@@ -87,6 +88,7 @@ app.use("/api/finance", financeRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/reminders", reminderRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/quotes", quoteRoutes);
 
 // Temporary root route
 app.get("/", (req, res) => {

@@ -21,9 +21,35 @@
     justify-self: start;
 }
 
-.leftSpacer {
+.panelToggleButton {
     width: 38px;
     height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    background: transparent;
+    color: transparent;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        color 160ms ease,
+        border-color 160ms ease,
+        background-color 160ms ease,
+        opacity 160ms ease;
+}
+
+.panelToggleVisible {
+    color: transparent;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.panelToggleVisible:hover {
+    color: transparent;
+    border-color: transparent;
+    background: transparent;
 }
 
 .centerSection {
@@ -189,10 +215,22 @@
     border-color: rgba(255, 77, 77, 0.2);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1080px) {
 
     .headerContainer {
         grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
+    .panelToggleVisible {
+        color: var(--text-secondary);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .panelToggleVisible:hover {
+        color: var(--accent-gold);
+        border-color: rgba(218, 165, 32, 0.16);
+        background: rgba(255, 255, 255, 0.03);
     }
 
 }

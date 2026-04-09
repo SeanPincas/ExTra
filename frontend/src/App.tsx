@@ -1,13 +1,9 @@
 import { useState } from "react";
 import AppIntro from "./components/AppIntro/AppIntro";
-import MainLayout from "./layout/MainLayout/MainLayout"
-import Header from "./components/Header/Header"
-import AppBackground from "./components/AppBackground/AppBackground";
-import Footer from "./components/Footer/Footer";
-import LeftPanel from "./components/LeftPanel/LeftPanel";
-import CenterPanel from "./components/CenterPanel/CenterPanel";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
+import DashboardPage from "./pages/DashboardPage/DashboardPage";
+import AppBackground from "./components/AppBackground/AppBackground";
 import { useAuth } from "./context/AuthContext";
 
 function App() {
@@ -26,24 +22,7 @@ function App() {
             <AppBackground />
             <AppIntro>
                 {showDashboard ? (
-                    <MainLayout
-                        header={<Header onLogout={handleLogoutView} />}
-                        content={
-                            <div style={{ display: "contents" }}>
-                                {/* LEFT */}
-                                <LeftPanel />
-
-                                {/* CENTER */}
-                                <CenterPanel />
-
-                                {/* RIGHT */}
-                                <div style={{ background: "#111", borderRadius: "8px" }}>
-                                    RIGHT PANEL
-                                </div>
-                            </div>
-                        }
-                        footer={<Footer />}
-                    />
+                    <DashboardPage onLogout={handleLogoutView} />
                 ) : (
                     <div style={{ position: "absolute", inset: 0 }}>
                         {/* While auth is bootstrapping we keep the same page frame,

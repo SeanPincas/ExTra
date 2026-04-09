@@ -4,6 +4,7 @@ export interface UserPreferences {
     currency: string
     savingsGoal: number
     reminderLeadTime: number
+    quoteChangeHours: number
 }
 
 export interface UserProfile {

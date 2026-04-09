@@ -48,6 +48,12 @@ const userSchema = new mongoose.Schema(
             reminderLeadTime: {
                 type: Number,
                 default: 3
+            },
+            quoteChangeHours: {
+                type: Number,
+                default: 24,
+                min: 1,
+                max: 168
             }
         }
     },

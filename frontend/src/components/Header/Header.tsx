@@ -11,9 +11,11 @@ import AddEntryModal from "../Finance/AddEntryModal/AddEntryModal";
 
 interface HeaderProps {
     onLogout?: () => void
+    onToggleLeftPanel?: () => void
+    showLeftPanelToggle?: boolean
 }
 
-function Header({ onLogout }: HeaderProps) {
+function Header({ onLogout, onToggleLeftPanel, showLeftPanelToggle = false }: HeaderProps) {
     const { user, clearAuth } = useAuth()
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
     const [isAddEntryOpen, setIsAddEntryOpen] = useState(false)
@@ -58,7 +60,14 @@ function Header({ onLogout }: HeaderProps) {
 
             {/* LEFT: Spacer kept for true logo centering while the left panel remains visible. */}
             <div className={styles.leftSection}>
-                <span className={styles.leftSpacer} aria-hidden="true" />
+                <button
+                    type="button"
+                    className={`${styles.panelToggleButton} ${showLeftPanelToggle ? styles.panelToggleVisible : ""}`}
+                    aria-label="Open navigation panel"
+                    onClick={onToggleLeftPanel}
+                >
+                    <Icons.menu size={18} />
+                </button>
             </div>
 
             {/* CENTER: LOGO */}

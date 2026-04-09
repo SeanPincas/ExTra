@@ -4,9 +4,10 @@ interface FilterProps {
     label: string
     options: readonly string[]
     activeOption: string
+    onOptionChange?: (nextOption: string) => void
 }
 
-function Filter({ label, options, activeOption }: FilterProps) {
+function Filter({ label, options, activeOption, onOptionChange }: FilterProps) {
     return (
         <div className={styles.filterWrapper}>
             {/* The label and segmented options are kept separate so this control
@@ -20,6 +21,7 @@ function Filter({ label, options, activeOption }: FilterProps) {
                         className={`${styles.filterOption} ${option === activeOption ? styles.active : ""}`}
                         type="button"
                         aria-pressed={option === activeOption}
+                        onClick={() => onOptionChange?.(option)}
                     >
                         <span>{option}</span>
                         {index < options.length - 1 && (

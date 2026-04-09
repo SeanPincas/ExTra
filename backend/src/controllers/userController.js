@@ -51,6 +51,17 @@ export const updateProfile = asyncHandler(async (req, res) => {
     if (preferences.currency) {
       user.preferences.currency = preferences.currency;
     }
+
+    if (preferences.quoteChangeHours !== undefined) {
+      const normalizedQuoteHours = Number(preferences.quoteChangeHours);
+
+      if (!Number.isInteger(normalizedQuoteHours) || normalizedQuoteHours < 1 || normalizedQuoteHours > 168) {
+        res.status(400);
+        throw new Error("Quote change hours must be between 1 and 168");
+      }
+
+      user.preferences.quoteChangeHours = normalizedQuoteHours;
+    }
   }
 
   const updatedUser = await user.save();

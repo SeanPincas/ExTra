@@ -45,6 +45,27 @@ function LoginPage({ onRegisterClick }: LoginPageProps) {
         }))
     }
 
+    const getLoginWarningMessage = (error: any) => {
+        const statusCode = error?.response?.status
+        const backendMessage = String(error?.response?.data?.message || "").toLowerCase()
+
+        if (
+            statusCode === 401 ||
+            backendMessage.includes("invalid") ||
+            backendMessage.includes("incorrect") ||
+            backendMessage.includes("password") ||
+            backendMessage.includes("email")
+        ) {
+            return "The email or password you entered is incorrect. Please check your details and try again."
+        }
+
+        return (
+            error?.response?.data?.message ||
+            error?.message ||
+            "Login failed. Please try again."
+        )
+    }
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
@@ -64,12 +85,7 @@ function LoginPage({ onRegisterClick }: LoginPageProps) {
 
             setAuthToken(authData.token)
         } catch (error: any) {
-            const message =
-                error?.response?.data?.message ||
-                error?.message ||
-                "Login failed. Please try again."
-
-            setErrorMessage(message)
+            setErrorMessage(getLoginWarningMessage(error))
         } finally {
             setIsSubmitting(false)
         }

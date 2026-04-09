@@ -27,6 +27,20 @@ export interface FinanceEntry {
     updatedAt: string
 }
 
+export interface FinanceDisplayEntry {
+    id: string
+    title: string
+    type: "Income" | "Expense"
+    category: string
+    categoryEmoji: string
+    date: string
+    timeLabel: string
+    amountLabel: string
+    tone: "income" | "expense"
+    items: FinanceItem[]
+    hasBreakdown: boolean
+}
+
 export interface GetFinanceListData {
     finances: FinanceEntry[]
     page: number
@@ -53,4 +67,16 @@ export interface CreateFinanceResponse {
     success: boolean
     message: string
     data: FinanceEntry
+}
+
+export interface UpdateFinanceResponse {
+    success: boolean
+    message: string
+    data: FinanceEntry
+}
+
+export interface DeleteFinanceResponse {
+    success: boolean
+    message: string
+    data: null
 }

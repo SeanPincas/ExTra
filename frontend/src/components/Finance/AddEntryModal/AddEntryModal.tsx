@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useFinance } from "../../../context/FinanceContext"
 import type { CreateFinancePayload } from "../../../types/finance"
-import type { FinanceEntryType } from "../../../utils/financeConstants"
+import type { FinanceCategory, FinanceEntryType } from "../../../utils/financeConstants"
 import {
     FINANCE_ENTRY_TYPES,
     getDefaultFinanceCategory,
@@ -37,7 +37,7 @@ function AddEntryModal({ onClose }: AddEntryModalProps) {
     const [title, setTitle] = useState("")
     const [primaryAmount, setPrimaryAmount] = useState("")
     const [type, setType] = useState<FinanceEntryType>(FINANCE_ENTRY_TYPES.expense)
-    const [category, setCategory] = useState(getDefaultFinanceCategory(FINANCE_ENTRY_TYPES.expense))
+    const [category, setCategory] = useState<FinanceCategory>(getDefaultFinanceCategory(FINANCE_ENTRY_TYPES.expense))
     const [showSubList, setShowSubList] = useState(false)
     const [items, setItems] = useState<DraftItem[]>([
         { id: 1, name: "", amount: "" },
@@ -342,7 +342,7 @@ function AddEntryModal({ onClose }: AddEntryModalProps) {
                                 <select
                                     className={`${styles.fieldInput} ${styles.categorySelect}`}
                                     value={category}
-                                    onChange={(event) => setCategory(event.target.value)}
+                                    onChange={(event) => setCategory(event.target.value as FinanceCategory)}
                                     disabled={isSubmitting}
                                 >
                                     {availableCategories.map((option) => (
