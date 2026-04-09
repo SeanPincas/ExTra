@@ -9,9 +9,10 @@ import styles from "./DashboardPage.module.css"
 
 interface DashboardPageProps {
     onLogout: () => void
+    onOpenSettings: () => void
 }
 
-function DashboardPage({ onLogout }: DashboardPageProps) {
+function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
     const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(false)
     const [isRightPanelOpen, setIsRightPanelOpen] = useState(false)
 
@@ -53,6 +54,7 @@ function DashboardPage({ onLogout }: DashboardPageProps) {
             header={
                 <Header
                     onLogout={onLogout}
+                    onOpenSettings={onOpenSettings}
                     onToggleLeftPanel={handleToggleLeftPanel}
                     showLeftPanelToggle
                 />
