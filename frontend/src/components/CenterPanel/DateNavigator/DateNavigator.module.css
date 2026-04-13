@@ -4,9 +4,9 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 6px;
-    padding: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 5px;
+    padding: 3px;
+    border: 1px solid color-mix(in srgb, var(--accent-gold) 38%, rgba(255, 255, 255, 0.08));
     border-radius: 0 0 12px 12px;
     background:
         radial-gradient(circle at 50% 10%, rgba(128, 99, 19, 0.1), transparent 38%),
@@ -20,7 +20,7 @@
 
 .navButton,
 .dateTrigger {
-    min-height: 28px;
+    min-height: 26px;
     border: none;
     background: transparent;
     color: var(--text-primary);
@@ -34,7 +34,7 @@
     justify-content: center;
     gap: 0;
     border-radius: 10px;
-    color: var(--text-secondary);
+    color: color-mix(in srgb, var(--accent-gold) 82%, white 8%);
     cursor: pointer;
     transition:
         color 160ms ease,
@@ -44,7 +44,7 @@
 
 .navButton:hover:not(:disabled) {
     color: var(--accent-gold);
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(218, 165, 32, 0.08);
 }
 
 .navButton:disabled {
@@ -57,7 +57,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 8px;
+    padding: 3px 8px;
     border-radius: 9px;
     cursor: pointer;
     transition:
@@ -82,24 +82,352 @@
     text-overflow: ellipsis;
 }
 
-.hiddenDateInput {
+.calendarOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(4, 5, 6, 0.42);
+    backdrop-filter: blur(5px);
+}
+
+.calendarModal {
+    --year-option-height: 32px;
+    --year-visible-count: 7;
+    --year-wheel-height: calc(var(--year-option-height) * var(--year-visible-count));
+    --year-wheel-padding: calc((var(--year-wheel-height) - var(--year-option-height)) / 2);
+    width: min(360px, calc(100vw - 32px));
+    min-height: 432px;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    background:
+        radial-gradient(circle at 20% 10%, rgba(128, 99, 19, 0.12), transparent 36%),
+        linear-gradient(180deg, rgba(24, 25, 27, 0.98), rgba(12, 13, 14, 0.98)),
+        var(--panel-texture);
+    background-size: auto, cover, 1000px;
+    box-shadow:
+        0 28px 60px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.calendarEyebrow {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-income);
+}
+
+.calendarClose,
+.calendarMonthButton,
+.calendarModeButton,
+.calendarNowButton,
+.monthCell,
+.yearOption,
+.calendarDay {
+    font: inherit;
+}
+
+.calendarTopRow {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendarClose {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+    justify-self: end;
+}
+
+.calendarClose:hover {
+    color: var(--accent-red);
+    border-color: rgba(255, 92, 92, 0.24);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.calendarNowButton {
+    min-height: 24px;
+    padding: 0 8px;
+    border: 1px solid rgba(218, 165, 32, 0.24);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--accent-gold);
+    cursor: pointer;
+    transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+    font-size: 0.76rem;
+    line-height: 1;
+}
+
+.calendarNowButton:hover {
+    color: var(--accent-gold);
+    border-color: rgba(218, 165, 32, 0.34);
+    background: rgba(218, 165, 32, 0.06);
+}
+
+.calendarSelectorRow {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto 34px;
+    align-items: center;
+    gap: 10px;
+}
+
+.calendarMonthButton,
+.calendarModeButton {
+    min-height: 34px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+.calendarMonthButton {
+    width: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+}
+
+.calendarMonthButton:hover:not(:disabled),
+.calendarModeButton:hover {
+    color: var(--accent-gold);
+    border-color: rgba(218, 165, 32, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.calendarMonthButton:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+}
+
+.calendarModeButton {
+    padding: 0 12px;
+    font-size: 0.76rem;
+    color: var(--text-primary);
+    justify-self: stretch;
+}
+
+.calendarModeButtonActive {
+    border-color: rgba(218, 165, 32, 0.24);
+    background: rgba(218, 165, 32, 0.08);
+    color: var(--accent-gold);
+}
+
+.calendarWeekdays,
+.calendarGrid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.calendarWeekdays {
+    align-self: end;
+}
+
+.calendarGrid,
+.monthGrid,
+.yearWheel {
+    align-self: stretch;
+}
+
+.calendarWeekday {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 22px;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+}
+
+.calendarDay {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition:
+        color 160ms ease,
+        border-color 160ms ease,
+        background-color 160ms ease,
+        transform 160ms ease;
+}
+
+.calendarDay:hover:not(:disabled) {
+    color: var(--accent-gold);
+    border-color: rgba(218, 165, 32, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-1px);
+}
+
+.calendarDayMuted {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.calendarDaySelected {
+    border-color: rgba(218, 165, 32, 0.34);
+    background: rgba(218, 165, 32, 0.12);
+    color: var(--accent-gold);
+    font-weight: 600;
+}
+
+.calendarDay:disabled {
+    color: rgba(255, 255, 255, 0.16);
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.015);
+}
+
+.monthGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-content: center;
+    gap: 6px;
+}
+
+.monthCell,
+.yearOption {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition:
+        color 160ms ease,
+        border-color 160ms ease,
+        background-color 160ms ease,
+        transform 160ms ease;
+}
+
+.monthCell {
+    aspect-ratio: 1 / 1;
+    min-height: 0;
+    border-radius: 10px;
+    max-width: 68px;
+    width: 100%;
+    justify-self: center;
+}
+
+.monthCell:hover:not(:disabled),
+.yearOption:hover {
+    color: var(--accent-gold);
+    border-color: rgba(218, 165, 32, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.monthCell:disabled {
+    color: rgba(255, 255, 255, 0.18);
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.015);
+}
+
+.monthCellSelected,
+.yearOptionSelected {
+    border-color: rgba(218, 165, 32, 0.34);
+    background: rgba(218, 165, 32, 0.12);
+    color: var(--accent-gold);
+    font-weight: 600;
+}
+
+.yearWheel {
+    position: relative;
+    max-height: var(--year-wheel-height);
+    min-height: var(--year-wheel-height);
+    overflow-y: auto;
+    display: grid;
+    gap: 0;
+    align-content: start;
+    padding: var(--year-wheel-padding) 2px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-snap-type: y mandatory;
+    scroll-padding-block: var(--year-wheel-padding);
+    mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+}
+
+.yearWheel::-webkit-scrollbar {
+    display: none;
+}
+
+.yearWheelShell {
+    position: relative;
+    min-height: var(--year-wheel-height);
+    display: grid;
+    align-content: center;
+}
+
+.yearWheelHighlight {
     position: absolute;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
+    inset-inline: 0;
+    top: calc(50% - (var(--year-option-height) / 2));
+    height: var(--year-option-height);
+    border: 1px solid rgba(218, 165, 32, 0.28);
+    border-radius: 12px;
+    background: rgba(218, 165, 32, 0.08);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 0 0 1px rgba(0, 0, 0, 0.08);
     pointer-events: none;
+}
+
+.yearOption {
+    position: relative;
+    z-index: 1;
+    min-height: var(--year-option-height);
+    padding: 0;
+    scroll-snap-align: center;
+    background: transparent;
+    border-color: transparent;
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 0.92rem;
+}
+
+.yearOptionSelected {
+    border-color: rgba(218, 165, 32, 0.34);
+    background: rgba(218, 165, 32, 0.12);
+    color: var(--accent-gold);
+    font-weight: 700;
+    font-size: 1.14rem;
 }
 
 @media (max-width: 640px) {
     .navigatorShell {
         width: min(100%, 320px);
-        padding: 3px;
+        padding: 2px;
         gap: 4px;
     }
 
     .navButton,
     .dateTrigger {
-        min-height: 26px;
+        min-height: 24px;
     }
 
     .navButton {
@@ -108,5 +436,40 @@
 
     .dateLabel {
         font-size: 0.72rem;
+    }
+
+    .calendarOverlay {
+        padding: 16px;
+    }
+
+    .calendarModal {
+        width: min(100%, 340px);
+        min-height: 404px;
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .calendarTopRow {
+        grid-template-columns: 1fr auto auto;
+        gap: 8px;
+    }
+
+    .calendarSelectorRow {
+        grid-template-columns: 34px minmax(0, 1fr) auto 34px;
+    }
+
+    .calendarModeButton,
+    .calendarNowButton {
+        padding-inline: 10px;
+        font-size: 0.72rem;
+    }
+
+    .calendarDay {
+        min-height: 34px;
+        border-radius: 10px;
+    }
+
+    .calendarModal {
+        --year-option-height: 30px;
     }
 }

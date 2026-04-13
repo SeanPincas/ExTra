@@ -1,27 +1,104 @@
+import { useRef, useState } from "react"
+import type { FinanceDisplayEntry } from "../../../types/finance"
+import { Icons } from "../../../utils/iconLibrary"
 import styles from "./EntryListArea.module.css"
 
-interface RenderableEntry {
-    id: string
-    title: string
-    type: "Income" | "Expense"
-    category: string
-    date: string
-    timeLabel: string
-    amountLabel: string
-    tone: "income" | "expense" | "neutral"
-}
-
 interface EntryListAreaProps {
-    entries: RenderableEntry[]
+    entries: FinanceDisplayEntry[]
     isLoading: boolean
     errorMessage: string
+    onEditEntry: (entry: FinanceDisplayEntry) => void
+    onDeleteEntry: (entry: FinanceDisplayEntry) => Promise<void>
+    isBatchDeleteMode: boolean
+    selectedDeleteEntryIds: string[]
+    onToggleEntrySelected: (entryId: string) => void
 }
 
 function EntryListArea({
     entries,
     isLoading,
     errorMessage,
+    onEditEntry,
+    onDeleteEntry,
+    isBatchDeleteMode,
+    selectedDeleteEntryIds,
+    onToggleEntrySelected,
 }: EntryListAreaProps) {
+    const [expandedEntryIds, setExpandedEntryIds] = useState<string[]>([])
+    const [actionEntryId, setActionEntryId] = useState<string | null>(null)
+    const lastTouchInteractionRef = useRef(false)
+    const touchGestureRef = useRef<{
+        entryId: string | null
+        startX: number
+        startY: number
+    }>({
+        entryId: null,
+        startX: 0,
+        startY: 0,
+    })
+
+    const toggleEntryBreakdown = (entryId: string) => {
+        setActionEntryId((currentEntryId) => (
+            currentEntryId === entryId ? null : currentEntryId
+        ))
+
+        setExpandedEntryIds((currentIds) => (
+            currentIds.includes(entryId)
+                ? currentIds.filter((id) => id !== entryId)
+                : [...currentIds, entryId]
+        ))
+    }
+
+    const toggleEntryActions = (entryId: string) => {
+        setActionEntryId((currentEntryId) => (
+            currentEntryId === entryId ? null : entryId
+        ))
+    }
+
+    const isEntrySelected = (entryId: string) => selectedDeleteEntryIds.includes(entryId)
+
+    const handleTouchStart = (entryId: string, clientX: number, clientY: number) => {
+        lastTouchInteractionRef.current = true
+        touchGestureRef.current = {
+            entryId,
+            startX: clientX,
+            startY: clientY,
+        }
+    }
+
+    const handleTouchEnd = (entryId: string, clientX: number, clientY: number) => {
+        if (touchGestureRef.current.entryId !== entryId) {
+            return
+        }
+
+        const deltaX = clientX - touchGestureRef.current.startX
+        const deltaY = clientY - touchGestureRef.current.startY
+
+        touchGestureRef.current = {
+            entryId: null,
+            startX: 0,
+            startY: 0,
+        }
+
+        if (Math.abs(deltaX) <= 36 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+            return
+        }
+
+        if (deltaX < 0) {
+            if (isBatchDeleteMode) {
+                onToggleEntrySelected(entryId)
+                return
+            }
+
+            setActionEntryId(entryId)
+            return
+        }
+
+        setActionEntryId((currentEntryId) => (
+            currentEntryId === entryId ? null : currentEntryId
+        ))
+    }
+
     if (isLoading) {
         return (
             <div className={styles.emptyState}>
@@ -56,25 +133,178 @@ function EntryListArea({
             {entries.map((entry) => (
                 <article
                     key={entry.id}
-                    className={`${styles.entryCard} ${styles[entry.tone]}`}
+                    className={`${styles.entryCard} ${styles[entry.tone]} ${expandedEntryIds.includes(entry.id) ? styles.entryCardExpanded : ""} ${isBatchDeleteMode ? styles.entryCardDeleteMode : ""} ${isEntrySelected(entry.id) ? styles.entryCardSelected : ""}`}
                 >
-                    <div className={styles.entryMain}>
-                        <span className={styles.entryBadge} aria-hidden="true" />
+                    <div className={`${styles.entrySwipeFrame} ${actionEntryId === entry.id && !isBatchDeleteMode ? styles.entrySwipeFrameOpen : ""}`}>
+                        <div
+                            className={`${styles.entryActions} ${entry.tone === "income" ? styles.entryActionsIncome : styles.entryActionsExpense}`}
+                            aria-hidden={actionEntryId !== entry.id || isBatchDeleteMode}
+                        >
+                            <button
+                                type="button"
+                                className={`${styles.actionButton} ${styles.editButton}`}
+                                aria-label={`Edit ${entry.title}`}
+                                onClick={(event) => {
+                                    event.stopPropagation()
+                                    setActionEntryId(null)
+                                    onEditEntry(entry)
+                                }}
+                            >
+                                <Icons.edit size={14} />
+                                <span>Edit</span>
+                            </button>
 
-                        <div className={styles.entryCopy}>
-                            <h3 className={styles.entryTitle}>{entry.title}</h3>
-                            <p className={styles.entryMeta}>
-                                [{entry.type}] {entry.category}
-                            </p>
+                            <button
+                                type="button"
+                                className={`${styles.actionButton} ${styles.deleteButton}`}
+                                aria-label={`Delete ${entry.title}`}
+                                onClick={async (event) => {
+                                    event.stopPropagation()
+                                    await onDeleteEntry(entry)
+                                    setActionEntryId(null)
+                                }}
+                            >
+                                <Icons.delete size={14} />
+                                <span>Delete</span>
+                            </button>
+                        </div>
+
+                        <div
+                            role="button"
+                            tabIndex={0}
+                            className={`${styles.entrySurface} ${actionEntryId === entry.id && !isBatchDeleteMode ? styles.entrySurfaceActionsOpen : ""} ${isBatchDeleteMode ? styles.entrySurfaceDeleteMode : ""} ${isEntrySelected(entry.id) ? styles.entrySurfaceSelected : ""}`}
+                            onClick={() => {
+                                if (lastTouchInteractionRef.current) {
+                                    lastTouchInteractionRef.current = false
+                                    return
+                                }
+
+                                if (isBatchDeleteMode) {
+                                    onToggleEntrySelected(entry.id)
+                                    return
+                                }
+
+                                toggleEntryActions(entry.id)
+                            }}
+                            onKeyDown={(event) => {
+                                if (event.key === "Enter" || event.key === " ") {
+                                    event.preventDefault()
+                                    if (isBatchDeleteMode) {
+                                        onToggleEntrySelected(entry.id)
+                                        return
+                                    }
+
+                                    toggleEntryActions(entry.id)
+                                }
+                            }}
+                            onTouchStart={(event) => {
+                                const touch = event.changedTouches[0]
+                                handleTouchStart(entry.id, touch.clientX, touch.clientY)
+                            }}
+                            onTouchEnd={(event) => {
+                                const touch = event.changedTouches[0]
+                                handleTouchEnd(entry.id, touch.clientX, touch.clientY)
+                            }}
+                        >
+                            <div className={styles.entryRow}>
+                                <div className={styles.entryMain}>
+                                    <span className={styles.entryToggleSlot}>
+                                        {isBatchDeleteMode ? (
+                                            <button
+                                                type="button"
+                                                className={`${styles.selectionToggle} ${isEntrySelected(entry.id) ? styles.selectionToggleSelected : ""}`}
+                                                aria-label={isEntrySelected(entry.id) ? "Unselect entry" : "Select entry"}
+                                                aria-pressed={isEntrySelected(entry.id)}
+                                                onClick={(event) => {
+                                                    event.stopPropagation()
+                                                    onToggleEntrySelected(entry.id)
+                                                }}
+                                            >
+                                                {isEntrySelected(entry.id) ? <Icons.checkSquare size={17} /> : <span className={styles.selectionToggleEmpty} aria-hidden="true" />}
+                                            </button>
+                                        ) : entry.hasBreakdown ? (
+                                            <button
+                                                type="button"
+                                                className={styles.entryToggle}
+                                                aria-label={expandedEntryIds.includes(entry.id) ? "Hide sub items" : "Show sub items"}
+                                                aria-expanded={expandedEntryIds.includes(entry.id)}
+                                                onClick={(event) => {
+                                                    event.stopPropagation()
+                                                    toggleEntryBreakdown(entry.id)
+                                                }}
+                                            >
+                                                <Icons.down
+                                                    size={18}
+                                                    className={`${styles.entryToggleIcon} ${expandedEntryIds.includes(entry.id) ? styles.entryToggleIconExpanded : ""}`}
+                                                />
+                                            </button>
+                                        ) : (
+                                            <span className={styles.entryToggleSpacer} aria-hidden="true" />
+                                        )}
+                                    </span>
+                                </div>
+
+                                <div className={styles.entryContent}>
+                                    <div className={styles.entryDesktopContent}>
+                                        <p className={styles.entryCopy}>
+                                            <span className={styles.entryTitle}>{entry.title}</span>
+                                            <span className={styles.entryEmoji} aria-hidden="true">{entry.categoryEmoji}</span>
+                                            <span className={styles.entryMetaInline}>
+                                                [{entry.type}] {entry.category}
+                                            </span>
+                                        </p>
+
+                                        <p className={styles.entryAside}>
+                                            <span className={styles.entryTime}>
+                                                {entry.date} | {entry.timeLabel}
+                                            </span>
+                                            <strong className={styles.entryAmount}>{entry.amountLabel}</strong>
+                                        </p>
+                                    </div>
+
+                                    <div className={styles.entryCompactContent}>
+                                        <div className={styles.entryTopLine}>
+                                            <span className={styles.entryTitle}>{entry.title}</span>
+                                            <strong className={styles.entryAmount}>{entry.amountLabel}</strong>
+                                        </div>
+
+                                        <div className={styles.entryBottomLine}>
+                                            <p className={styles.entryMetaGroup}>
+                                                <span className={styles.entryTypeTag}>[{entry.type}]</span>
+                                                <span className={styles.entryCategoryGroup}>
+                                                    <span className={styles.entryEmoji} aria-hidden="true">{entry.categoryEmoji}</span>
+                                                    <span className={styles.entryCategoryText}>{entry.category}</span>
+                                                </span>
+                                            </p>
+
+                                            <span className={styles.entryTime}>
+                                                {entry.date} | {entry.timeLabel}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div className={styles.entryAside}>
-                        <strong className={styles.entryAmount}>{entry.amountLabel}</strong>
-                        <span className={styles.entryTime}>
-                            {entry.date} | {entry.timeLabel}
-                        </span>
-                    </div>
+                    {entry.hasBreakdown && expandedEntryIds.includes(entry.id) && (
+                        <div className={styles.breakdownShell}>
+                            <div className={styles.breakdownArea}>
+                                {entry.items.map((item, index) => (
+                                    <div key={`${entry.id}-${item.name}-${index}`} className={styles.breakdownRow}>
+                                        <span className={styles.breakdownName}>{item.name}</span>
+                                        <span className={styles.breakdownAmount}>
+                                            {new Intl.NumberFormat("en-PH", {
+                                                style: "currency",
+                                                currency: "PHP",
+                                                maximumFractionDigits: 0,
+                                            }).format(item.amount)}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </article>
             ))}
         </div>

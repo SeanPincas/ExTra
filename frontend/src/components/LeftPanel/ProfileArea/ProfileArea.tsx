@@ -19,12 +19,21 @@ function ProfileArea() {
 
     const { user, isAuthLoading } = useAuth()
     const username = isAuthLoading ? "Loading..." : user?.name || "Username"
+    const avatarSrc = user?.profilePicture || ""
 
     return (
         <section className={styles.profileCard}>
             <div className={styles.profileTopRow}>
-                <div className={styles.avatarBadge}>
-                    <Icons.user size={18} />
+                <div className={styles.avatarBadge} aria-hidden="true">
+                    {avatarSrc ? (
+                        <img
+                            src={avatarSrc}
+                            alt=""
+                            className={styles.avatarImage}
+                        />
+                    ) : (
+                        <Icons.user size={18} />
+                    )}
                 </div>
 
                 <div className={styles.profileCopy}>

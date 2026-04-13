@@ -8,11 +8,22 @@ import {
 } from "react"
 import {
     createFinanceEntry as createFinanceEntryRequest,
+    deleteFinanceEntry as deleteFinanceEntryRequest,
     getFinanceList,
+    updateFinanceEntry as updateFinanceEntryRequest,
 } from "../api/financeAPI"
+import {
+    FINANCE_ENTRY_TYPES,
+    getFinanceCategoryEmoji,
+    getAllFinanceCategories,
+    getFinanceCategories,
+    isValidFinanceCategory,
+    type FinanceCategory,
+} from "../utils/financeConstants"
 import { useAuth } from "./AuthContext"
 import type {
     CreateFinancePayload,
+    FinanceDisplayEntry,
     FinanceEntry,
 } from "../types/finance"
 import type {
@@ -20,36 +31,25 @@ import type {
     RangeFilter,
 } from "../types/financeFilters"
 
-interface FinanceListEntry {
-    id: string
-    title: string
-    type: "Income" | "Expense"
-    category: string
-    date: string
-    timeLabel: string
-    amountLabel: string
-    tone: "income" | "expense" | "neutral"
-}
-
 interface FinanceContextValue {
     rangeFilter: RangeFilter
     selectedDate: string | null
     rangeAnchorDate: string
     todayDateKey: string
-    categoryFilter: string
-    categories: string[]
+    categoryFilter: "ALL" | FinanceCategory
+    categories: ("ALL" | FinanceCategory)[]
     typeFilter: EntryTypeFilter
     searchDraft: string
     navigatorDateLabel: string
     effectiveMode: "DATE" | RangeFilter
     canNavigateBackward: boolean
     canNavigateForward: boolean
-    financeEntries: FinanceListEntry[]
+    financeEntries: FinanceDisplayEntry[]
     totalPages: number
     currentPage: number
     isFinanceLoading: boolean
     financeErrorMessage: string
-    setCategoryFilter: (nextCategory: string) => void
+    setCategoryFilter: (nextCategory: "ALL" | FinanceCategory) => void
     setTypeFilter: (nextType: EntryTypeFilter) => void
     setSearchDraft: (nextSearch: string) => void
     setRangeFilter: (nextRange: RangeFilter) => void
@@ -63,9 +63,13 @@ interface FinanceContextValue {
     jumpToToday: () => void
     refreshFinance: () => Promise<void>
     createFinanceEntry: (payload: CreateFinancePayload) => Promise<void>
+    updateFinanceEntry: (entryId: string, payload: CreateFinancePayload) => Promise<void>
+    deleteFinanceEntry: (entryId: string) => Promise<void>
+    deleteFinanceEntries: (entryIds: string[]) => Promise<void>
 }
 
 const FinanceContext = createContext<FinanceContextValue | undefined>(undefined)
+const FINANCE_FILTERS_STORAGE_KEY = "extra_finance_filters"
 
 interface FinanceProviderProps {
     children: ReactNode
@@ -219,15 +223,122 @@ function formatNavigatorDateLabel(selectedDate: string | null, rangeFilter: Rang
     return formatRangeWindowLabel(start, end)
 }
 
+function readStoredFinanceFilters() {
+    if (typeof window === "undefined") {
+        return null
+    }
+
+    try {
+        const rawValue = window.localStorage.getItem(FINANCE_FILTERS_STORAGE_KEY)
+
+        if (!rawValue) {
+            return null
+        }
+
+        return JSON.parse(rawValue) as Partial<{
+            rangeFilter: RangeFilter
+            selectedDate: string | null
+            rangeAnchorDate: string
+            categoryFilter: "ALL" | FinanceCategory
+            typeFilter: EntryTypeFilter
+            searchDraft: string
+        }>
+    } catch {
+        return null
+    }
+}
+
+function getInitialRangeFilter() {
+    const storedFilters = readStoredFinanceFilters()
+
+    if (
+        storedFilters?.rangeFilter === "TODAY" ||
+        storedFilters?.rangeFilter === "WEEK" ||
+        storedFilters?.rangeFilter === "MONTH" ||
+        storedFilters?.rangeFilter === "ALL"
+    ) {
+        return storedFilters.rangeFilter
+    }
+
+    return "TODAY" as RangeFilter
+}
+
+function getInitialSelectedDate() {
+    const storedFilters = readStoredFinanceFilters()
+
+    if (typeof storedFilters?.selectedDate === "string") {
+        return storedFilters.selectedDate
+    }
+
+    return null
+}
+
+function getInitialRangeAnchorDate() {
+    const todayKey = toDateKey(new Date())
+    const storedFilters = readStoredFinanceFilters()
+
+    if (typeof storedFilters?.rangeAnchorDate === "string") {
+        return storedFilters.rangeAnchorDate
+    }
+
+    if (typeof storedFilters?.selectedDate === "string") {
+        return storedFilters.selectedDate
+    }
+
+    return todayKey
+}
+
+function getInitialCategoryFilter() {
+    const storedFilters = readStoredFinanceFilters()
+
+    if (storedFilters?.categoryFilter === "ALL") {
+        return "ALL" as const
+    }
+
+    if (typeof storedFilters?.categoryFilter === "string") {
+        const allCategories = getAllFinanceCategories()
+
+        if (allCategories.includes(storedFilters.categoryFilter as FinanceCategory)) {
+            return storedFilters.categoryFilter as FinanceCategory
+        }
+    }
+
+    return "ALL" as const
+}
+
+function getInitialTypeFilter() {
+    const storedFilters = readStoredFinanceFilters()
+
+    if (
+        storedFilters?.typeFilter === "ALL" ||
+        storedFilters?.typeFilter === "INCOME" ||
+        storedFilters?.typeFilter === "EXPENSE"
+    ) {
+        return storedFilters.typeFilter
+    }
+
+    return "ALL" as EntryTypeFilter
+}
+
+function getInitialSearchDraft() {
+    const storedFilters = readStoredFinanceFilters()
+
+    if (typeof storedFilters?.searchDraft === "string") {
+        return storedFilters.searchDraft
+    }
+
+    return ""
+}
+
 function FinanceProvider({ children }: FinanceProviderProps) {
     const { token } = useAuth()
-    const [rangeFilter, setRangeFilterState] = useState<RangeFilter>("TODAY")
-    const [selectedDate, setSelectedDateState] = useState<string | null>(null)
-    const [rangeAnchorDate, setRangeAnchorDate] = useState(() => toDateKey(new Date()))
-    const [categoryFilter, setCategoryFilter] = useState("ALL")
-    const [typeFilter, setTypeFilter] = useState<EntryTypeFilter>("ALL")
-    const [searchDraft, setSearchDraft] = useState("")
-    const [debouncedSearch, setDebouncedSearch] = useState("")
+    const [rangeFilter, setRangeFilterState] = useState<RangeFilter>(() => getInitialRangeFilter())
+    const [selectedDate, setSelectedDateState] = useState<string | null>(() => getInitialSelectedDate())
+    const [rangeAnchorDate, setRangeAnchorDate] = useState(() => getInitialRangeAnchorDate())
+    const [categoryFilter, setCategoryFilter] = useState<"ALL" | FinanceCategory>(() => getInitialCategoryFilter())
+    const [typeFilter, setTypeFilter] = useState<EntryTypeFilter>(() => getInitialTypeFilter())
+    const [searchDraft, setSearchDraft] = useState(() => getInitialSearchDraft())
+    const [debouncedSearch, setDebouncedSearch] = useState(() => getInitialSearchDraft().trim())
     const [currentPage, setCurrentPage] = useState(1)
     const [todayKey, setTodayKey] = useState(() => toDateKey(new Date()))
     const [rawFinanceEntries, setRawFinanceEntries] = useState<FinanceEntry[]>([])
@@ -244,6 +355,28 @@ function FinanceProvider({ children }: FinanceProviderProps) {
             window.clearTimeout(timeoutId)
         }
     }, [searchDraft])
+
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return
+        }
+
+        window.localStorage.setItem(FINANCE_FILTERS_STORAGE_KEY, JSON.stringify({
+            rangeFilter,
+            selectedDate,
+            rangeAnchorDate,
+            categoryFilter,
+            typeFilter,
+            searchDraft,
+        }))
+    }, [
+        rangeFilter,
+        selectedDate,
+        rangeAnchorDate,
+        categoryFilter,
+        typeFilter,
+        searchDraft,
+    ])
 
     useEffect(() => {
         const intervalId = window.setInterval(() => {
@@ -266,6 +399,24 @@ function FinanceProvider({ children }: FinanceProviderProps) {
     useEffect(() => {
         setCurrentPage(1)
     }, [rangeFilter, selectedDate, rangeAnchorDate, debouncedSearch, categoryFilter, typeFilter])
+
+    useEffect(() => {
+        if (categoryFilter === "ALL") {
+            return
+        }
+
+        if (typeFilter === "ALL") {
+            return
+        }
+
+        const financeType = typeFilter === "INCOME"
+            ? FINANCE_ENTRY_TYPES.income
+            : FINANCE_ENTRY_TYPES.expense
+
+        if (!isValidFinanceCategory(financeType, categoryFilter)) {
+            setCategoryFilter("ALL")
+        }
+    }, [categoryFilter, typeFilter])
 
     useEffect(() => {
         if (!token) {
@@ -338,13 +489,52 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         await refreshFinance()
     }
 
+    const updateFinanceEntry = async (entryId: string, payload: CreateFinancePayload) => {
+        if (!token) {
+            throw new Error("You must be signed in to update an entry.")
+        }
+
+        await updateFinanceEntryRequest(entryId, payload)
+        await refreshFinance()
+    }
+
+    const deleteFinanceEntry = async (entryId: string) => {
+        if (!token) {
+            throw new Error("You must be signed in to delete an entry.")
+        }
+
+        await deleteFinanceEntryRequest(entryId)
+        await refreshFinance()
+    }
+
+    const deleteFinanceEntries = async (entryIds: string[]) => {
+        if (!token) {
+            throw new Error("You must be signed in to delete entries.")
+        }
+
+        if (!entryIds.length) {
+            return
+        }
+
+        await Promise.all(entryIds.map((entryId) => deleteFinanceEntryRequest(entryId)))
+        await refreshFinance()
+    }
+
     useEffect(() => {
         refreshFinance()
     }, [token, currentPage, debouncedSearch, rangeFilter, rangeAnchorDate, selectedDate])
 
     const categories = useMemo(() => {
-        return ["ALL", ...new Set(rawFinanceEntries.map((entry) => entry.category))]
-    }, [rawFinanceEntries])
+        if (typeFilter === "INCOME") {
+            return ["ALL", ...getFinanceCategories(FINANCE_ENTRY_TYPES.income)]
+        }
+
+        if (typeFilter === "EXPENSE") {
+            return ["ALL", ...getFinanceCategories(FINANCE_ENTRY_TYPES.expense)]
+        }
+
+        return ["ALL", ...getAllFinanceCategories()]
+    }, [typeFilter])
 
     const financeEntries = useMemo(() => {
         const nextEntries = rawFinanceEntries.filter((entry) => {
@@ -364,6 +554,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
             title: entry.title,
             type: entry.type === "income" ? "Income" : "Expense",
             category: entry.category,
+            categoryEmoji: getFinanceCategoryEmoji(entry.category as FinanceCategory),
             date: new Date(entry.createdAt).toLocaleDateString("en-US", {
                 month: "short",
                 day: "2-digit",
@@ -374,7 +565,9 @@ function FinanceProvider({ children }: FinanceProviderProps) {
                 minute: "2-digit",
             }),
             amountLabel: formatCurrency(entry.totalAmount),
-            tone: entry.type === "income" ? "income" : "expense" as const,
+            tone: entry.type === "income" ? "income" : "expense",
+            items: entry.items,
+            hasBreakdown: entry.items.length > 1,
         }))
     }, [categoryFilter, rawFinanceEntries, typeFilter])
 
@@ -552,6 +745,9 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         jumpToToday,
         refreshFinance,
         createFinanceEntry,
+        updateFinanceEntry,
+        deleteFinanceEntry,
+        deleteFinanceEntries,
     }), [
         rangeFilter,
         selectedDate,
@@ -580,6 +776,9 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         jumpToToday,
         refreshFinance,
         createFinanceEntry,
+        updateFinanceEntry,
+        deleteFinanceEntry,
+        deleteFinanceEntries,
     ])
 
     return (

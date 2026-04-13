@@ -1,22 +1,28 @@
 import { useState } from "react";
 import AppIntro from "./components/AppIntro/AppIntro";
-import MainLayout from "./layout/MainLayout/MainLayout"
-import Header from "./components/Header/Header"
-import AppBackground from "./components/AppBackground/AppBackground";
-import Footer from "./components/Footer/Footer";
-import LeftPanel from "./components/LeftPanel/LeftPanel";
-import CenterPanel from "./components/CenterPanel/CenterPanel";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
+import DashboardPage from "./pages/DashboardPage/DashboardPage";
+import SettingsPage from "./pages/SettingsPage/SettingsPage";
+import AppBackground from "./components/AppBackground/AppBackground";
 import { useAuth } from "./context/AuthContext";
 
 function App() {
     const [authView, setAuthView] = useState<"register" | "login">("register")
+    const [appView, setAppView] = useState<"dashboard" | "settings">("dashboard")
     const { token, user, isAuthLoading } = useAuth()
     const showDashboard = Boolean(token && user)
 
     const handleLogoutView = () => {
         setAuthView("login")
+    }
+
+    const handleOpenSettings = () => {
+        setAppView("settings")
+    }
+
+    const handleBackToDashboard = () => {
+        setAppView("dashboard")
     }
 
     return (
@@ -26,24 +32,17 @@ function App() {
             <AppBackground />
             <AppIntro>
                 {showDashboard ? (
-                    <MainLayout
-                        header={<Header onLogout={handleLogoutView} />}
-                        content={
-                            <div style={{ display: "contents" }}>
-                                {/* LEFT */}
-                                <LeftPanel />
-
-                                {/* CENTER */}
-                                <CenterPanel />
-
-                                {/* RIGHT */}
-                                <div style={{ background: "#111", borderRadius: "8px" }}>
-                                    RIGHT PANEL
-                                </div>
-                            </div>
-                        }
-                        footer={<Footer />}
-                    />
+                    appView === "settings" ? (
+                        <SettingsPage
+                            onBackToDashboard={handleBackToDashboard}
+                            onLogout={handleLogoutView}
+                        />
+                    ) : (
+                        <DashboardPage
+                            onLogout={handleLogoutView}
+                            onOpenSettings={handleOpenSettings}
+                        />
+                    )
                 ) : (
                     <div style={{ position: "absolute", inset: 0 }}>
                         {/* While auth is bootstrapping we keep the same page frame,

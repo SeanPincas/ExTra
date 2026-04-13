@@ -23,10 +23,6 @@ function NotificationArea() {
                     </p>
                 ))}
             </div>
-
-            <blockquote className={styles.quoteCard}>
-                "A budget tells your money where to go."
-            </blockquote>
         </section>
     )
 }
