@@ -27,7 +27,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 
-  const { name, preferences, profilePicture } = req.body;
+  const { name, preferences, profilePicture, phoneNumber } = req.body;
 
   if (name) {
     if (name.length < 3 || name.length > 24) {
@@ -52,6 +52,17 @@ export const updateProfile = asyncHandler(async (req, res) => {
     }
 
     user.profilePicture = normalizedPicture;
+  }
+
+  if (phoneNumber !== undefined) {
+    const normalizedPhoneNumber = String(phoneNumber ?? "").trim();
+
+    if (normalizedPhoneNumber && !/^[0-9+\-\s()]{7,24}$/.test(normalizedPhoneNumber)) {
+      res.status(400);
+      throw new Error("Please enter a valid phone number");
+    }
+
+    user.phoneNumber = normalizedPhoneNumber;
   }
 
   if (preferences) {
@@ -92,5 +103,44 @@ export const updateProfile = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     user: updatedUser
+  });
+});
+
+// --------------------------------------------------
+// DELETE CURRENT USER ACCOUNT
+// DELETE /api/users/me
+// --------------------------------------------------
+export const deleteProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  const { name, password } = req.body;
+
+  if (!name || String(name).trim() !== user.name) {
+    res.status(400);
+    throw new Error('Username confirmation does not match');
+  }
+
+  if (!password) {
+    res.status(400);
+    throw new Error('Password is required');
+  }
+
+  const isMatch = await user.matchPassword(String(password));
+
+  if (!isMatch) {
+    res.status(401);
+    throw new Error('Password confirmation is incorrect');
+  }
+
+  await User.deleteOne({ _id: user._id });
+
+  res.status(200).json({
+    success: true,
+    message: 'Account deleted successfully'
   });
 });

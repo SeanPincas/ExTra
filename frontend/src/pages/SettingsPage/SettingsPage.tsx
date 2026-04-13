@@ -6,6 +6,8 @@ import { updateCurrentUser } from "../../api/userAPI"
 import { Icons } from "../../utils/iconLibrary"
 import { CURRENCY_OPTIONS, PAY_DAY_OPTIONS, QUOTE_CHANGE_HOURS_OPTIONS, REMINDER_LEAD_TIME_OPTIONS } from "../../utils/preferencesOptions"
 import logo from "../../assets/logo.png"
+import AvatarPositionModal from "../../components/Settings/AvatarPositionModal/AvatarPositionModal"
+import DeleteAccountModal from "../../components/Settings/DeleteAccountModal/DeleteAccountModal"
 import styles from "./SettingsPage.module.css"
 
 interface SettingsPageProps {
@@ -23,10 +25,13 @@ function SettingsPage({
     const [saveError, setSaveError] = useState("")
     const [saveSuccess, setSaveSuccess] = useState("")
     const [warningMessage, setWarningMessage] = useState("")
+    const [pendingProfilePicture, setPendingProfilePicture] = useState("")
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
     const [form, setForm] = useState(() => ({
         name: user?.name ?? "",
         profilePicture: user?.profilePicture ?? "",
+        phoneNumber: user?.phoneNumber ?? "",
         preferences: {
             payDay: user?.preferences?.payDay ?? 0,
             salary: String(user?.preferences?.salary ?? 0),
@@ -52,7 +57,6 @@ function SettingsPage({
     }, [warningMessage])
 
     const setNumericPreference = (field: "salary" | "savingsGoal", next: string) => {
-        // Allow empty (so the user can clear), digits, and one decimal point.
         if (!/^\d*\.?\d*$/.test(next)) {
             setWarningMessage("Numbers only for this field.")
             return
@@ -68,11 +72,12 @@ function SettingsPage({
     }
 
     const profilePicturePreview = form.profilePicture || user?.profilePicture || ""
-    const displayEmail = user?.email ?? "—"
+    const displayEmail = user?.email ?? "-"
 
     const initialProfileSnapshot = useMemo(() => ({
         name: user?.name ?? "",
         profilePicture: user?.profilePicture ?? "",
+        phoneNumber: user?.phoneNumber ?? "",
     }), [user])
 
     const initialPreferencesSnapshot = useMemo(() => ({
@@ -87,9 +92,10 @@ function SettingsPage({
     const hasProfileEdits = useMemo(() => {
         return (
             form.name.trim() !== initialProfileSnapshot.name ||
-            String(form.profilePicture || "") !== String(initialProfileSnapshot.profilePicture || "")
+            String(form.profilePicture || "") !== String(initialProfileSnapshot.profilePicture || "") ||
+            String(form.phoneNumber || "") !== String(initialProfileSnapshot.phoneNumber || "")
         )
-    }, [form.name, form.profilePicture, initialProfileSnapshot])
+    }, [form.name, form.phoneNumber, form.profilePicture, initialProfileSnapshot])
 
     const hasPreferenceEdits = useMemo(() => {
         return (
@@ -131,7 +137,7 @@ function SettingsPage({
         })
 
         setWarningMessage("")
-        setForm((current) => ({ ...current, profilePicture: dataUrl }))
+        setPendingProfilePicture(dataUrl)
     }
 
     const handleSave = async () => {
@@ -159,6 +165,7 @@ function SettingsPage({
             await updateCurrentUser({
                 name: form.name.trim(),
                 profilePicture: form.profilePicture,
+                phoneNumber: form.phoneNumber.trim(),
                 preferences: {
                     payDay: Number(form.preferences.payDay),
                     salary: normalizedSalary,
@@ -190,35 +197,40 @@ function SettingsPage({
     const currencyOptions = useMemo(() => CURRENCY_OPTIONS, [])
 
     return (
-        <MainLayout
-            header={
-                <div className={styles.topBar} aria-label="Settings header">
-                    <button
-                        type="button"
-                        className={`btnBase btnMatteDark ${styles.backButton}`}
-                        onClick={onBackToDashboard}
-                    >
-                        Back to Dashboard
-                    </button>
+        <>
+            <MainLayout
+                header={
+                    <div className={styles.topBar} aria-label="Settings header">
+                        <div className={styles.leftRail}>
+                            <button
+                                type="button"
+                                className={`btnBase btnMatteDark ${styles.backButton}`}
+                                onClick={onBackToDashboard}
+                                aria-label="Back to dashboard"
+                                title="Back to dashboard"
+                            >
+                                <Icons.back size={16} />
+                                <span className={styles.backButtonLabel}>Back to Dashboard</span>
+                            </button>
+                        </div>
 
-                    <div className={styles.logoSection} aria-hidden="true">
-                        <span className={styles.logoWrapper}>
-                            <img
-                                src={logo}
-                                alt="ExTra Logo"
-                                className={styles.logoImage}
-                            />
-                        </span>
-                    </div>
+                        <div className={styles.centerRail} aria-hidden="true">
+                            <span className={styles.logoWrapper}>
+                                <img
+                                    src={logo}
+                                    alt="ExTra Logo"
+                                    className={styles.logoImage}
+                                />
+                            </span>
+                        </div>
 
-                    <div className={styles.pageTitleBlock}>
-                        <h2 className={styles.pageTitle}>Account Settings</h2>
-                        <p className={styles.pageSubtitle}>
-                            Manage your profile, preferences, and sensitive actions for ExTra.
-                        </p>
+                        <div className={styles.rightRail}>
+                            <div className={styles.pageTitleBlock}>
+                                <h2 className={styles.pageTitle}>Account Settings</h2>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            }
+                }
             content={
                 <section className={styles.settingsShell} aria-label="Account settings">
                     <div className={styles.grid}>
@@ -230,33 +242,37 @@ function SettingsPage({
                                         <span className={styles.panelMeta}>Profile + preferences</span>
                                     </div>
 
-                                    <div className={styles.section}>
+                                    <div className={styles.settingsSection}>
                                         <div className={styles.sectionHeader}>
-                                            <h4>User Profile</h4>
+                                            <h4>Profile Settings</h4>
                                             <span className={styles.sectionMeta}>Connected to your account</span>
                                         </div>
 
-                                        <div className={styles.profileTopRow}>
-                                            <button
-                                                type="button"
-                                                className={styles.avatarFrame}
-                                                aria-label="Change profile picture"
-                                                onClick={handlePickImage}
-                                            >
-                                                {profilePicturePreview ? (
-                                                    <img
-                                                        src={profilePicturePreview}
-                                                        alt="Profile avatar preview"
-                                                        className={styles.avatarImage}
-                                                    />
-                                                ) : (
-                                                    <div className={styles.avatarFallback}>
-                                                        <Icons.user size={22} />
-                                                    </div>
-                                                )}
-                                            </button>
+                                        <div className={styles.profileSettingsLayout}>
+                                            <div className={styles.avatarColumn}>
+                                                <button
+                                                    type="button"
+                                                    className={styles.avatarFrame}
+                                                    aria-label="Change profile picture"
+                                                    onClick={handlePickImage}
+                                                >
+                                                    {profilePicturePreview ? (
+                                                        <img
+                                                            src={profilePicturePreview}
+                                                            alt="Profile avatar preview"
+                                                            className={styles.avatarImage}
+                                                        />
+                                                    ) : (
+                                                        <div className={styles.avatarFallback}>
+                                                            <Icons.user size={20} />
+                                                        </div>
+                                                    )}
 
-                                            <div className={styles.avatarActions}>
+                                                    <span className={styles.avatarEditBadge} aria-hidden="true">
+                                                        <Icons.camera size={12} />
+                                                    </span>
+                                                </button>
+
                                                 <input
                                                     ref={fileInputRef}
                                                     type="file"
@@ -264,161 +280,182 @@ function SettingsPage({
                                                     className={styles.fileInput}
                                                     onChange={(event) => handleFileChange(event.target.files?.[0] ?? null)}
                                                 />
-                                                <span className={styles.avatarHint}>Click the avatar to upload a new picture.</span>
+
+                                                <span className={styles.avatarHint}>Tap the avatar to change picture.</span>
                                             </div>
-                                        </div>
 
-                                        <div className={styles.formGrid}>
-                                            <label className={styles.fieldGroup}>
-                                                <span>Username</span>
-                                                <input
-                                                    className={styles.fieldInput}
-                                                    value={form.name}
-                                                    onChange={(event) => setForm((c) => ({ ...c, name: event.target.value }))}
-                                                />
-                                                <span className={styles.fieldHint}>3–24 chars, letters & numbers only</span>
-                                            </label>
+                                            <div className={styles.profileFieldsColumn}>
+                                                <div className={styles.profileFieldRow}>
+                                                    <label className={styles.fieldGroup}>
+                                                        <span>Username</span>
+                                                        <input
+                                                            className={styles.fieldInput}
+                                                            value={form.name}
+                                                            onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
+                                                        />
+                                                        <span className={styles.fieldHint}>3-24 chars, letters and numbers only</span>
+                                                    </label>
 
-                                            <label className={styles.fieldGroup}>
-                                                <span>Email</span>
-                                                <input
-                                                    className={styles.fieldInput}
-                                                    value={displayEmail}
-                                                    readOnly
-                                                />
-                                                <span className={styles.fieldHintSpacer} aria-hidden="true">
-                                                    spacer
-                                                </span>
-                                            </label>
-                                        </div>
+                                                    <label className={styles.fieldGroup}>
+                                                        <span>Email</span>
+                                                        <input
+                                                            className={styles.fieldInput}
+                                                            value={displayEmail}
+                                                            readOnly
+                                                        />
+                                                        <span className={styles.fieldHintSpacer} aria-hidden="true">
+                                                            spacer
+                                                        </span>
+                                                    </label>
+                                                </div>
 
-                                        <div className={styles.profileActionsRow}>
-                                            <button
-                                                type="button"
-                                                className={`btnBase btnMatteDark ${styles.changePasswordButton}`}
-                                                disabled
-                                            >
-                                                Change password
-                                            </button>
+                                                <div className={styles.profileFieldRow}>
+                                                    <label className={styles.fieldGroup}>
+                                                        <span>Password</span>
+                                                        <button
+                                                            type="button"
+                                                            className={`btnBase btnMatteDark ${styles.passwordFieldButton}`}
+                                                            disabled
+                                                        >
+                                                            Change password
+                                                        </button>
+                                                        <span className={styles.fieldHintSpacer} aria-hidden="true">
+                                                            spacer
+                                                        </span>
+                                                    </label>
+
+                                                    <label className={styles.fieldGroup}>
+                                                        <span>Phone Number</span>
+                                                        <input
+                                                            className={styles.fieldInput}
+                                                            inputMode="tel"
+                                                            value={form.phoneNumber}
+                                                            onChange={(event) => setForm((current) => ({ ...current, phoneNumber: event.target.value }))}
+                                                            placeholder="+63 9XX XXX XXXX"
+                                                        />
+                                                        <span className={styles.fieldHint}>Optional account contact</span>
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className={styles.section}>
+                                    <div className={styles.settingsSection}>
                                         <div className={styles.sectionHeader}>
-                                            <h4>User Preferences</h4>
+                                            <h4>Preference Settings</h4>
                                             <span className={styles.sectionMeta}>Your finance defaults</span>
                                         </div>
 
                                         <div className={styles.formGrid}>
-                                        <label className={styles.fieldGroup}>
-                                            <span>Pay day</span>
-                                            <select
-                                                className={styles.fieldInput}
-                                                value={String(form.preferences.payDay)}
-                                                onChange={(event) =>
-                                                    setForm((c) => ({
-                                                        ...c,
-                                                        preferences: { ...c.preferences, payDay: Number(event.target.value) },
-                                                    }))
-                                                }
-                                            >
-                                                <option value="0">Not set</option>
-                                                {PAY_DAY_OPTIONS.map((day) => (
-                                                    <option key={day} value={day}>
-                                                        {day}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </label>
+                                            <label className={styles.fieldGroup}>
+                                                <span>Pay day</span>
+                                                <select
+                                                    className={styles.fieldInput}
+                                                    value={String(form.preferences.payDay)}
+                                                    onChange={(event) =>
+                                                        setForm((current) => ({
+                                                            ...current,
+                                                            preferences: { ...current.preferences, payDay: Number(event.target.value) },
+                                                        }))
+                                                    }
+                                                >
+                                                    <option value="0">Not set</option>
+                                                    {PAY_DAY_OPTIONS.map((day) => (
+                                                        <option key={day} value={day}>
+                                                            {day}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </label>
 
-                                        <label className={styles.fieldGroup}>
-                                            <span>Salary</span>
-                                            <input
-                                                className={styles.fieldInput}
-                                                inputMode="decimal"
-                                                value={form.preferences.salary}
-                                                onChange={(event) => setNumericPreference("salary", event.target.value)}
-                                            />
-                                        </label>
+                                            <label className={styles.fieldGroup}>
+                                                <span>Salary</span>
+                                                <input
+                                                    className={styles.fieldInput}
+                                                    inputMode="decimal"
+                                                    value={form.preferences.salary}
+                                                    onChange={(event) => setNumericPreference("salary", event.target.value)}
+                                                />
+                                            </label>
 
-                                        <label className={styles.fieldGroup}>
-                                            <span>Currency</span>
-                                            <select
-                                                className={styles.fieldInput}
-                                                value={form.preferences.currency}
-                                                onChange={(event) =>
-                                                    setForm((c) => ({
-                                                        ...c,
-                                                        preferences: { ...c.preferences, currency: event.target.value },
-                                                    }))
-                                                }
-                                            >
-                                                {currencyOptions.map((option) => (
-                                                    <option key={option.value} value={option.value}>
-                                                        {option.label}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </label>
+                                            <label className={styles.fieldGroup}>
+                                                <span>Currency</span>
+                                                <select
+                                                    className={styles.fieldInput}
+                                                    value={form.preferences.currency}
+                                                    onChange={(event) =>
+                                                        setForm((current) => ({
+                                                            ...current,
+                                                            preferences: { ...current.preferences, currency: event.target.value },
+                                                        }))
+                                                    }
+                                                >
+                                                    {currencyOptions.map((option) => (
+                                                        <option key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </label>
 
-                                        <label className={styles.fieldGroup}>
-                                            <span>Savings goal</span>
-                                            <input
-                                                className={styles.fieldInput}
-                                                inputMode="decimal"
-                                                value={form.preferences.savingsGoal}
-                                                onChange={(event) => setNumericPreference("savingsGoal", event.target.value)}
-                                            />
-                                        </label>
+                                            <label className={styles.fieldGroup}>
+                                                <span>Savings goal</span>
+                                                <input
+                                                    className={styles.fieldInput}
+                                                    inputMode="decimal"
+                                                    value={form.preferences.savingsGoal}
+                                                    onChange={(event) => setNumericPreference("savingsGoal", event.target.value)}
+                                                />
+                                            </label>
 
-                                        <label className={styles.fieldGroup}>
-                                            <span className={styles.labelRow}>
-                                                <span>Reminder lead time</span>
-                                                <span className={styles.tooltipShell}>
-                                                    <span className={styles.helpIcon} aria-hidden="true">?</span>
-                                                    <span className={styles.tooltip}>
-                                                        This controls how many days before a due date ExTra starts warning you.
+                                            <label className={styles.fieldGroup}>
+                                                <span className={styles.labelRow}>
+                                                    <span>Reminder lead time</span>
+                                                    <span className={styles.tooltipShell}>
+                                                        <span className={styles.helpIcon} aria-hidden="true">?</span>
+                                                        <span className={styles.tooltip}>
+                                                            This controls how many days before a due date ExTra starts warning you.
+                                                        </span>
                                                     </span>
                                                 </span>
-                                            </span>
-                                            <select
-                                                className={styles.fieldInput}
-                                                value={String(form.preferences.reminderLeadTime)}
-                                                onChange={(event) =>
-                                                    setForm((c) => ({
-                                                        ...c,
-                                                        preferences: { ...c.preferences, reminderLeadTime: Number(event.target.value) },
-                                                    }))
-                                                }
-                                            >
-                                                {REMINDER_LEAD_TIME_OPTIONS.map((days) => (
-                                                    <option key={days} value={days}>
-                                                        {days} day{days === 1 ? "" : "s"}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </label>
+                                                <select
+                                                    className={styles.fieldInput}
+                                                    value={String(form.preferences.reminderLeadTime)}
+                                                    onChange={(event) =>
+                                                        setForm((current) => ({
+                                                            ...current,
+                                                            preferences: { ...current.preferences, reminderLeadTime: Number(event.target.value) },
+                                                        }))
+                                                    }
+                                                >
+                                                    {REMINDER_LEAD_TIME_OPTIONS.map((days) => (
+                                                        <option key={days} value={days}>
+                                                            {days} day{days === 1 ? "" : "s"}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </label>
 
-                                        <label className={styles.fieldGroup}>
-                                            <span>Quote change hours</span>
-                                            <select
-                                                className={styles.fieldInput}
-                                                value={String(form.preferences.quoteChangeHours)}
-                                                onChange={(event) =>
-                                                    setForm((c) => ({
-                                                        ...c,
-                                                        preferences: { ...c.preferences, quoteChangeHours: Number(event.target.value) },
-                                                    }))
-                                                }
-                                            >
-                                                {QUOTE_CHANGE_HOURS_OPTIONS.map((hours) => (
-                                                    <option key={hours} value={hours}>
-                                                        Every {hours} hour{hours === 1 ? "" : "s"}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </label>
-                                    </div>
+                                            <label className={styles.fieldGroup}>
+                                                <span>Quote change hours</span>
+                                                <select
+                                                    className={styles.fieldInput}
+                                                    value={String(form.preferences.quoteChangeHours)}
+                                                    onChange={(event) =>
+                                                        setForm((current) => ({
+                                                            ...current,
+                                                            preferences: { ...current.preferences, quoteChangeHours: Number(event.target.value) },
+                                                        }))
+                                                    }
+                                                >
+                                                    {QUOTE_CHANGE_HOURS_OPTIONS.map((hours) => (
+                                                        <option key={hours} value={hours}>
+                                                            Every {hours} hour{hours === 1 ? "" : "s"}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </label>
+                                        </div>
                                     </div>
 
                                     <div className={styles.actionsRow}>
@@ -446,10 +483,10 @@ function SettingsPage({
                                         <button
                                             type="button"
                                             className={`btnBase ${styles.deleteButton}`}
-                                            disabled
+                                            onClick={() => setIsDeleteModalOpen(true)}
                                         >
-                                            <Icons.delete size={18} />
-                                            Delete account (coming soon)
+                                            <Icons.delete size={16} />
+                                            Delete Account
                                         </button>
 
                                         <button
@@ -457,7 +494,7 @@ function SettingsPage({
                                             className={`btnBase btnMatteDark ${styles.logoutButton}`}
                                             onClick={handleLogout}
                                         >
-                                            <Icons.logout size={18} />
+                                            <Icons.logout size={16} />
                                             Logout
                                         </button>
                                     </div>
@@ -473,10 +510,33 @@ function SettingsPage({
                     )}
                 </section>
             }
-            footer={<Footer />}
-        />
+                footer={<Footer />}
+            />
+
+            {pendingProfilePicture && (
+                <AvatarPositionModal
+                    imageSrc={pendingProfilePicture}
+                    onClose={() => setPendingProfilePicture("")}
+                    onApply={(nextImage) => {
+                        setForm((current) => ({ ...current, profilePicture: nextImage }))
+                        setPendingProfilePicture("")
+                    }}
+                />
+            )}
+
+            {isDeleteModalOpen && user && (
+                <DeleteAccountModal
+                    username={user.name}
+                    onClose={() => setIsDeleteModalOpen(false)}
+                    onDeleted={() => {
+                        setIsDeleteModalOpen(false)
+                        clearAuth()
+                        onLogout()
+                    }}
+                />
+            )}
+        </>
     )
 }
 
 export default SettingsPage
-

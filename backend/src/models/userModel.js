@@ -44,6 +44,12 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: ""
         },
+        phoneNumber: {
+            type: String,
+            default: "",
+            trim: true,
+            maxlength: 24
+        },
         preferences: {
             payDay: {
                 type: Number,

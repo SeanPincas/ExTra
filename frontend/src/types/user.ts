@@ -12,6 +12,7 @@ export interface UserProfile {
     name: string
     email: string
     profilePicture?: string
+    phoneNumber?: string
     preferences: UserPreferences
     createdAt: string
     updatedAt: string

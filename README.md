@@ -2,7 +2,7 @@
 
 ExTra is a personal finance and expense tracking dashboard built with a React + TypeScript frontend and a Node.js + Express + MongoDB backend.
 
-The project is currently in an active build phase. The authentication flow is working, the dashboard shell is in place, and the left panel has already been modularized. Some center and right dashboard features are still placeholders on the frontend, even though backend support for several systems already exists.
+The project is currently in an active build phase. The authentication flow is working, the dashboard shell is in place, the left panel is wired to live stats, the center panel already supports live finance entry workflows, and the account settings page is now functional. The right panel is still a lighter support area compared to the rest of the dashboard.
 
 ## Current Status
 
@@ -15,7 +15,11 @@ The project is currently in an active build phase. The authentication flow is wo
 - Intro animation and transition shell
 - Global dashboard background and matte textured theme
 - Header with centered capsule logo and authenticated user action button
-- Left panel modular structure
+- Left panel modular structure with live summary totals
+- Center panel finance list with responsive filtering, date navigation, add/edit/delete flows, and batch delete mode
+- Floating date navigator with custom calendar modal, month picker, and year wheel picker
+- Account settings page with profile, preferences, avatar upload/reposition, logout, and account deletion confirmation
+- Quote rotation system fetched from the backend based on user preference
 - Reusable filter component
 - Docker setup for frontend and backend
 
@@ -24,16 +28,17 @@ The project is currently in an active build phase. The authentication flow is wo
 - Auth routes
 - User profile routes
 - Finance CRUD routes
+- Quote routes
 - Dashboard stats route
 - Reminder routes
 - Notification route
 
 ### Still in progress on the frontend
 
-- Center panel real content
 - Right panel real content
-- User settings dropdown in the header
-- Full dashboard data wiring for left, center, and right panels
+- Deeper analytics widgets and calendar insight workflows
+- Additional center-panel refinement and hotfix work
+- Extended account settings features such as password change and richer avatar handling
 
 ## Tech Stack
 
@@ -130,6 +135,7 @@ Current auth UI includes:
 - leather-themed brand panel
 - warning cloud UX for validation/server messages
 - password reveal interaction
+- legal modal support for privacy policy and terms
 
 Files:
 
@@ -175,6 +181,45 @@ Reusable UI utilities currently include:
 - centralized icon library
 - auth validation helpers
 
+### Account settings
+
+The settings page currently includes:
+
+- profile picture preview and avatar reposition modal
+- username and phone number editing
+- read-only connected email display
+- finance preference controls
+- quote rotation preference
+- sensitive actions area for logout and delete account
+- delete-account verification modal requiring username and password
+
+Files:
+
+- [frontend/src/pages/SettingsPage/SettingsPage.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\pages\SettingsPage\SettingsPage.tsx)
+- [frontend/src/components/Settings/AvatarPositionModal/AvatarPositionModal.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\Settings\AvatarPositionModal\AvatarPositionModal.tsx)
+- [frontend/src/components/Settings/DeleteAccountModal/DeleteAccountModal.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\Settings\DeleteAccountModal\DeleteAccountModal.tsx)
+
+### Center panel
+
+The center panel currently includes:
+
+- live finance entry fetching
+- responsive range and category filters
+- floating date navigator
+- custom calendar modal
+- add entry modal
+- edit entry modal
+- single-entry delete and batch delete mode
+- responsive entry list interactions
+
+Core files:
+
+- [frontend/src/components/CenterPanel/CenterPanel.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\CenterPanel\CenterPanel.tsx)
+- [frontend/src/components/CenterPanel/EntryFilterBar/EntryFilterBar.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\CenterPanel\EntryFilterBar\EntryFilterBar.tsx)
+- [frontend/src/components/CenterPanel/EntryListArea/EntryListArea.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\CenterPanel\EntryListArea\EntryListArea.tsx)
+- [frontend/src/components/CenterPanel/DateNavigator/DateNavigator.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\CenterPanel\DateNavigator\DateNavigator.tsx)
+- [frontend/src/context/FinanceContext.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\context\FinanceContext.tsx)
+
 ## Backend Overview
 
 ### Server boot
@@ -204,6 +249,7 @@ The API currently includes:
 
 - `GET /api/users/me`
 - `PUT /api/users/me`
+- `DELETE /api/users/me`
 
 #### Finance
 
@@ -211,6 +257,11 @@ The API currently includes:
 - `GET /api/finance`
 - `PUT /api/finance/:id`
 - `DELETE /api/finance/:id`
+
+#### Quotes
+
+- `GET /api/quotes/current`
+- `GET /api/quotes/library`
 
 #### Stats
 
@@ -290,10 +341,17 @@ Current auth validation rules documented in the codebase:
 - must include uppercase, lowercase, and number
 - no spaces
 
+## Current Next Plan
+
+- continue center-panel refinements and hotfixes
+- improve responsive behavior across tablet and phone breakpoints
+- expand right-panel insights and connected analytics
+- continue polishing account settings and profile tooling
+
 ## Known Notes
 
-- The dashboard center and right columns are still placeholders in the current frontend shell.
-- Some backend capability already exists before the matching frontend UI is completed.
+- The right panel is still less complete than the left and center panels.
+- Some backend capability still exists ahead of the matching final frontend UX.
 - This README documents the current repository state, even if parts of that functionality were originally generated or scaffolded with ChatGPT, as long as they already exist in the project.
 
 ## Git Workflow Note
