@@ -30,7 +30,8 @@ import {
     Recycle,
     CalendarDays,
     PenLine,
-    Trash2
+    Trash2,
+    Camera
 } from "lucide-react"
 
 function TripleChevronLeft(props: SVGProps<SVGSVGElement>) {
@@ -177,6 +178,7 @@ export const Icons = {
     today: CalendarDays,
     edit: PenLine,
     delete: Trash2,
+    camera: Camera,
 
     // USER
     user: User,
