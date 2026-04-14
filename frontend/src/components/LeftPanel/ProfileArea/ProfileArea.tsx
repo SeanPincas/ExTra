@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import styles from "./ProfileArea.module.css"
 import { Icons } from "../../../utils/iconLibrary"
 import { useAuth } from "../../../context/AuthContext"
@@ -19,12 +20,36 @@ function ProfileArea() {
 
     const { user, isAuthLoading } = useAuth()
     const username = isAuthLoading ? "Loading..." : user?.name || "Username"
+    const avatarSrcRaw = user?.profilePicture || ""
+    const avatarSrc = useMemo(() => {
+        if (!avatarSrcRaw) {
+            return ""
+        }
+
+        // If the backend stores a URL, add a light cache-buster so profile updates
+        // (like avatar repositioning) show immediately.
+        if (/^https?:\/\//i.test(avatarSrcRaw)) {
+            const version = user?.updatedAt ? encodeURIComponent(String(user.updatedAt)) : String(Date.now())
+            const hasQuery = avatarSrcRaw.includes("?")
+            return `${avatarSrcRaw}${hasQuery ? "&" : "?"}v=${version}`
+        }
+
+        return avatarSrcRaw
+    }, [avatarSrcRaw, user?.updatedAt])
 
     return (
         <section className={styles.profileCard}>
             <div className={styles.profileTopRow}>
-                <div className={styles.avatarBadge}>
-                    <Icons.user size={18} />
+                <div className={styles.avatarBadge} aria-hidden="true">
+                    {avatarSrc ? (
+                        <img
+                            src={avatarSrc}
+                            alt=""
+                            className={styles.avatarImage}
+                        />
+                    ) : (
+                        <Icons.user size={18} />
+                    )}
                 </div>
 
                 <div className={styles.profileCopy}>

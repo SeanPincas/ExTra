@@ -17,6 +17,6 @@ router.post("/", protect, createReminder);
 router.get("/", protect, getReminders);
 router.put("/:id", protect, updateReminder);
 router.delete("/:id", protect, deleteReminder);
-router.post(".api/:id/pay", protect, payReminder);
+router.post("/:id/pay", protect, payReminder);
 
 export default router;

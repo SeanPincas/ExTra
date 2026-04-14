@@ -1,12 +1,11 @@
-// Footer.tsx
-
 import styles from "./Footer.module.css"
 
-function Footer(){
-
-    return(
+function Footer() {
+    return (
         <footer className={styles.footer}>
-            Â© ExTra 2026
+            <span className={styles.footerSpacer} aria-hidden="true" />
+            <span className={styles.footerText}>© ExTra 2026</span>
+            <span className={styles.footerSpacer} aria-hidden="true" />
         </footer>
     )
 }

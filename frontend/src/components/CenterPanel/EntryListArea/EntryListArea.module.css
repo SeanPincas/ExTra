@@ -1,0 +1,612 @@
+.listArea {
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 3px 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+}
+
+.listArea::-webkit-scrollbar {
+    width: 8px;
+}
+
+.listArea::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.listArea::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    background-clip: padding-box;
+}
+
+.listArea::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.22);
+    background-clip: padding-box;
+}
+
+.emptyState {
+    min-height: 0;
+    display: grid;
+    place-content: center;
+    gap: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.emptyState h3 {
+    font-size: 1.15rem;
+    color: var(--text-primary);
+}
+
+.emptyState p {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.entryCard {
+    --entry-row-height: 50px;
+    --entry-actions-width: 154px;
+    display: grid;
+    gap: 0;
+}
+
+.entrySwipeFrame {
+    position: relative;
+    min-height: var(--entry-row-height);
+}
+
+.entryCardDeleteMode .entryActions {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(8px);
+}
+
+.entryActions {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: var(--entry-actions-width);
+    min-height: var(--entry-row-height);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    padding: 3px 3px 3px 35px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 0 14px 14px 0;
+    overflow: hidden;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 10px 20px rgba(0, 0, 0, 0.14);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(8px);
+    transition:
+        opacity 180ms ease,
+        transform 220ms ease;
+}
+
+.entryActionsIncome {
+    border-color: color-mix(in srgb, var(--text-income) 35%, rgba(255, 255, 255, 0.08));
+}
+
+.entryActionsExpense {
+    border-color: color-mix(in srgb, var(--text-expense) 35%, rgba(255, 255, 255, 0.08));
+}
+
+.entrySwipeFrameOpen .entryActions {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+.entrySurface {
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: var(--entry-row-height);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    background:
+        radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.022), transparent 34%),
+        linear-gradient(180deg, rgba(27, 28, 30, 0.985), rgba(15, 16, 18, 0.985)),
+        var(--panel-texture);
+    background-size: auto, cover, 760px;
+    background-blend-mode: screen, normal, soft-light;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition:
+        width 220ms ease,
+        transform 220ms ease,
+        background-color 180ms ease,
+        box-shadow 180ms ease,
+        border-color 180ms ease,
+        border-radius 220ms ease;
+}
+
+.income .entrySurface {
+    border-color: color-mix(in srgb, var(--text-income) 35%, rgba(255, 255, 255, 0.08));
+}
+
+.expense .entrySurface {
+    border-color: color-mix(in srgb, var(--text-expense) 35%, rgba(255, 255, 255, 0.08));
+}
+
+.entryCardExpanded .entrySurface {
+    background:
+        radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.03), transparent 36%),
+        linear-gradient(180deg, rgba(30, 31, 33, 0.99), rgba(17, 18, 20, 0.99)),
+        var(--panel-texture);
+    background-size: auto, cover, 760px;
+    background-blend-mode: screen, normal, soft-light;
+}
+
+.entrySurfaceActionsOpen {
+    width: calc(100% - 121px);
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+    box-shadow: 12px 0 24px rgba(0, 0, 0, 0.16);
+}
+
+.entrySurfaceDeleteMode {
+    width: 100%;
+}
+
+.entrySurfaceSelected {
+    border-color: rgba(255, 92, 92, 0.34);
+    box-shadow:
+        0 0 0 1px rgba(255, 92, 92, 0.12),
+        0 10px 20px rgba(0, 0, 0, 0.14);
+}
+
+.actionButton {
+    box-sizing: border-box;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    min-height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.055);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 0.64rem;
+    line-height: 1;
+    padding: 0 8px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition:
+        filter 160ms ease,
+        background-color 160ms ease,
+        color 160ms ease;
+}
+
+.actionButton:hover {
+    filter: brightness(1.06);
+}
+
+.editButton {
+    border-color: rgba(218, 165, 32, 0.24);
+    background: rgba(218, 165, 32, 0.18);
+    color: var(--accent-gold);
+}
+
+.deleteButton {
+    border-color: rgba(255, 92, 92, 0.24);
+    background: rgba(255, 92, 92, 0.2);
+    color: var(--text-expense);
+}
+
+.entryRow {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+}
+
+.entryMain {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+}
+
+.entryToggleSlot {
+    width: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.entryToggle,
+.entryToggleSpacer {
+    width: 22px;
+    height: 22px;
+}
+
+.entryToggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 0;
+    cursor: pointer;
+    transition: color 160ms ease;
+}
+
+.entryToggle:hover {
+    color: var(--accent-gold);
+}
+
+.entryToggleIcon {
+    transition: transform 180ms ease;
+}
+
+.entryToggleIconExpanded {
+    transform: rotate(180deg);
+}
+
+.selectionToggle {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: rgba(255, 92, 92, 0.72);
+    padding: 0;
+    cursor: pointer;
+    transition: color 160ms ease, transform 160ms ease;
+}
+
+.selectionToggle:hover {
+    color: var(--text-expense);
+}
+
+.selectionToggleSelected {
+    color: var(--text-expense);
+}
+
+.selectionToggleEmpty {
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(255, 92, 92, 0.4);
+    border-radius: 4px;
+    background: rgba(255, 92, 92, 0.06);
+}
+
+.entryContent {
+    min-width: 0;
+}
+
+.entryDesktopContent {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.entryCompactContent {
+    min-width: 0;
+    display: none;
+    gap: 5px;
+}
+
+.entryTopLine,
+.entryBottomLine {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+}
+
+.entryTitle {
+    font-size: 0.94rem;
+    color: var(--text-primary);
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.entryAmount {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.entryMetaGroup,
+.entryTime {
+    color: var(--text-secondary);
+    font-size: 0.74rem;
+    line-height: 1.1;
+}
+
+.entryCopy {
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.entryMetaInline {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-secondary);
+    font-size: 0.74rem;
+    line-height: 1.1;
+}
+
+.entryMetaGroup {
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.entryTypeTag {
+    flex-shrink: 0;
+}
+
+.entryCategoryGroup {
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    overflow: hidden;
+}
+
+.entryEmoji {
+    font-size: 1rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.entryCategoryText {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.entryTime {
+    white-space: nowrap;
+}
+
+.entryAside {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.breakdownArea {
+    display: grid;
+    gap: 5px;
+}
+
+.breakdownShell {
+    box-sizing: border-box;
+    width: calc(100% - 38px);
+    margin: 0 auto;
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 0 0 14px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    animation: breakdownReveal 180ms ease;
+}
+
+.breakdownRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 5px 0;
+}
+
+.breakdownRow:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.breakdownName,
+.breakdownAmount {
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+}
+
+.breakdownAmount {
+    white-space: nowrap;
+}
+
+@keyframes breakdownReveal {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 980px) {
+    .listArea {
+        gap: 8px;
+        padding: 3px 12px;
+    }
+
+    .entryCard {
+        --entry-row-height: 48px;
+        --entry-actions-width: 146px;
+    }
+
+    .entrySurface {
+        padding: 5px 10px;
+    }
+
+    .entryTopLine,
+    .entryBottomLine {
+        gap: 10px;
+    }
+
+    .entryTitle {
+        font-size: 0.88rem;
+    }
+
+    .entryMetaGroup,
+    .entryMetaInline,
+    .entryTime {
+        font-size: 0.71rem;
+    }
+
+    .entryAmount {
+        font-size: 0.84rem;
+    }
+
+    .entryActions {
+        padding-left: 29px;
+    }
+
+    .entrySurfaceActionsOpen {
+        width: calc(100% - 113px);
+    }
+
+    .breakdownShell {
+        width: calc(100% - 32px);
+        padding: 7px 10px;
+    }
+}
+
+@media (max-width: 720px) {
+    .entryDesktopContent {
+        display: none;
+    }
+
+    .entryCompactContent {
+        display: grid;
+        gap: 4px;
+    }
+
+    .entryTopLine,
+    .entryBottomLine {
+        grid-template-columns: minmax(0, 1fr) max-content;
+        gap: 8px;
+        align-items: start;
+    }
+
+    .entryTime {
+        text-align: right;
+    }
+}
+
+@media (max-width: 640px) {
+    .listArea {
+        padding: 8px 14px;
+    }
+
+    .entryCard {
+        --entry-row-height: 46px;
+    }
+
+    .breakdownShell {
+        width: calc(100% - 38px);
+        margin: 0 auto;
+    }
+
+    .entryActions {
+        width: 138px;
+        padding-left: 33px;
+    }
+
+    .entrySurfaceActionsOpen {
+        width: calc(100% - 101px);
+    }
+}
+
+@media (max-width: 420px) {
+    .listArea {
+        padding-inline: 10px;
+    }
+
+    .entryCard {
+        --entry-row-height: 44px;
+        --entry-actions-width: 132px;
+    }
+
+    .entrySurface {
+        padding: 4px 9px;
+    }
+
+    .entryToggleSlot,
+    .entryToggle,
+    .entryToggleSpacer {
+        width: 20px;
+    }
+
+    .entryTitle {
+        font-size: 0.84rem;
+    }
+
+    .entryMetaGroup,
+    .entryMetaInline,
+    .entryTime {
+        font-size: 0.68rem;
+    }
+
+    .entryAmount {
+        font-size: 0.8rem;
+    }
+
+    .entryActions {
+        padding-left: 28px;
+    }
+
+    .actionButton {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .entryTopLine,
+    .entryBottomLine {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 4px;
+    }
+
+    .entryTime {
+        text-align: left;
+        white-space: normal;
+    }
+}

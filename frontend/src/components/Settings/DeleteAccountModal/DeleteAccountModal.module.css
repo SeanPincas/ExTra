@@ -1,0 +1,137 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 92;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(18px, 4vw, 28px);
+    background: rgba(6, 6, 7, 0.62);
+    backdrop-filter: blur(10px);
+}
+
+.modal {
+    position: relative;
+    width: min(460px, 100%);
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+    border: 1px solid rgba(255, 77, 77, 0.16);
+    border-radius: 20px;
+    background:
+        linear-gradient(180deg, rgba(20, 10, 10, 0.9), rgba(10, 8, 8, 0.95)),
+        var(--panel-texture);
+    background-size: cover, 1000px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 28px 52px rgba(0, 0, 0, 0.34);
+}
+
+.closeButton {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.closeButton:hover {
+    color: var(--accent-red);
+}
+
+.header {
+    display: grid;
+    gap: 4px;
+    padding-right: 48px;
+}
+
+.title {
+    font-size: 1.28rem;
+    line-height: 1;
+    color: var(--text-primary);
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    line-height: 1.45;
+}
+
+.form {
+    display: grid;
+    gap: 10px;
+}
+
+.fieldGroup {
+    display: grid;
+    gap: 5px;
+}
+
+.fieldGroup > span {
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+}
+
+.fieldInput {
+    width: 100%;
+    min-height: 38px;
+    padding: 8px 11px;
+    border-radius: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        linear-gradient(180deg, rgba(19, 20, 22, 0.92), rgba(12, 12, 14, 0.97)),
+        var(--panel-texture);
+    background-size: cover, 900px;
+    color: var(--text-primary);
+    outline: none;
+}
+
+.fieldInput:focus {
+    border-color: rgba(255, 77, 77, 0.24);
+}
+
+.errorText {
+    margin: 0;
+    font-size: 0.74rem;
+    color: color-mix(in srgb, var(--text-expense) 86%, var(--text-primary));
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.deleteButton {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--text-secondary);
+}
+
+.deleteButtonReady {
+    background: rgba(255, 77, 77, 0.16);
+    border-color: rgba(255, 77, 77, 0.28);
+    color: var(--text-expense);
+}
+
+@media (max-width: 520px) {
+    .modal {
+        padding: 16px;
+    }
+
+    .actions {
+        flex-wrap: wrap;
+    }
+
+    .actions > button {
+        flex: 1 1 0;
+    }
+}

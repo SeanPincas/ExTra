@@ -21,6 +21,37 @@
     justify-self: start;
 }
 
+.panelToggleButton {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    background: transparent;
+    color: transparent;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        color 160ms ease,
+        border-color 160ms ease,
+        background-color 160ms ease,
+        opacity 160ms ease;
+}
+
+.panelToggleVisible {
+    color: transparent;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.panelToggleVisible:hover {
+    color: transparent;
+    border-color: transparent;
+    background: transparent;
+}
+
 .centerSection {
     display: flex;
     align-items: center;
@@ -68,27 +99,65 @@
    BUTTONS
 ===================================================== */
 
-.iconButton {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--text-primary);
+.headerActionButton {
+    min-height: 34px;
+    padding-inline: 12px;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    line-height: 1.1;
 }
 
-.buttonLabelCompact {
-    display: none;
-}
-
-.buttonIconOnly {
-    display: none;
+.buttonIcon {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
-@media (max-width: 900px) {
+.buttonLabelFull,
+.settingsLabel {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1.1;
+}
+
+.addButton {
+    gap: 6px;
+}
+
+.settingsButton {
+    gap: 6px;
+}
+
+.settingsLabel {
+    font-size: 0.82rem;
+}
+
+@media (max-width: 1080px) {
 
     .headerContainer {
         grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
+    .panelToggleVisible {
+        color: var(--text-secondary);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .panelToggleVisible:hover {
+        color: var(--accent-gold);
+        border-color: rgba(218, 165, 32, 0.16);
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .headerActionButton {
+        min-height: 32px;
+        padding-inline: 10px;
+        font-size: 0.78rem;
+    }
+
+    .settingsLabel {
+        font-size: 0.78rem;
     }
 
 }
@@ -109,12 +178,14 @@
         padding: 7px 22px;
     }
 
-    .buttonLabelFull {
-        display: none;
+    .headerActionButton {
+        min-height: 30px;
+        padding-inline: 9px;
+        font-size: 0.75rem;
     }
 
-    .buttonLabelCompact {
-        display: inline;
+    .settingsLabel {
+        font-size: 0.75rem;
     }
 }
 
@@ -129,15 +200,19 @@
         padding-inline: 50px;
     }
 
-    /* Phones use icons only so the actions stay compact and readable. */
-    .buttonLabelFull,
-    .buttonLabelCompact,
-    .authLabelFull {
+    .settingsLabel {
         display: none;
     }
 
-    .buttonIconOnly {
-        display: inline-flex;
+    .buttonLabelFull {
+        display: none;
+    }
+
+    .headerActionButton {
+        min-height: 30px;
+        min-width: 34px;
+        padding-inline: 8px;
+        border-radius: 10px;
     }
 
 }

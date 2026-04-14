@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
 import { registerUser } from "../../api/authAPI"
+import LegalModal from "../../components/reusableComp/LegalModal/LegalModal"
 import { useAuth } from "../../context/AuthContext"
 import { Icons } from "../../utils/iconLibrary"
+import type { LegalDocumentKey } from "../../utils/legalDocuments"
 import {
     validateConfirmPassword,
     validateEmail,
@@ -34,6 +36,8 @@ function RegisterPage({ onLoginClick }: RegisterPageProps) {
     const [errorMessage, setErrorMessage] = useState("")
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [acceptedLegal, setAcceptedLegal] = useState(false)
+    const [activeLegalDocument, setActiveLegalDocument] = useState<LegalDocumentKey | null>(null)
 
     useEffect(() => {
         if (!errorMessage) {
@@ -117,6 +121,11 @@ function RegisterPage({ onLoginClick }: RegisterPageProps) {
 
         if (Object.values(nextErrors).some(Boolean)) {
             setErrorMessage("Please fix the highlighted fields.")
+            return
+        }
+
+        if (!acceptedLegal) {
+            setErrorMessage("Please accept the Privacy Policy and Terms and Conditions first.")
             return
         }
 
@@ -294,6 +303,33 @@ function RegisterPage({ onLoginClick }: RegisterPageProps) {
                         </button>
                     </p>
 
+                    <label className={styles.legalConsent}>
+                        <input
+                            type="checkbox"
+                            checked={acceptedLegal}
+                            onChange={(event) => setAcceptedLegal(event.target.checked)}
+                            disabled={isSubmitting}
+                        />
+                        <span>
+                            I agree to the{" "}
+                            <button
+                                type="button"
+                                className={styles.helperLink}
+                                onClick={() => setActiveLegalDocument("privacy")}
+                            >
+                                Data Privacy Policy
+                            </button>
+                            {" "}and{" "}
+                            <button
+                                type="button"
+                                className={styles.helperLink}
+                                onClick={() => setActiveLegalDocument("terms")}
+                            >
+                                Terms and Conditions
+                            </button>
+                        </span>
+                    </label>
+
                     {errorMessage && (
                         <div className={styles.warningCloud} role="alert">
                             {errorMessage}
@@ -302,6 +338,13 @@ function RegisterPage({ onLoginClick }: RegisterPageProps) {
                 </section>
                 </div>
             </section>
+
+            {activeLegalDocument && (
+                <LegalModal
+                    documentKey={activeLegalDocument}
+                    onClose={() => setActiveLegalDocument(null)}
+                />
+            )}
         </main>
     )
 }

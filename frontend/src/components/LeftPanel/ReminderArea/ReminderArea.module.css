@@ -1,8 +1,8 @@
 .reminderSection {
-    display: grid;
-    gap: 10px;
-    align-content: start;
-    padding: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 10px 5px 6px;
     border: 1px solid var(--border-soft);
     border-radius: 14px;
     background:
@@ -12,6 +12,7 @@
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.04),
         0 12px 24px rgba(0, 0, 0, 0.12);
+    min-height: 0;
 }
 
 .sectionHeader {
@@ -19,6 +20,7 @@
     align-items: center;
     gap: 8px;
     color: var(--text-primary);
+    width: 100%;
 }
 
 .sectionHeader h3 {
@@ -26,32 +28,273 @@
     font-weight: 600;
 }
 
-.reminderList {
+.headerActions {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.iconButton {
+    min-width: 34px;
+    width: 34px;
+    height: 34px;
+    min-height: 34px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    box-sizing: border-box;
+}
+
+.actionButton {
+    min-width: 26px;
+    width: 26px;
+    height: 26px;
+    min-height: 26px;
+    padding: 0;
+    aspect-ratio: 1 / 1;
+    border-radius: 9px;
+    box-sizing: border-box;
+}
+
+.actionButton:disabled {
+    opacity: 0.45;
+}
+
+.actionButton:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.addButton {
+    border-color: rgba(61, 220, 132, 0.26);
+    background: rgba(61, 220, 132, 0.12);
+    color: color-mix(in srgb, var(--text-income) 75%, var(--text-primary));
+}
+
+.addButton:hover:not(:disabled) {
+    border-color: rgba(61, 220, 132, 0.38);
+    background: rgba(61, 220, 132, 0.16);
+}
+
+.editButton {
+    border-color: rgba(218, 165, 32, 0.26);
+    background: rgba(218, 165, 32, 0.1);
+    color: color-mix(in srgb, var(--accent-gold) 70%, white);
+}
+
+.editButton:hover:not(:disabled) {
+    border-color: rgba(218, 165, 32, 0.38);
+    background: rgba(218, 165, 32, 0.14);
+}
+
+.deleteButton {
+    border-color: rgba(255, 92, 92, 0.18);
+    background: rgba(255, 92, 92, 0.16);
+    color: var(--text-expense);
+}
+
+.deleteButton:hover:not(:disabled) {
+    border-color: rgba(255, 92, 92, 0.28);
+    background: rgba(255, 92, 92, 0.22);
+}
+
+.headerDeleteButton {
+    border: 1px solid rgba(255, 92, 92, 0.22);
+    background: rgba(255, 92, 92, 0.22);
+    color: var(--text-expense);
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.headerDeleteButton:hover:not(:disabled) {
+    filter: brightness(1.06);
+    border-color: rgba(255, 92, 92, 0.3);
+    background: rgba(255, 92, 92, 0.28);
+}
+
+.editorCard {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px;
     display: grid;
+    gap: 10px;
+}
+
+.editorGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 8px;
 }
 
-.reminderItem {
+.editorField {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+.editorField > span:first-child {
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+}
+
+.editorInput {
+    width: 100%;
+    min-width: 0;
+    min-height: 36px;
+    padding: 8px 11px;
+    border-radius: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        linear-gradient(180deg, rgba(19, 20, 22, 0.92), rgba(12, 12, 14, 0.97)),
+        var(--panel-texture);
+    background-size: cover, 900px;
+    color: var(--text-primary);
+    outline: none;
+    box-sizing: border-box;
+}
+
+.editorActions {
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 10px 11px;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.editorButton {
+    min-height: 36px;
+    padding-inline: 12px;
+}
+
+.editorButtonPrimary {
+    min-height: 36px;
+    padding-inline: 12px;
+    background: var(--accent-green);
+    border-color: color-mix(in srgb, var(--accent-money-green) 70%, #0f0f0f);
+}
+
+.inlineError {
+    font-size: 0.76rem;
+    color: color-mix(in srgb, var(--text-expense) 80%, var(--text-primary));
+    padding: 0 2px;
+}
+
+.reminderBox {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background:
+        radial-gradient(circle at 16% 16%, #4a3626 0%, #2b1e16 44%, #1c140f 100%),
+        var(--panel-texture),
+        var(--bg-leather);
+    background-size: auto, cover, 900px;
+    overflow: hidden;
+    box-sizing: border-box;
+    min-height: 0;
+    flex: 1;
+    max-height: 100%;
+}
+
+.reminderBoxDanger {
+    border-color: rgba(255, 92, 92, 0.28);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.reminderList {
+    display: grid;
+    gap: 0;
+    padding: 5px;
+    max-height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    min-height: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.reminderListEmpty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+}
+
+.reminderList::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+.reminderItem {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
     border-radius: 12px;
     cursor: pointer;
     color: var(--text-primary);
-    font-size: 0.84rem;
+    font-size: 0.74rem;
     line-height: 1.45;
-    background: rgba(255, 255, 255, 0.03);
+    background:
+        linear-gradient(180deg, #232425, #18191a),
+        var(--panel-texture);
+    background-size: cover, 820px;
     border: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: left;
 }
 
 .reminderItem input {
     accent-color: var(--accent-green);
-    margin-top: 3px;
+    margin: 0;
+}
+
+.reminderBoxDanger .reminderItem input {
+    accent-color: var(--accent-red);
+}
+
+.reminderTitle {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.reminderDue {
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    white-space: nowrap;
+}
+
+.reminderAmount {
+    margin-left: auto;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.reminderItemSelected {
+    border-color: rgba(218, 165, 32, 0.22);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.reminderItemMuted {
+    opacity: 0.68;
+}
+
+.emptyNote {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    text-align: center;
 }
 
 @media (max-width: 900px) {
     .reminderSection {
-        padding: 12px;
+        padding: 10px 5px 7px;
     }
 }

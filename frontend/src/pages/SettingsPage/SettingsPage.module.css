@@ -1,0 +1,629 @@
+ .settingsShell {
+     height: 100%;
+     min-height: 0;
+     min-width: 0;
+     display: grid;
+     grid-template-rows: 1fr;
+     gap: 14px;
+     position: relative;
+ }
+ 
+.topBar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding-inline: clamp(10px, 2vw, 18px);
+}
+
+.leftRail,
+.rightRail {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+}
+
+.leftRail {
+    flex: 0 0 auto;
+}
+
+.rightRail {
+    margin-left: auto;
+    width: min(100%, 280px);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.backButtonLabel {
+    display: inline;
+}
+
+.centerRail {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 1;
+}
+
+ .logoWrapper {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     padding: 5px clamp(90px, 5vw, 100px);
+     border-radius: 999px;
+     background: linear-gradient(180deg, #2b261e 0%, #100d0a 100%);
+     border: 1px solid rgba(128, 99, 19, 0.14);
+     box-shadow:
+         inset 0 1px 1px rgba(255, 255, 255, 0.05),
+         0 12px 28px rgba(0, 0, 0, 0.28);
+ }
+
+ .logoImage {
+     height: clamp(28px, 4vw, 42px);
+     width: auto;
+     object-fit: contain;
+ }
+ 
+.pageTitleBlock {
+    width: min(100%, 280px);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
+    text-align: right;
+}
+ 
+ .pageTitle {
+     font-size: 1.35rem;
+     color: var(--text-primary);
+     min-width: 0;
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+ }
+ 
+.grid {
+     min-height: 0;
+     min-width: 0;
+     height: 100%;
+     display: grid;
+    grid-template-columns: minmax(0, 1fr);
+     gap: 16px;
+ }
+ 
+ .rightCol {
+     min-height: 0;
+     min-width: 0;
+     overflow: auto;
+ }
+ 
+ .navItem {
+     width: 100%;
+     text-align: left;
+     padding: 14px 14px;
+     border-radius: 14px;
+     border: 1px solid var(--border-soft);
+     background:
+         linear-gradient(180deg, rgba(19, 20, 22, 0.92), rgba(12, 12, 14, 0.97)),
+         var(--panel-texture);
+     background-size: cover, 900px;
+     box-shadow:
+         inset 0 1px 0 rgba(255, 255, 255, 0.04),
+         0 12px 24px rgba(0, 0, 0, 0.12);
+     cursor: pointer;
+     transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+ }
+ 
+ .navItem:hover {
+     transform: translateY(-1px);
+     border-color: rgba(218, 165, 32, 0.22);
+ }
+ 
+ .navItemActive {
+     border-color: rgba(218, 165, 32, 0.34);
+     box-shadow:
+         inset 0 1px 0 rgba(255, 255, 255, 0.06),
+         0 14px 28px rgba(0, 0, 0, 0.16);
+ }
+ 
+ .navItemTitle {
+     font-weight: 600;
+     color: var(--text-primary);
+ }
+ 
+ .navItemHint {
+     margin-top: 4px;
+     font-size: 0.78rem;
+     color: var(--text-secondary);
+ }
+
+.profileSettingsLayout {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+}
+
+.avatarColumn {
+    display: grid;
+    gap: 8px;
+    justify-items: center;
+}
+
+.avatarFrame {
+    position: relative;
+    width: 78px;
+    height: 78px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+.avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatarFallback {
+    color: var(--text-secondary);
+    display: grid;
+    place-items: center;
+}
+
+.avatarEditBadge {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgba(218, 165, 32, 0.24);
+    background: rgba(13, 13, 15, 0.9);
+    color: var(--accent-gold);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+}
+
+.avatarHint {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    line-height: 1.25;
+    text-align: center;
+}
+
+.fileInput {
+    display: none;
+}
+
+.fullWidth {
+    width: 100%;
+}
+
+.panelStack {
+    height: auto;
+    min-height: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.settingsSection {
+    display: grid;
+    gap: 10px;
+    padding-top: 4px;
+}
+
+.settingsSection + .settingsSection {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 12px;
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.sectionHeader h4 {
+    font-size: 0.98rem;
+    letter-spacing: 0.01em;
+}
+
+.sectionMeta {
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+}
+
+.warningCloud {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    max-width: min(260px, calc(100% - 24px));
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 92, 92, 0.28);
+    background: rgba(43, 12, 12, 0.92);
+    color: #ffd2d2;
+    font-size: 0.76rem;
+    line-height: 1.4;
+    box-shadow:
+        0 12px 26px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    z-index: 20;
+}
+ 
+ .panel {
+     height: 100%;
+     min-height: 0;
+     min-width: 0;
+     border: 1px solid var(--border-soft);
+     border-radius: 14px;
+     overflow: hidden;
+     padding: 13px;
+     background:
+         radial-gradient(circle at center, rgba(92, 92, 92, 0.18) 0%, rgba(18, 18, 18, 0.96) 78%),
+         var(--panel-texture);
+     background-size: cover, 960px;
+     box-shadow:
+         inset 0 1px 0 rgba(255, 255, 255, 0.04),
+         0 12px 26px rgba(0, 0, 0, 0.14);
+     display: grid;
+     grid-template-rows: auto 1fr auto;
+     gap: 10px;
+ }
+ 
+ .panelHeader {
+     display: flex;
+     align-items: baseline;
+     justify-content: space-between;
+     gap: 10px;
+     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+     padding-bottom: 10px;
+ }
+ 
+ .panelHeader h3 {
+     font-size: 1rem;
+ }
+ 
+ .panelMeta {
+     font-size: 0.74rem;
+     color: var(--text-secondary);
+ }
+ 
+ .formGrid {
+     min-width: 0;
+     display: grid;
+     grid-template-columns: repeat(2, minmax(0, 1fr));
+     gap: 10px;
+     align-content: start;
+ }
+
+.profileFieldsColumn {
+    display: grid;
+    gap: 10px;
+}
+
+.profileFieldRow {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+ 
+ .fieldGroup {
+     display: grid;
+     gap: 5px;
+     min-width: 0;
+ }
+ 
+ .fieldGroup > span:first-child {
+     font-size: 0.78rem;
+     color: var(--text-secondary);
+ }
+ 
+ .fieldInput {
+     width: 100%;
+     min-width: 0;
+    min-height: 38px;
+     padding: 8px 11px;
+     box-sizing: border-box;
+     border-radius: 11px;
+     border: 1px solid rgba(255, 255, 255, 0.08);
+     background:
+         linear-gradient(180deg, rgba(19, 20, 22, 0.92), rgba(12, 12, 14, 0.97)),
+         var(--panel-texture);
+     background-size: cover, 900px;
+     color: var(--text-primary);
+     outline: none;
+ }
+
+.fieldInput:is(select) {
+    appearance: none;
+    color-scheme: dark;
+    display: block;
+}
+
+.fieldInput:is(select) option {
+    background-color: #171718;
+    color: var(--text-primary);
+    font: inherit;
+}
+ 
+ .fieldInput:focus {
+     border-color: rgba(218, 165, 32, 0.22);
+ }
+ 
+.fieldHint {
+     font-size: 0.68rem;
+     color: color-mix(in srgb, var(--text-secondary) 86%, var(--text-primary));
+ }
+
+.fieldHintSpacer {
+    font-size: 0.68rem;
+    line-height: 1.2;
+    visibility: hidden;
+}
+
+.labelRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tooltipShell {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.helpIcon {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    line-height: 1;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.tooltip {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(100% + 10px);
+    width: min(260px, 52vw);
+    padding: 10px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        radial-gradient(circle at center, rgba(92, 92, 92, 0.18) 0%, rgba(18, 18, 18, 0.96) 78%),
+        var(--panel-texture);
+    background-size: cover, 900px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 14px 26px rgba(0, 0, 0, 0.2);
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 140ms ease;
+    z-index: 10;
+}
+
+.tooltipShell:hover .tooltip {
+    opacity: 1;
+}
+
+.actionsRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.saveButton {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--text-primary);
+}
+
+.saveButtonActive {
+    background: var(--accent-green);
+    border-color: color-mix(in srgb, var(--accent-money-green) 70%, #0f0f0f);
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.passwordFieldButton {
+    min-height: 38px;
+    justify-content: center;
+    padding-inline: 11px;
+    opacity: 0.88;
+}
+
+.successText {
+    font-size: 0.76rem;
+    color: color-mix(in srgb, var(--text-income) 80%, var(--text-primary));
+}
+
+.errorText {
+    font-size: 0.76rem;
+    color: color-mix(in srgb, var(--text-expense) 80%, var(--text-primary));
+}
+
+.sensitivePanel {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 13px;
+    background:
+        linear-gradient(180deg, rgba(20, 10, 10, 0.86), rgba(10, 8, 8, 0.94)),
+        var(--panel-texture);
+    background-size: cover, 960px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 12px 26px rgba(0, 0, 0, 0.14);
+    display: grid;
+    gap: 10px;
+}
+
+.sensitiveHeader {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 10px;
+}
+
+.sensitiveBody {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logoutButton {
+    margin-left: auto;
+}
+.logoutButton {
+    gap: 7px;
+}
+
+.deleteButton {
+    gap: 7px;
+    background: rgba(255, 77, 77, 0.12);
+    border-color: rgba(255, 77, 77, 0.22);
+    color: color-mix(in srgb, var(--text-primary) 92%, var(--accent-red));
+}
+ 
+ .callout {
+     padding: 10px 12px;
+     border-radius: 12px;
+     border: 1px solid rgba(218, 165, 32, 0.18);
+     background: rgba(218, 165, 32, 0.06);
+     color: var(--text-secondary);
+     font-size: 0.82rem;
+ }
+ 
+ @media (max-width: 980px) {
+     .grid {
+         grid-template-columns: minmax(0, 1fr);
+     }
+ 
+     .rightRail,
+     .pageTitleBlock {
+         width: min(100%, 220px);
+     }
+ 
+     .formGrid,
+     .profileFieldRow {
+         grid-template-columns: minmax(0, 1fr);
+     }
+ }
+
+ @media (max-width: 720px) {
+     .topBar {
+         gap: 10px;
+         padding-inline: 10px;
+     }
+
+     .rightRail,
+     .pageTitleBlock {
+         width: min(100%, 180px);
+     }
+
+     .profileSettingsLayout {
+         grid-template-columns: minmax(0, 1fr);
+     }
+
+     .avatarColumn {
+         justify-items: start;
+     }
+
+     .avatarHint {
+         text-align: left;
+     }
+ }
+
+ @media (max-width: 640px) {
+     .topBar {
+         min-height: auto;
+         gap: 8px;
+     }
+
+     .logoWrapper {
+         padding: 7px 22px;
+     }
+
+     .pageTitle {
+         font-size: 1.1rem;
+     }
+
+     .rightRail,
+     .pageTitleBlock {
+         width: min(100%, 150px);
+     }
+
+     .panel {
+         padding: 11px;
+     }
+
+     .sensitiveBody {
+         flex-wrap: wrap;
+     }
+ }
+
+ @media (max-width: 480px) {
+     .backButton {
+         min-width: 38px;
+         width: 38px;
+         height: 38px;
+         padding: 0;
+         justify-content: center;
+     }
+
+     .backButtonLabel {
+         display: none;
+     }
+
+     .logoWrapper {
+         padding-inline: 34px;
+     }
+
+     .pageTitle {
+         font-size: 1.02rem;
+     }
+
+     .rightRail,
+     .pageTitleBlock {
+         width: min(100%, 132px);
+     }
+ }
+

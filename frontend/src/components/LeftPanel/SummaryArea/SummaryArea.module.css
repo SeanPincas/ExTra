@@ -1,7 +1,7 @@
 .summarySection {
     display: grid;
     gap: 10px;
-    padding: 13px 8px 10px;
+    padding: 10px 8px 10px;
     border: 1px solid var(--border-soft);
     border-radius: 14px;
     background:
@@ -34,7 +34,7 @@
 }
 
 .summaryValue {
-    font-size: clamp(1.3rem, 1.5vw, 1.8rem);
+    font-size: clamp(1.18rem, 1.35vw, 1.62rem);
     line-height: 1.05;
 }
 
@@ -51,6 +51,22 @@
 .balance .summaryLabel,
 .balance .summaryValue {
     color: color-mix(in srgb, var(--accent-gold) 70%, white);
+}
+
+.summaryQuote {
+    margin: 0;
+    min-height: 40px;
+    max-height: 40px;
+    display: grid;
+    align-items: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: clamp(0.68rem, 0.82vw, 0.78rem);
+    line-height: 1.32;
+    text-align: center;
+    opacity: 0.86;
+    overflow: hidden;
+    text-wrap: balance;
 }
 
 @media (max-width: 900px) {

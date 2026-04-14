@@ -1,7 +1,7 @@
 .profileCard {
     display: grid;
     gap: 10px;
-    padding: 14px;
+    padding: 8px 10px;
     border: 1px solid var(--border-soft);
     border-radius: 14px;
     background:
@@ -29,6 +29,14 @@
     color: var(--text-primary);
     background: radial-gradient(circle at 35% 30%, rgba(147, 209, 255, 0.55), rgba(37, 45, 54, 0.9));
     border: 1px solid rgba(255, 255, 255, 0.16);
+    overflow: hidden;
+}
+
+.avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .profileCopy {
@@ -38,11 +46,11 @@
 
 .greeting {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.78rem;
 }
 
 .username {
-    font-size: 1.35rem;
+    font-size: 1.48rem;
     line-height: 1.1;
     color: var(--text-primary);
 }

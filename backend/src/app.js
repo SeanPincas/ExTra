@@ -13,6 +13,7 @@ import financeRoutes from "./routes/financeRoutes.js";
 import statsRoutes from "./routes/statsRoutes.js";
 import reminderRoutes from "./routes/reminderRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import quoteRoutes from "./routes/quoteRoutes.js";
 
 import { errorHandler } from "./middleware/error.middleware.js";
 
@@ -37,7 +38,10 @@ const apiLimiter = rateLimiter({
         error: "Too many requests. Please try again later."
     },
     standardHeaders: true, // returns rate limit info in headers
-    legacyHeaders: false
+    legacyHeaders: false,
+    // Dev builds fire many parallel dashboard requests (StrictMode + multi-panel fetches).
+    // Keep limiter active in production, but skip it locally to avoid false 429s.
+    skip: () => process.env.NODE_ENV !== "production",
 });
 
 // --------------------------------------------------
@@ -47,7 +51,7 @@ const apiLimiter = rateLimiter({
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 // Parse incoming JSON bodies
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
 // Security Header
 app.use(helmet());
 // Rate Limiter
@@ -87,6 +91,7 @@ app.use("/api/finance", financeRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/reminders", reminderRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/quotes", quoteRoutes);
 
 // Temporary root route
 app.get("/", (req, res) => {
