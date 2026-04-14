@@ -5,9 +5,10 @@ import styles from "./CenterHeaderArea.module.css"
 interface CenterHeaderAreaProps {
     searchDraft: string
     onSearchChange: (nextSearch: string) => void
+    onOpenStatsPanel?: () => void
 }
 
-function CenterHeaderArea({ searchDraft, onSearchChange }: CenterHeaderAreaProps) {
+function CenterHeaderArea({ searchDraft, onSearchChange, onOpenStatsPanel }: CenterHeaderAreaProps) {
     const [isSearchOpen, setIsSearchOpen] = useState(Boolean(searchDraft))
     const searchInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -42,27 +43,38 @@ function CenterHeaderArea({ searchDraft, onSearchChange }: CenterHeaderAreaProps
                title-left / search-right dashboard structure. */}
             <h2 className={styles.title}>Entry List</h2>
 
-            <div className={`${styles.searchShell} ${isSearchOpen ? styles.searchShellOpen : ""}`}>
+            <div className={styles.headerTools}>
+                <div className={`${styles.searchShell} ${isSearchOpen ? styles.searchShellOpen : ""}`}>
+                    <button
+                        type="button"
+                        className={styles.searchButton}
+                        aria-label={isSearchOpen ? "Search entries" : "Open search"}
+                        onClick={handleOpenSearch}
+                    >
+                        <Icons.search size={15} />
+                    </button>
+
+                    {isSearchOpen && (
+                        <input
+                            ref={searchInputRef}
+                            type="search"
+                            className={styles.searchInput}
+                            value={searchDraft}
+                            placeholder="Search entries"
+                            onChange={(event) => onSearchChange(event.target.value)}
+                            onBlur={handleSearchBlur}
+                        />
+                    )}
+                </div>
+
                 <button
                     type="button"
-                    className={styles.searchButton}
-                    aria-label={isSearchOpen ? "Search entries" : "Open search"}
-                    onClick={handleOpenSearch}
+                    className={styles.statsButton}
+                    aria-label="Open insights panel"
+                    onClick={onOpenStatsPanel}
                 >
-                    <Icons.search size={15} />
+                    <Icons.stats width={15} height={15} />
                 </button>
-
-                {isSearchOpen && (
-                    <input
-                        ref={searchInputRef}
-                        type="search"
-                        className={styles.searchInput}
-                        value={searchDraft}
-                        placeholder="Search entries"
-                        onChange={(event) => onSearchChange(event.target.value)}
-                        onBlur={handleSearchBlur}
-                    />
-                )}
             </div>
         </div>
     )

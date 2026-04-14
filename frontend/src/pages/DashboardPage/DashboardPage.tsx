@@ -73,7 +73,7 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
                     </div>
 
                     <div className={styles.centerShell}>
-                        <CenterPanel />
+                        <CenterPanel onOpenStatsPanel={handleToggleRightPanel} />
                     </div>
 
                     <div className={`${styles.panelShell} ${styles.rightShell} ${isRightPanelOpen ? styles.panelOpen : ""}`}>
@@ -81,12 +81,7 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
                     </div>
                 </div>
             }
-            footer={
-                <Footer
-                    onToggleRightPanel={handleToggleRightPanel}
-                    showRightPanelToggle={!isRightPanelOpen}
-                />
-            }
+            footer={<Footer />}
         />
     )
 }

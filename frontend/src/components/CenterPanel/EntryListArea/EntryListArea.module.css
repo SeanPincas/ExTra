@@ -1,10 +1,13 @@
 .listArea {
     min-height: 0;
+    height: 100%;
+    max-height: 100%;
     display: grid;
     align-content: start;
     gap: 10px;
     padding: 3px 16px;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
 }

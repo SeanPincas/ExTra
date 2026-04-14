@@ -1,6 +1,7 @@
 .centerPanel {
     min-width: 0;
     min-height: 0;
+    height: 100%;
     display: grid;
     grid-template-rows: auto auto 1fr auto;
     border: 1px solid var(--border-soft);

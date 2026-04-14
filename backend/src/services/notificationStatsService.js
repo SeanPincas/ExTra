@@ -1,7 +1,7 @@
 // notificationStatsService.js
 
 import Finance from "../models/financeModel.js";
-import { sumIncome } from "../utils/financeMath.js";
+import { sumIncome, sumExpense } from "../utils/financeMath.js";
 import { getDateRangeFilter } from "../utils/dateRange.js";
 
 // ================================================================

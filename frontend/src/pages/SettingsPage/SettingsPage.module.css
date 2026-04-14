@@ -346,6 +346,7 @@
      min-width: 0;
     min-height: 38px;
      padding: 8px 11px;
+     box-sizing: border-box;
      border-radius: 11px;
      border: 1px solid rgba(255, 255, 255, 0.08);
      background:
@@ -359,6 +360,7 @@
 .fieldInput:is(select) {
     appearance: none;
     color-scheme: dark;
+    display: block;
 }
 
 .fieldInput:is(select) option {
