@@ -5,23 +5,30 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { successResponse } from "../utils/response.js";
 import { validateReminder } from "../utils/requestValidation.js";
 import { ENTRY_TYPES } from "../utils/financeConstants.js";
+import { sortRemindersByPriority } from "../services/reminderEngine.js";
 
 // ================================================================
 // CREATE REMINDER
 // ================================================================
 export const createReminder = asyncHandler(async (req, res) => {
 
-    const { title, type, amount, dueDay, category, notes } = req.body;
-    validateReminder({ title, type, amount, dueDay, category });
-    const reminder = await Reminder.create({
+    const { title, type, amount, dueDate, category, notes, active } = req.body;
+    validateReminder({ title, type, amount, dueDate, category });
+    const reminderPayload = {
         user: req.user._id,
         title,
         type,
         amount,
         category,
-        dueDay,
-        notes
-    });
+        dueDate,
+        notes,
+    };
+
+    if (typeof active === "boolean") {
+        reminderPayload.active = active;
+    }
+
+    const reminder = await Reminder.create(reminderPayload);
 
     successResponse(res, reminder, "Reminder created", 201);
 });
@@ -33,12 +40,10 @@ export const getReminders = asyncHandler(async (req, res) => {
 
     const reminders = await Reminder.find({
         user: req.user._id
-    }).sort({
-        active: -1,   // active reminders first
-        dueDay: 1     // nearest due day first
     });
 
-    successResponse(res, reminders);
+    const sortedReminders = sortRemindersByPriority(reminders, new Date());
+    successResponse(res, sortedReminders);
 });
 
 // ================================================================

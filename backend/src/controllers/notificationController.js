@@ -22,7 +22,7 @@ export const getNotifications = asyncHandler(async (req, res) => {
     // --------------------------------------------------
     const paydayAlert = await shouldShowPaydayPopup(
         userId,
-        req.user.preferences?.payday
+        req.user.preferences?.payDay
     );
 
     if (paydayAlert) {
@@ -43,11 +43,11 @@ export const getNotifications = asyncHandler(async (req, res) => {
     reminders.forEach(reminder => {
 
         const leadTime = req.user.preferences?.reminderLeadTime || 3;
-        if (isReminderDue(reminder.dueDay, leadTime)) {
+        if (isReminderDue(reminder.dueDate, leadTime)) {
             notifications.push({
                 type: "reminder",
                 title: reminder.title,
-                dueDay: reminder.dueDay,
+                dueDate: reminder.dueDate,
                 amount: reminder.amount
             });
         }

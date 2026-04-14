@@ -3,6 +3,7 @@ import {
     useContext,
     useEffect,
     useMemo,
+    useRef,
     useState,
     type ReactNode,
 } from "react"
@@ -32,28 +33,46 @@ function AuthProvider({ children }: AuthProviderProps) {
     })
     const [user, setUser] = useState<UserProfile | null>(null)
     const [isAuthLoading, setIsAuthLoading] = useState(true)
+    const refreshInFlightRef = useRef<Promise<void> | null>(null)
 
     const refreshCurrentUser = async () => {
+        if (refreshInFlightRef.current) {
+            return refreshInFlightRef.current
+        }
+
         if (!token) {
             setUser(null)
             setIsAuthLoading(false)
             return
         }
 
-        setIsAuthLoading(true)
+        const runRefresh = async () => {
+            setIsAuthLoading(true)
 
-        try {
-            const currentUser = await getCurrentUser()
-            setUser(currentUser)
-        } catch (error) {
-            console.error("Failed to refresh current user:", error)
-            window.localStorage.removeItem(AUTH_TOKEN_KEY)
-            window.localStorage.removeItem("token")
-            setToken(null)
-            setUser(null)
-        } finally {
-            setIsAuthLoading(false)
+            try {
+                const currentUser = await getCurrentUser()
+                setUser(currentUser)
+            } catch (error: any) {
+                const statusCode = error?.response?.status
+                console.error("Failed to refresh current user:", error)
+
+                // Keep auth session on temporary server limits/transient errors.
+                // Only clear auth when token is truly invalid.
+                if (statusCode === 401 || statusCode === 403) {
+                    window.localStorage.removeItem(AUTH_TOKEN_KEY)
+                    window.localStorage.removeItem("token")
+                    setToken(null)
+                    setUser(null)
+                }
+            } finally {
+                setIsAuthLoading(false)
+                refreshInFlightRef.current = null
+            }
         }
+
+        const promise = runRefresh()
+        refreshInFlightRef.current = promise
+        return promise
     }
 
     useEffect(() => {

@@ -99,23 +99,37 @@
    BUTTONS
 ===================================================== */
 
-.buttonLabelCompact {
-    display: none;
+.headerActionButton {
+    min-height: 34px;
+    padding-inline: 12px;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    line-height: 1.1;
 }
 
-.buttonIconOnly {
-    display: none;
+.buttonIcon {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
+.buttonLabelFull,
+.settingsLabel {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1.1;
+}
+
+.addButton {
+    gap: 6px;
+}
+
 .settingsButton {
-    gap: 8px;
-    padding-inline: 12px;
+    gap: 6px;
 }
 
 .settingsLabel {
-    font-size: 0.86rem;
+    font-size: 0.82rem;
 }
 
 @media (max-width: 1080px) {
@@ -136,6 +150,16 @@
         background: rgba(255, 255, 255, 0.03);
     }
 
+    .headerActionButton {
+        min-height: 32px;
+        padding-inline: 10px;
+        font-size: 0.78rem;
+    }
+
+    .settingsLabel {
+        font-size: 0.78rem;
+    }
+
 }
 
 @media (max-width: 640px) {
@@ -154,12 +178,14 @@
         padding: 7px 22px;
     }
 
-    .buttonLabelFull {
-        display: none;
+    .headerActionButton {
+        min-height: 30px;
+        padding-inline: 9px;
+        font-size: 0.75rem;
     }
 
-    .buttonLabelCompact {
-        display: inline;
+    .settingsLabel {
+        font-size: 0.75rem;
     }
 }
 
@@ -178,14 +204,15 @@
         display: none;
     }
 
-    /* Phones use icons only so the actions stay compact and readable. */
-    .buttonLabelFull,
-    .buttonLabelCompact {
+    .buttonLabelFull {
         display: none;
     }
 
-    .buttonIconOnly {
-        display: inline-flex;
+    .headerActionButton {
+        min-height: 30px;
+        min-width: 34px;
+        padding-inline: 8px;
+        border-radius: 10px;
     }
 
 }
