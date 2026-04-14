@@ -89,7 +89,7 @@ export const validateCategory = (category) => {
 // --------------------------------------------------
 // REMINDER VALIDATION
 // --------------------------------------------------
-export const validateReminder = ({ title, type, amount, dueDay, category }) => {
+export const validateReminder = ({ title, type, amount, dueDate, category }) => {
   if (!title) {
     throw new Error("Reminder title is required");
   }
@@ -102,8 +102,13 @@ export const validateReminder = ({ title, type, amount, dueDay, category }) => {
     throw new Error("Amount must be positive");
   }
 
-  if (dueDay < 1 || dueDay > 31) {
-    throw new Error("dueDay must be between 1 and 31");
+  if (!dueDate) {
+    throw new Error("dueDate is required");
+  }
+
+  const normalizedDueDate = new Date(dueDate);
+  if (Number.isNaN(normalizedDueDate.getTime())) {
+    throw new Error("dueDate must be a valid date");
   }
 
   const allowedCategories = CATEGORIES[type.toUpperCase()];

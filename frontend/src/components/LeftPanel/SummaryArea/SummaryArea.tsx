@@ -8,6 +8,7 @@ import styles from "./SummaryArea.module.css"
 import Filter from "../../reusableComp/Filter/Filter"
 
 const summaryFilterOptions = ["TODAY", "WEEK", "MONTH", "ALL"] as const
+const SUMMARY_FILTER_STORAGE_KEY = "extra_summary_range_filter"
 const defaultTotals: DashboardTotals = {
     income: 0,
     expense: 0,
@@ -23,10 +24,45 @@ function formatCurrency(amount: number) {
     }).format(amount)
 }
 
+function readStoredSummaryRangeFilter() {
+    if (typeof window === "undefined") {
+        return null
+    }
+
+    try {
+        const rawValue = window.localStorage.getItem(SUMMARY_FILTER_STORAGE_KEY)
+
+        if (
+            rawValue === "TODAY" ||
+            rawValue === "WEEK" ||
+            rawValue === "MONTH" ||
+            rawValue === "ALL"
+        ) {
+            return rawValue as RangeFilter
+        }
+    } catch {
+        // ignore storage issues
+    }
+
+    return null
+}
+
 function SummaryArea() {
-    const [activeRange, setActiveRange] = useState<RangeFilter>("TODAY")
+    const [activeRange, setActiveRange] = useState<RangeFilter>(() => readStoredSummaryRangeFilter() ?? "ALL")
     const [totals, setTotals] = useState<DashboardTotals>(defaultTotals)
     const [quote, setQuote] = useState<QuoteEntry | null>(null)
+
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return
+        }
+
+        try {
+            window.localStorage.setItem(SUMMARY_FILTER_STORAGE_KEY, activeRange)
+        } catch {
+            // ignore storage issues
+        }
+    }, [activeRange])
 
     useEffect(() => {
         let isActive = true

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AppIntro from "./components/AppIntro/AppIntro";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
@@ -12,6 +12,12 @@ function App() {
     const [appView, setAppView] = useState<"dashboard" | "settings">("dashboard")
     const { token, user, isAuthLoading } = useAuth()
     const showDashboard = Boolean(token && user)
+
+    useEffect(() => {
+        if (token) {
+            setAuthView("login")
+        }
+    }, [token])
 
     const handleLogoutView = () => {
         setAuthView("login")
@@ -48,7 +54,18 @@ function App() {
                         {/* While auth is bootstrapping we keep the same page frame,
                            so the screen does not jump between layouts. */}
                         {isAuthLoading ? (
-                            <RegisterPage onLoginClick={() => setAuthView("login")} />
+                            <main
+                                style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    display: "grid",
+                                    placeItems: "center",
+                                    color: "var(--text-secondary)",
+                                    fontSize: "0.9rem",
+                                }}
+                            >
+                                Checking your session...
+                            </main>
                         ) : authView === "login" ? (
                             <LoginPage onRegisterClick={() => setAuthView("register")} />
                         ) : (

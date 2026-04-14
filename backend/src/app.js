@@ -38,7 +38,10 @@ const apiLimiter = rateLimiter({
         error: "Too many requests. Please try again later."
     },
     standardHeaders: true, // returns rate limit info in headers
-    legacyHeaders: false
+    legacyHeaders: false,
+    // Dev builds fire many parallel dashboard requests (StrictMode + multi-panel fetches).
+    // Keep limiter active in production, but skip it locally to avoid false 429s.
+    skip: () => process.env.NODE_ENV !== "production",
 });
 
 // --------------------------------------------------

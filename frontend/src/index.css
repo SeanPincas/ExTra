@@ -88,6 +88,19 @@ body,
     --border-soft: rgba(255, 255, 255, 0.08);
     --border-gold: goldenrod;
 
+    /* Heatmap intensity tokens */
+    --heatmap-neutral-0: rgba(255, 255, 255, 0.08);
+    --heatmap-income-1: rgba(119, 186, 145, 0.22);
+    --heatmap-income-2: rgba(119, 186, 145, 0.34);
+    --heatmap-income-3: rgba(119, 186, 145, 0.46);
+    --heatmap-income-4: rgba(119, 186, 145, 0.58);
+    --heatmap-income-5: rgba(119, 186, 145, 0.72);
+    --heatmap-expense-1: rgba(224, 105, 86, 0.22);
+    --heatmap-expense-2: rgba(224, 105, 86, 0.34);
+    --heatmap-expense-3: rgba(224, 105, 86, 0.46);
+    --heatmap-expense-4: rgba(224, 105, 86, 0.58);
+    --heatmap-expense-5: rgba(224, 105, 86, 0.72);
+
     /* ===============================
      PANEL TEXTURE SYSTEM
   =============================== */

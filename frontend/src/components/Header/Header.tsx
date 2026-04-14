@@ -58,27 +58,23 @@ function Header({ onToggleLeftPanel, showLeftPanelToggle = false, onOpenSettings
                 {/* Add Entry */}
                 <button
                     type="button"
-                    className={`btnBase btnGreenSolid ${styles.addButton}`}
+                    className={`btnBase btnGreenSolid ${styles.headerActionButton} ${styles.addButton}`}
                     aria-label="Add Entry"
                     onClick={openAddEntryModal}
                 >
-                    {/* Full label for larger screens. */}
-                    <span className={styles.buttonLabelFull}>+ Add Entry</span>
-                    {/* Compact label for smaller tablets. */}
-                    <span className={styles.buttonLabelCompact}>+ Entry</span>
-                    {/* Icon-only version for phones. */}
-                    <span className={styles.buttonIconOnly} aria-hidden="true">
-                        <Icons.add size={18} />
+                    <span className={styles.buttonIcon} aria-hidden="true">
+                        <Icons.add width={15} height={15} />
                     </span>
+                    <span className={styles.buttonLabelFull}>Add Entry</span>
                 </button>
 
                 <button
                     type="button"
-                    className={`btnBase btnMatteDark ${styles.settingsButton}`}
+                    className={`btnBase btnMatteDark ${styles.headerActionButton} ${styles.settingsButton}`}
                     aria-label="Open account settings"
                     onClick={onOpenSettings}
                 >
-                    <Icons.settings size={18} />
+                    <Icons.settings width={15} height={15} />
                     <span className={styles.settingsLabel}>Settings</span>
                 </button>
 

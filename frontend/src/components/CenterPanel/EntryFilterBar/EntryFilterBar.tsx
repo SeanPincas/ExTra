@@ -15,7 +15,8 @@ interface EntryFilterBarProps {
     onReset: () => void
     onToday: () => void
     onAdd: () => void
-    onDelete: () => void | Promise<void>
+    onBatchDeleteToggle: () => void
+    onBatchDeleteDone: () => void | Promise<void>
     isBatchDeleteMode: boolean
     selectedDeleteCount: number
 }
@@ -34,67 +35,73 @@ function EntryFilterBar({
     onReset,
     onToday,
     onAdd,
-    onDelete,
+    onBatchDeleteToggle,
+    onBatchDeleteDone,
     isBatchDeleteMode,
     selectedDeleteCount,
 }: EntryFilterBarProps) {
+    const isRangeDisabled = Boolean(selectedDate)
+    const rangeDisplayValue = isRangeDisabled ? "~~~" : rangeFilter
+
     return (
         <div className={styles.filterBar}>
             <div className={styles.topRow}>
-                {/* The range control stays compact, then reveals its options
-                   to the right on hover so the main layout remains clean. */}
-                <div className={styles.rangeShell}>
-                    <div className={styles.rangeAnchor}>
-                        <button
-                            type="button"
-                            className={styles.rangeCompact}
-                        >
-                            <span className={styles.rangeLabel}>Filter:</span>
-                            <span className={styles.rangeValue}>{rangeFilter}</span>
-                        </button>
-
-                        <div className={styles.rangeExpanded}>
-                            {rangeOptions.map((option, index) => (
-                                <button
-                                    key={option}
-                                    type="button"
-                                    className={`${styles.rangeOption} ${rangeFilter === option && !selectedDate ? styles.rangeOptionActive : ""}`}
-                                    onMouseDown={(event) => event.preventDefault()}
-                                    onClick={() => onRangeChange(option)}
-                                >
-                                    <span>{option}</span>
-                                    {index < rangeOptions.length - 1 && (
-                                        <span className={styles.rangePipe} aria-hidden="true">|</span>
-                                    )}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
+                <label className={`${styles.inlineControl} ${styles.rangeShell}`}>
+                    <span className={styles.categorySelectShell}>
+                        <span className={styles.inlineLabel}>Filter</span>
+                        <span className={styles.rangeValueCluster}>
+                            <span className={styles.categoryValue}>{rangeDisplayValue}</span>
+                            <Icons.down size={15} />
+                        </span>
+                    </span>
+                    <select
+                        className={styles.inlineSelect}
+                        value={rangeFilter}
+                        disabled={isRangeDisabled}
+                        onChange={(event) => onRangeChange(event.target.value as RangeFilter)}
+                    >
+                        {rangeOptions.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+                </label>
 
                 <div className={styles.topActions}>
                     <button
                         type="button"
-                        className={`${styles.modeActionButton} ${styles.modeDeleteButton} ${isBatchDeleteMode ? styles.modeDeleteButtonActive : ""}`}
-                        aria-label={isBatchDeleteMode && selectedDeleteCount > 0 ? `Delete ${selectedDeleteCount} selected entries` : "Toggle batch delete mode"}
-                        title={isBatchDeleteMode && selectedDeleteCount > 0 ? `Delete ${selectedDeleteCount} selected entries` : "Delete"}
-                        onClick={() => {
-                            void onDelete()
-                        }}
+                        className={`${styles.modeActionButton} ${styles.modeDeleteButton}`}
+                        aria-label={isBatchDeleteMode ? "Cancel batch delete mode" : "Enter batch delete mode"}
+                        title={isBatchDeleteMode ? "Cancel" : "Delete"}
+                        onClick={onBatchDeleteToggle}
                     >
-                        <Icons.delete size={14} />
-                        <span>{isBatchDeleteMode && selectedDeleteCount > 0 ? `Delete (${selectedDeleteCount})` : "Delete"}</span>
+                        {isBatchDeleteMode ? <Icons.close size={14} /> : <Icons.delete size={14} />}
+                        <span>
+                            {isBatchDeleteMode ? "Cancel" : "Delete"}
+                        </span>
                     </button>
 
                     <button
                         type="button"
                         className={`${styles.modeActionButton} ${styles.modeAddButton}`}
-                        aria-label="Add entry"
-                        title="Add"
-                        onClick={onAdd}
+                        aria-label={isBatchDeleteMode ? "Done batch deleting entries" : "Add entry"}
+                        title={isBatchDeleteMode ? "Done" : "Add"}
+                        onClick={() => {
+                            if (isBatchDeleteMode) {
+                                void onBatchDeleteDone()
+                                return
+                            }
+
+                            onAdd()
+                        }}
                     >
-                        <Icons.add size={14} />
-                        <span>Add</span>
+                        {isBatchDeleteMode ? <Icons.checkSquare size={14} /> : <Icons.add size={14} />}
+                        <span>
+                            {isBatchDeleteMode
+                                ? (selectedDeleteCount > 0 ? `Delete (${selectedDeleteCount})` : "Done")
+                                : "Add"}
+                        </span>
                     </button>
                 </div>
 

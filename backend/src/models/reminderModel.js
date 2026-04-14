@@ -30,12 +30,9 @@ const reminderSchema = new mongoose.Schema(
             type: String,
             default: "Bills"
         },
-        // day of month (1–31)
-        dueDay: {
-            type: Number,
-            required: true,
-            min: 1,
-            max: 31
+        dueDate: {
+            type: Date,
+            required: true
         },
         // optional description
         notes: {

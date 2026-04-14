@@ -1,0 +1,165 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(18px, 4vw, 32px);
+    background: rgba(6, 6, 7, 0.62);
+    backdrop-filter: blur(10px);
+}
+
+.modal {
+    position: relative;
+    width: min(620px, 100%);
+    max-height: min(88vh, 720px);
+    display: grid;
+    gap: 16px;
+    padding: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border-soft);
+    border-radius: 22px;
+    background:
+        radial-gradient(circle at 16% 18%, rgba(143, 108, 73, 0.1), transparent 24%),
+        radial-gradient(circle at center, rgba(78, 78, 78, 0.14), rgba(12, 12, 13, 0.96) 78%),
+        var(--panel-texture);
+    background-size: auto, cover, 1100px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 28px 52px rgba(0, 0, 0, 0.34);
+}
+
+.topCornerActions {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+}
+
+.closeButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding-top: 4px;
+    padding-right: 56px;
+}
+
+.headerCopy {
+    display: grid;
+    gap: 4px;
+}
+
+.title {
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    line-height: 1;
+    color: var(--text-primary);
+}
+
+.subtitle {
+    max-width: 52ch;
+    color: var(--text-secondary);
+    font-size: 0.84rem;
+    line-height: 1.45;
+}
+
+.calendarShell {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 16% 16%, #4a3626 0%, #2b1e16 44%, #1c140f 100%),
+        var(--panel-texture),
+        var(--bg-leather);
+    background-size: auto, cover, auto;
+    padding: 12px;
+    display: grid;
+    gap: 10px;
+}
+
+.calendarTopRow {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.monthNav {
+    min-width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.monthLabel {
+    text-align: center;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.weekday {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.dayCell {
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background:
+        linear-gradient(180deg, #232425, #18191a),
+        var(--panel-texture);
+    background-size: cover, 820px;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 0.84rem;
+    cursor: pointer;
+}
+
+.dayCellMuted {
+    opacity: 0.5;
+}
+
+.dayCellSelected {
+    border-color: rgba(218, 165, 32, 0.28);
+    box-shadow: inset 0 0 0 1px rgba(218, 165, 32, 0.18);
+}
+
+@media (max-width: 480px) {
+    .modal {
+        padding: 14px;
+        border-radius: 16px;
+    }
+}
+
