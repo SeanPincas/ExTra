@@ -20,6 +20,11 @@ function clampPercent(value: number) {
     return Math.max(0, Math.min(100, value))
 }
 
+interface RightPanelProps {
+    showPanelHandle?: boolean
+    onTogglePanel?: () => void
+}
+
 const SavingsSection = memo(function SavingsSection({ stats }: { stats: DashboardStatsData }) {
     const savingsGoal = stats.savingsTracker?.goal ?? 0
     const currentSavings = stats.savingsTracker?.current ?? stats.totals.balance
@@ -41,7 +46,7 @@ const SavingsSection = memo(function SavingsSection({ stats }: { stats: Dashboar
     )
 })
 
-function RightPanel() {
+function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps) {
     const { rangeFilter } = useFinance()
     const [stats, setStats] = useState<DashboardStatsData>(defaultStats)
     const [isMainLoading, setIsMainLoading] = useState(true)
@@ -80,9 +85,22 @@ function RightPanel() {
 
     return (
         <aside className={styles.rightPanelRoot}>
+            {showPanelHandle ? (
+                <button
+                    type="button"
+                    className={styles.statsPanelHandle}
+                    aria-label="Close insights panel"
+                    onClick={onTogglePanel}
+                >
+                    <Icons.stats width={15} height={15} />
+                </button>
+            ) : null}
+
             <div className={styles.rightPanelHeader}>
                 <div className={styles.rightPanelTitleRow}>
-                    <h2 className={styles.rightPanelTitle}>Insights</h2>
+                    <div className={styles.rightPanelTitleGroup}>
+                        <h2 className={styles.rightPanelTitle}>Insights</h2>
+                    </div>
                     <button
                         ref={hintButtonRef}
                         type="button"

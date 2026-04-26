@@ -1,0 +1,63 @@
+.shell {
+    position: relative;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 10px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    overflow: hidden;
+    color: var(--text-primary);
+}
+
+.shell:hover {
+    border-color: rgba(218, 165, 32, 0.18);
+}
+
+.content {
+    width: 100%;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+}
+
+.label {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+.value {
+    color: var(--text-primary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    border: none;
+    background-color: #171718;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    opacity: 0;
+    cursor: pointer;
+    color-scheme: dark;
+}
+
+.select option {
+    background-color: #171718;
+    color: var(--text-primary);
+    font: inherit;
+}

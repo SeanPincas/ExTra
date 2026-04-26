@@ -2,6 +2,11 @@
     display: grid;
     gap: 9px;
     padding: 10px 8px;
+    border-radius: 12px;
+    background:
+        linear-gradient(180deg, rgba(24, 24, 28, 0.58), rgba(18, 18, 22, 0.64)),
+        url("/src/assets/leather.png");
+    background-size: cover, cover;
 }
 
 .contentBlockHeader {

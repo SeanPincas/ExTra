@@ -10,3 +10,9 @@ export interface GetCurrentQuoteResponse {
     message: string
     data: QuoteEntry
 }
+
+export interface GetQuoteLibraryResponse {
+    success: boolean
+    message: string
+    data: QuoteEntry[]
+}

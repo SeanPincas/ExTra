@@ -15,9 +15,12 @@ interface DashboardPageProps {
 function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
     const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(false)
     const [isRightPanelOpen, setIsRightPanelOpen] = useState(false)
+    const [isRightPanelOverlayMode, setIsRightPanelOverlayMode] = useState(() => window.innerWidth <= 900)
 
     useEffect(() => {
         const handleResize = () => {
+            setIsRightPanelOverlayMode(window.innerWidth <= 900)
+
             if (window.innerWidth > 1100) {
                 setIsLeftPanelOpen(false)
             }
@@ -57,6 +60,7 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
                     onOpenSettings={onOpenSettings}
                     onToggleLeftPanel={handleToggleLeftPanel}
                     showLeftPanelToggle
+                    isLeftPanelOpen={isLeftPanelOpen}
                 />
             }
             content={
@@ -73,11 +77,18 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
                     </div>
 
                     <div className={styles.centerShell}>
-                        <CenterPanel onOpenStatsPanel={handleToggleRightPanel} />
+                        <CenterPanel
+                            onOpenStatsPanel={handleToggleRightPanel}
+                            showStatsButton={isRightPanelOverlayMode && !isRightPanelOpen}
+                            isStatsPanelOpen={isRightPanelOpen}
+                        />
                     </div>
 
                     <div className={`${styles.panelShell} ${styles.rightShell} ${isRightPanelOpen ? styles.panelOpen : ""}`}>
-                        <RightPanel />
+                        <RightPanel
+                            showPanelHandle={isRightPanelOverlayMode && isRightPanelOpen}
+                            onTogglePanel={handleToggleRightPanel}
+                        />
                     </div>
                 </div>
             }

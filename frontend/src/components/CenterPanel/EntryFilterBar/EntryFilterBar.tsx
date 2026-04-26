@@ -1,6 +1,8 @@
 import { Icons } from "../../../utils/iconLibrary"
 import type { EntryTypeFilter, RangeFilter } from "../../../types/financeFilters"
 import type { FinanceCategory } from "../../../utils/financeConstants"
+import FinanceTypeSwitch from "../../reusableComp/FinanceTypeSwitch/FinanceTypeSwitch"
+import InlineSelectControl from "../../reusableComp/InlineSelectControl/InlineSelectControl"
 import styles from "./EntryFilterBar.module.css"
 
 interface EntryFilterBarProps {
@@ -22,6 +24,11 @@ interface EntryFilterBarProps {
 }
 
 const rangeOptions: RangeFilter[] = ["TODAY", "WEEK", "MONTH", "ALL"]
+const typeFilterOptions = [
+    { value: "ALL", label: "ALL", tone: "neutral" },
+    { value: "INCOME", label: "INCOME", tone: "income" },
+    { value: "EXPENSE", label: "EXPENSE", tone: "expense" },
+] as const
 
 function EntryFilterBar({
     rangeFilter,
@@ -47,35 +54,22 @@ function EntryFilterBar({
     return (
         <div className={styles.filterBar}>
             <div className={styles.topRow}>
-                <label className={`${styles.inlineControl} ${styles.rangeShell}`}>
-                    <span className={styles.categorySelectShell}>
-                        <span className={styles.inlineLabel}>Filter</span>
-                        <span className={styles.rangeValueCluster}>
-                            <span className={styles.categoryValue}>{rangeDisplayValue}</span>
-                            <Icons.down size={15} />
-                        </span>
-                    </span>
-                    <select
-                        className={styles.inlineSelect}
-                        value={safeRangeValue}
-                        onChange={(event) => {
-                            const nextRange = event.target.value as RangeFilter
-                            // Block "ALL" only while date-navigation is active.
-                            if (isRangeDisabled && nextRange === "ALL") return
-                            onRangeChange(nextRange)
-                        }}
-                    >
-                        {rangeOptions.map((option) => (
-                            <option
-                                key={option}
-                                value={option}
-                                disabled={isRangeDisabled && option === "ALL"}
-                            >
-                                {option}
-                            </option>
-                        ))}
-                    </select>
-                </label>
+                <InlineSelectControl
+                    className={styles.rangeShell}
+                    label="Filter"
+                    displayValue={rangeDisplayValue}
+                    selectValue={safeRangeValue}
+                    options={rangeOptions.map((option) => ({
+                        value: option,
+                        label: option,
+                        disabled: isRangeDisabled && option === "ALL",
+                    }))}
+                    onChange={(nextValue) => {
+                        const nextRange = nextValue as RangeFilter
+                        if (isRangeDisabled && nextRange === "ALL") return
+                        onRangeChange(nextRange)
+                    }}
+                />
 
                 <div className={styles.topActions}>
                     <button
@@ -141,45 +135,24 @@ function EntryFilterBar({
 
             <div className={styles.bottomRow}>
                 <div className={styles.bottomLeft}>
-                    <label className={`${styles.inlineControl} ${styles.categoryShell}`}>
-                        <span className={styles.categorySelectShell}>
-                            <span className={styles.inlineLabel}>Category</span>
-                            <span className={styles.categoryValue}>{categoryFilter}</span>
-                            <Icons.down size={15} />
-                        </span>
-                        <select
-                            className={styles.inlineSelect}
-                            value={categoryFilter}
-                            onChange={(event) => onCategoryChange(event.target.value as "ALL" | FinanceCategory)}
-                        >
-                            {categories.map((category) => (
-                                <option key={category} value={category}>
-                                    {category}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
+                    <InlineSelectControl
+                        className={styles.categoryShell}
+                        label="Category"
+                        displayValue={categoryFilter}
+                        selectValue={categoryFilter}
+                        options={categories.map((category) => ({
+                            value: category,
+                            label: category,
+                        }))}
+                        onChange={(nextValue) => onCategoryChange(nextValue as "ALL" | FinanceCategory)}
+                    />
 
-                    <div className={styles.typeSwitch} role="group" aria-label="Type filter">
-                        {(["ALL", "INCOME", "EXPENSE"] as const).map((option) => {
-                            const activeClass =
-                                option === "INCOME"
-                                    ? styles.typeButtonIncomeActive
-                                    : option === "EXPENSE"
-                                        ? styles.typeButtonExpenseActive
-                                        : styles.typeButtonNeutralActive
-
-                            return (
-                            <button
-                                key={option}
-                                type="button"
-                                className={`${styles.typeButton} ${typeFilter === option ? `${styles.typeButtonActive} ${activeClass}` : ""}`}
-                                onClick={() => onTypeChange(option)}
-                            >
-                                <span className={styles.typeButtonLabel}>{option}</span>
-                            </button>
-                            )
-                        })}
+                    <div className={styles.typeSwitch}>
+                        <FinanceTypeSwitch
+                            value={typeFilter}
+                            options={typeFilterOptions}
+                            onChange={(nextType) => onTypeChange(nextType as EntryTypeFilter)}
+                        />
                     </div>
                 </div>
 

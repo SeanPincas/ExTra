@@ -44,6 +44,8 @@ function ReminderArea() {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false)
     const [confirmMode, setConfirmMode] = useState<"multi" | "single">("multi")
     const sectionRef = useRef<HTMLElement | null>(null)
+    const reminderTitleRefs = useRef<Record<string, HTMLSpanElement | null>>({})
+    const [titleOverflowDistance, setTitleOverflowDistance] = useState<Record<string, number>>({})
 
     const activeReminder = useMemo(() => (
         reminders.find((reminder) => reminder._id === activeReminderId) ?? null
@@ -117,6 +119,50 @@ function ReminderArea() {
         document.addEventListener("pointerdown", handlePointerDown, { capture: true })
         return () => document.removeEventListener("pointerdown", handlePointerDown, { capture: true })
     }, [activeReminderId, isConfirmOpen, isEditModalOpen, isViewModalOpen, selectedIds.length])
+
+    useEffect(() => {
+        const checkTitleOverflow = () => {
+            const nextDistances: Record<string, number> = {}
+
+            reminders.forEach((reminder) => {
+                const titleNode = reminderTitleRefs.current[reminder._id]
+                if (!titleNode) {
+                    return
+                }
+
+                const viewportWidth = titleNode.parentElement?.clientWidth ?? 0
+                const contentWidth = titleNode.scrollWidth
+                const overflowDistance = Math.ceil(contentWidth - viewportWidth)
+                if (overflowDistance > 2) {
+                    nextDistances[reminder._id] = overflowDistance
+                }
+            })
+
+            setTitleOverflowDistance(nextDistances)
+        }
+
+        checkTitleOverflow()
+        window.addEventListener("resize", checkTitleOverflow)
+
+        let resizeObserver: ResizeObserver | null = null
+        if (typeof ResizeObserver !== "undefined") {
+            resizeObserver = new ResizeObserver(() => {
+                checkTitleOverflow()
+            })
+
+            reminders.forEach((reminder) => {
+                const titleNode = reminderTitleRefs.current[reminder._id]
+                if (titleNode) {
+                    resizeObserver?.observe(titleNode)
+                }
+            })
+        }
+
+        return () => {
+            window.removeEventListener("resize", checkTitleOverflow)
+            resizeObserver?.disconnect()
+        }
+    }, [isMultiDeleteMode, reminders])
 
     const openAddModal = () => {
         setIsAddModalOpen(true)
@@ -327,6 +373,8 @@ function ReminderArea() {
                         const dueLabel = formatDueLabel(reminder.dueDate)
                         const amountLabel = formatMoney(reminder.amount, currency)
                         const isChecked = selectedIds.includes(reminder._id)
+                        const overflowDistance = titleOverflowDistance[reminder._id] ?? 0
+                        const shouldAnimateTitle = overflowDistance > 0
 
                         return (
                             <button
@@ -347,6 +395,7 @@ function ReminderArea() {
                             >
                                 <input
                                     type="checkbox"
+                                    className={styles.reminderCheck}
                                     checked={isMultiDeleteMode ? isChecked : reminder.active === false}
                                     onChange={() => {
                                         if (isMultiDeleteMode) {
@@ -359,7 +408,18 @@ function ReminderArea() {
                                     onClick={(event) => event.stopPropagation()}
                                     aria-label={isMultiDeleteMode ? "Select reminder for deletion" : "Mark reminder as done"}
                                 />
-                                <span className={styles.reminderTitle}>{reminder.title}</span>
+                                <span className={styles.reminderTitleViewport}>
+                                    <span
+                                        ref={(node) => {
+                                            reminderTitleRefs.current[reminder._id] = node
+                                        }}
+                                        className={`${styles.reminderTitle} ${shouldAnimateTitle ? styles.reminderTitleMarquee : ""}`}
+                                        style={shouldAnimateTitle ? { ["--marquee-shift" as any]: `${overflowDistance}px` } : undefined}
+                                        title={reminder.title}
+                                    >
+                                        {reminder.title}
+                                    </span>
+                                </span>
                                 <span className={styles.reminderDue}>{dueLabel}</span>
                                 <span className={styles.reminderAmount}>{amountLabel}</span>
                             </button>

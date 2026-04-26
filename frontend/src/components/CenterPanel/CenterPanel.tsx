@@ -13,15 +13,18 @@ import ConfirmModal from "../reusableComp/ConfirmModal/ConfirmModal"
 
 interface CenterPanelProps {
     onOpenStatsPanel?: () => void
+    showStatsButton?: boolean
+    isStatsPanelOpen?: boolean
 }
 
-function CenterPanel({ onOpenStatsPanel }: CenterPanelProps) {
+function CenterPanel({ onOpenStatsPanel, showStatsButton = false, isStatsPanelOpen = false }: CenterPanelProps) {
     const [isNavigatorPeekOpen, setIsNavigatorPeekOpen] = useState(false)
     const [isAddEntryOpen, setIsAddEntryOpen] = useState(false)
     const [editingEntry, setEditingEntry] = useState<FinanceDisplayEntry | null>(null)
     const [isBatchDeleteMode, setIsBatchDeleteMode] = useState(false)
     const [selectedDeleteEntryIds, setSelectedDeleteEntryIds] = useState<string[]>([])
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
+    const [pendingDeleteEntry, setPendingDeleteEntry] = useState<FinanceDisplayEntry | null>(null)
     const navigatorShellRef = useRef<HTMLDivElement | null>(null)
     const {
         rangeFilter,
@@ -103,7 +106,8 @@ function CenterPanel({ onOpenStatsPanel }: CenterPanelProps) {
     }
 
     const handleDeleteEntry = async (entry: FinanceDisplayEntry) => {
-        await deleteFinanceEntry(entry.id)
+        setPendingDeleteEntry(entry)
+        setIsDeleteConfirmOpen(true)
     }
 
     const handleOpenAddEntry = () => {
@@ -141,6 +145,23 @@ function CenterPanel({ onOpenStatsPanel }: CenterPanelProps) {
         setSelectedDeleteEntryIds([])
         setIsBatchDeleteMode(false)
         setIsDeleteConfirmOpen(false)
+        setPendingDeleteEntry(null)
+    }
+
+    const confirmSingleDelete = async () => {
+        if (!pendingDeleteEntry) {
+            setIsDeleteConfirmOpen(false)
+            return
+        }
+
+        await deleteFinanceEntry(pendingDeleteEntry.id)
+        setPendingDeleteEntry(null)
+        setIsDeleteConfirmOpen(false)
+    }
+
+    const closeDeleteConfirm = () => {
+        setIsDeleteConfirmOpen(false)
+        setPendingDeleteEntry(null)
     }
 
     const handleToggleDeleteEntrySelected = (entryId: string) => {
@@ -161,6 +182,8 @@ function CenterPanel({ onOpenStatsPanel }: CenterPanelProps) {
                 searchDraft={searchDraft}
                 onSearchChange={setSearchDraft}
                 onOpenStatsPanel={onOpenStatsPanel}
+                showStatsButton={showStatsButton}
+                isStatsPanelOpen={isStatsPanelOpen}
             />
 
             <div className={styles.filterStack}>
@@ -252,12 +275,16 @@ function CenterPanel({ onOpenStatsPanel }: CenterPanelProps) {
 
         {isDeleteConfirmOpen && (
             <ConfirmModal
-                title="Delete selected entries?"
-                message={`This will permanently delete ${selectedDeleteEntryIds.length} entr${selectedDeleteEntryIds.length === 1 ? "y" : "ies"}.`}
+                title={pendingDeleteEntry
+                    ? "Are you sure you want to delete this Entry?"
+                    : "Delete selected entries?"}
+                message={pendingDeleteEntry
+                    ? "Note that deleting this Entry will have an effect on your financial statistics, if the entry was a mistake you can edit or delete this entry."
+                    : `This will permanently delete ${selectedDeleteEntryIds.length} entr${selectedDeleteEntryIds.length === 1 ? "y" : "ies"}.`}
                 confirmLabel="Delete"
                 tone="danger"
-                onClose={() => setIsDeleteConfirmOpen(false)}
-                onConfirm={confirmBatchDelete}
+                onClose={closeDeleteConfirm}
+                onConfirm={pendingDeleteEntry ? confirmSingleDelete : confirmBatchDelete}
             />
         )}
         </>

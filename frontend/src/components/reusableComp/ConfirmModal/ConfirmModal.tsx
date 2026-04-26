@@ -67,9 +67,19 @@ function ConfirmModal({
                 </div>
 
                 <div className={styles.header}>
-                    <div className={styles.headerCopy}>
-                        <h2 id="confirm-modal-title" className={styles.title}>{title}</h2>
-                        <p className={styles.subtitle}>{message}</p>
+                    <span className={`${styles.intentTag} ${tone === "danger" ? styles.intentTagDanger : styles.intentTagNeutral}`}>
+                        {tone === "danger" ? "Danger Action" : "Confirmation"}
+                    </span>
+
+                    <div className={styles.headerRow}>
+                        <span className={`${styles.intentIcon} ${tone === "danger" ? styles.intentIconDanger : styles.intentIconNeutral}`} aria-hidden="true">
+                            {tone === "danger" ? <Icons.delete size={14} /> : <Icons.checkSquare size={14} />}
+                        </span>
+
+                        <div className={styles.headerCopy}>
+                            <h2 id="confirm-modal-title" className={styles.title}>{title}</h2>
+                            <p className={styles.subtitle}>{message}</p>
+                        </div>
                     </div>
                 </div>
 

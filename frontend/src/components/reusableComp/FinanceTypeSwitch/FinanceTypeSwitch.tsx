@@ -1,19 +1,21 @@
-import type { FinanceEntryType } from "../../../utils/financeConstants"
 import {
     FINANCE_TYPE_SWITCH_OPTIONS,
+    type FinanceTypeSwitchOption,
     getNextFinanceType,
 } from "../../../utils/financeTypeSwitch.utils"
 import styles from "./FinanceTypeSwitch.module.css"
 
 interface FinanceTypeSwitchProps {
-    value: FinanceEntryType
-    onChange: (nextValue: FinanceEntryType) => void
+    value: string
+    onChange: (nextValue: string) => void
+    options?: readonly FinanceTypeSwitchOption[]
+    className?: string
 }
 
-function FinanceTypeSwitch({ value, onChange }: FinanceTypeSwitchProps) {
+function FinanceTypeSwitch({ value, onChange, options = FINANCE_TYPE_SWITCH_OPTIONS, className = "" }: FinanceTypeSwitchProps) {
     return (
-        <div className={styles.switchRoot} role="tablist" aria-label="Finance type switch">
-            {FINANCE_TYPE_SWITCH_OPTIONS.map((option) => {
+        <div className={`${styles.switchRoot} ${className}`.trim()} role="tablist" aria-label="Finance type switch">
+            {options.map((option) => {
                 const isActive = option.value === value
 
                 return (
@@ -27,7 +29,7 @@ function FinanceTypeSwitch({ value, onChange }: FinanceTypeSwitchProps) {
                         onKeyDown={(event) => {
                             if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
                                 event.preventDefault()
-                                onChange(getNextFinanceType(value))
+                                onChange(getNextFinanceType(value, options))
                             }
                         }}
                     >

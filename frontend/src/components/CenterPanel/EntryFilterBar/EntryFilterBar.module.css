@@ -73,15 +73,8 @@
 
 .rangeShell {
     --filter-shell-width: clamp(132px, 13.5vw, 164px);
-    position: relative;
     flex: 0 1 var(--filter-shell-width);
-    min-height: 32px;
     width: var(--filter-shell-width);
-    padding: 0 11px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 11px;
-    background: rgba(255, 255, 255, 0.03);
-    overflow: hidden;
 }
 
 .inlineControl {
@@ -94,15 +87,8 @@
 }
 
 .categoryShell {
-    position: relative;
     flex: 0 1 var(--filter-shell-width);
-    min-height: 32px;
     width: var(--filter-shell-width);
-    padding: 0 11px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 11px;
-    background: rgba(255, 255, 255, 0.03);
-    overflow: hidden;
 }
 
 .inlineLabel {
@@ -175,18 +161,14 @@
     font: inherit;
 }
 
-.categoryShell:hover {
-    border-color: rgba(218, 165, 32, 0.18);
-}
-
 .typeSwitch {
     display: inline-flex;
     align-items: center;
     flex-shrink: 0;
-    padding: 3px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 11px;
-    background: rgba(255, 255, 255, 0.03);
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
 }
 
 .typeButton {

@@ -423,7 +423,10 @@
     padding: 8px 12px;
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 0 0 14px 14px;
-    background: rgba(255, 255, 255, 0.03);
+    background:
+        linear-gradient(180deg, rgba(34, 34, 40, 0.44), rgba(24, 24, 30, 0.5)),
+        url("/src/assets/leather.png");
+    background-size: cover, cover;
     animation: breakdownReveal 180ms ease;
 }
 
