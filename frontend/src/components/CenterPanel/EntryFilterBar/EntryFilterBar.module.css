@@ -113,9 +113,9 @@
 .categorySelectShell {
     height: 100%;
     min-height: 32px;
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     min-width: 0;
     color: var(--text-primary);
 }
@@ -123,20 +123,30 @@
 .rangeShell .categorySelectShell {
     width: 100%;
     position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0;
+}
+
+.rangeShell .inlineLabel {
+    justify-self: start;
 }
 
 .rangeValueCluster {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 4px;
+    justify-self: center;
+    width: max-content;
+    min-width: 0;
 }
 
 .categoryValue {
     color: var(--text-primary);
     font-size: 0.78rem;
+    text-align: center;
     font-weight: 600;
     min-width: 0;
     overflow: hidden;

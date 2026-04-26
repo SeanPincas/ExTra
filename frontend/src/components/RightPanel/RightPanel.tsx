@@ -1,10 +1,11 @@
-import { memo, useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
+import { memo, useEffect, useRef, useState } from "react"
 import styles from "./RightPanel.module.css"
 import { Icons } from "../../utils/iconLibrary"
-import type { DashboardStatsData, StatsTrendPoint, TopCategoryEntry } from "../../types/stats"
+import type { DashboardStatsData } from "../../types/stats"
 import { getDashboardStats } from "../../api/statsAPI"
 import { useFinance } from "../../context/FinanceContext"
 import CalendarHeatmap from "./CalendarHeatmap/CalendarHeatmap"
+import StatisticsSection from "./statistics/StatisticsSection"
 
 const defaultStats: DashboardStatsData = {
     totals: { income: 0, expense: 0, balance: 0 },
@@ -18,93 +19,6 @@ function clampPercent(value: number) {
     if (Number.isNaN(value)) return 0
     return Math.max(0, Math.min(100, value))
 }
-
-function buildTopCategories(stats: DashboardStatsData): TopCategoryEntry[] {
-    const topEntries = Array.isArray(stats.topExpenseCategories) ? stats.topExpenseCategories : []
-    const totalExpense = stats.totals.expense > 0 ? stats.totals.expense : 0
-    return topEntries.slice(0, 5).map(([category, total]) => ({
-        category,
-        total,
-        percentage: clampPercent(totalExpense > 0 ? (total / totalExpense) * 100 : 0),
-    }))
-}
-
-function getTrendMax(trend: StatsTrendPoint[]) {
-    return trend.reduce((maxAmount, point) => Math.max(maxAmount, point.expense, point.income), 0)
-}
-
-const StatisticsSection = memo(function StatisticsSection({ stats }: { stats: DashboardStatsData }) {
-    const topCategories = useMemo(() => buildTopCategories(stats), [stats])
-    const trend = useMemo(() => (Array.isArray(stats.trend) ? stats.trend : []).slice(-7), [stats])
-    const trendMax = useMemo(() => getTrendMax(trend), [trend])
-
-    return (
-        <section className={styles.statisticsSectionCard}>
-            <div className={styles.contentBlockHeader}>
-                <Icons.chart width={14} height={14} />
-                <h3 className={styles.contentBlockTitle}>3 Statistics Graph</h3>
-            </div>
-            <div className={styles.categoryBreakdownSection}>
-                <h4 className={styles.graphHeading}>Top Expense Categories</h4>
-                {topCategories.length ? (
-                    <div className={styles.categoryBreakdownList}>
-                        {topCategories.map((category) => (
-                            <div key={category.category} className={styles.categoryBreakdownRow}>
-                                <div className={styles.categoryBreakdownMeta}>
-                                    <span>{category.category}</span>
-                                    <span>{formatCurrency(category.total)}</span>
-                                </div>
-                                <div className={styles.categoryBreakdownTrack}>
-                                    <span className={styles.categoryBreakdownFill} style={{ width: `${category.percentage}%` }} />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p className={styles.panelStateText}>No expense categories for this range.</p>
-                )}
-            </div>
-            <div className={styles.trendSection}>
-                <h4 className={styles.graphHeading}>7-Day Spending Trend</h4>
-                {trend.length ? (
-                    <div className={styles.trendBarsGrid}>
-                        {trend.map((point) => {
-                            const amount = point.expense
-                            const ratio = trendMax > 0 ? Math.max(0.08, amount / trendMax) : 0.08
-                            return (
-                                <div key={point.date} className={styles.trendBarColumn}>
-                                    <span className={styles.trendBarFill} style={{ height: `${Math.round(ratio * 100)}%` }} title={`${point.date}: ${formatCurrency(amount)}`} />
-                                </div>
-                            )
-                        })}
-                    </div>
-                ) : (
-                    <p className={styles.panelStateText}>No trend data for this range.</p>
-                )}
-            </div>
-            <div className={styles.distributionSection}>
-                <h4 className={styles.graphHeading}>Expense Distribution</h4>
-                {topCategories.length ? (
-                    <div className={styles.distributionProgressList}>
-                        {topCategories.slice(0, 3).map((category) => (
-                            <div key={`${category.category}-ring`} className={styles.distributionProgressRow}>
-                                <div className={styles.distributionProgressRing} style={{ "--progress": `${category.percentage}%` } as CSSProperties}>
-                                    <span>{Math.round(category.percentage)}%</span>
-                                </div>
-                                <div className={styles.distributionProgressMeta}>
-                                    <strong>{category.category}</strong>
-                                    <span>{formatCurrency(category.total)}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <p className={styles.panelStateText}>No distribution data for this range.</p>
-                )}
-            </div>
-        </section>
-    )
-})
 
 const SavingsSection = memo(function SavingsSection({ stats }: { stats: DashboardStatsData }) {
     const savingsGoal = stats.savingsTracker?.goal ?? 0

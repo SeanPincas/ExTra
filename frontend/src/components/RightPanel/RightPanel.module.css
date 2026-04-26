@@ -65,12 +65,15 @@
     overflow-y: auto;
 }
 
-.heatmapSectionCard,
+.rightPanelBody > * {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .statisticsSectionCard,
 .savingsSectionCard {
     display: grid;
-    gap: 9px;
-    padding: 10px 8px;
+    gap: 4px;
+    padding: 8px 7px;
 }
 
 .contentBlockHeader {
@@ -87,63 +90,14 @@
     color: var(--text-primary);
 }
 
-.heatmapMonthControls {
-    width: 100%;
+.statisticsChartsStack {
     display: grid;
-    grid-template-columns: 24px 1fr 24px;
-    align-items: center;
-    gap: 8px;
+    gap: 2px;
 }
 
-.heatmapMonthButton {
-    width: 24px;
-    height: 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 7px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.02);
-    color: var(--text-secondary);
-    cursor: pointer;
-}
-
-.heatmapMonthLabel {
-    justify-self: center;
-    font-size: 0.72rem;
-    color: var(--text-secondary);
-}
-
-.heatmapGridContainer {
-    padding: 7px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.heatmapCalendarGrid {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 5px;
-}
-
-.heatmapDayCell {
-    height: 22px;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    padding: 0;
-}
-
-.heatmapDayCellMuted {
-    opacity: 0.35;
-}
-
-.heatmapDayNumber {
-    font-size: 0.64rem;
-    color: rgba(255, 255, 255, 0.9);
+.statisticsChartBlock {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 2px;
 }
 
 .graphHeading {
@@ -269,280 +223,6 @@
 .savingsProgressLabel {
     font-size: 0.72rem;
     color: var(--text-secondary);
-}
-
-.heatmapInsightCloud {
-    position: fixed;
-    width: min(332px, calc(100vw - 24px));
-    max-height: min(420px, calc(100vh - 24px));
-    overflow: auto;
-    padding: 10px 11px;
-    border: 1px solid rgba(129, 141, 155, 0.45);
-    border-radius: 12px;
-    background:
-        linear-gradient(156deg, rgba(244, 247, 250, 0.97) 0%, rgba(228, 234, 240, 0.96) 54%, rgba(214, 221, 229, 0.96) 100%),
-        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 3px, rgba(0, 0, 0, 0.02) 3px 6px);
-    color: #1f2933;
-    z-index: 1000;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.75),
-        0 14px 30px rgba(3, 10, 18, 0.28);
-}
-
-.heatmapInsightCloudGrid {
-    display: flex;
-    align-items: center;
-    gap: 0;
-}
-
-.heatmapInsightCloudInfo {
-    display: grid;
-    gap: 6px;
-    flex: 1 1 auto;
-    min-width: 80px;
-    width: auto;
-    max-width: 100%;
-}
-
-.heatmapInsightCloudInfo > * {
-    width: auto;
-    min-width: 114px;
-    max-width: 100%;
-}
-
-/* Debug rainbow rows for first-column spacing diagnostics */
-.heatmapInsightCloudInfo > :nth-child(1) { background: rgba(255, 0, 0, 0.14); border-radius: 4px; }
-.heatmapInsightCloudInfo > :nth-child(2) { background: rgba(255, 127, 0, 0.14); border-radius: 4px; }
-.heatmapInsightCloudInfo > :nth-child(3) { background: rgba(255, 255, 0, 0.14); border-radius: 4px; }
-.heatmapInsightCloudInfo > :nth-child(4) { background: rgba(0, 255, 0, 0.14); border-radius: 4px; }
-.heatmapInsightCloudInfo > :nth-child(5) { background: rgba(0, 127, 255, 0.14); border-radius: 4px; }
-
-.insightDonutTotalsOnly > :nth-child(1) { background: rgba(75, 0, 130, 0.14); border-radius: 4px; }
-.insightDonutTotalsOnly > :nth-child(2) { background: rgba(148, 0, 211, 0.14); border-radius: 4px; }
-.insightDonutTotalsOnly > :nth-child(3) { background: rgba(0, 128, 128, 0.14); border-radius: 4px; }
-.insightDonutTotalsOnly > :nth-child(4) { background: rgba(255, 20, 147, 0.14); border-radius: 4px; }
-
-.heatmapInsightCloudChartCol {
-    display: grid;
-    place-items: center;
-    flex: 0 0 116px;
-    margin-left: -2px;
-}
-
-.heatmapInsightCloudTitle {
-    margin: 0;
-    font-size: 1.12rem;
-    color: #111827;
-    text-transform: none;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-}
-
-.heatmapInsightCloudDate {
-    margin: 1px 0 7px;
-    font-size: 0.74rem;
-    color: #475569;
-}
-
-.heatmapInsightCloudMixLabel {
-    margin: 0 0 4px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #1f2937;
-    letter-spacing: 0.02em;
-}
-
-.heatmapInsightCloudMuted {
-    margin: 0;
-    font-size: 0.72rem;
-    color: #6b7280;
-}
-
-.insightRingsWrap {
-    position: relative;
-    height: 172px;
-    margin-bottom: 8px;
-}
-
-.insightRingsCore {
-    position: absolute;
-    inset: 50% auto auto 50%;
-    transform: translate(-50%, -50%);
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background: #f3f4f6;
-    display: grid;
-    place-items: center;
-    font-size: 0.62rem;
-    text-align: center;
-    color: #1f2937;
-}
-
-.insightRing {
-    --ring-size: 160px;
-    --ring-color: #4f7cff;
-    --ring-progress: 0%;
-    position: absolute;
-    inset: 50% auto auto 50%;
-    transform: translate(-50%, -50%);
-    width: var(--ring-size);
-    height: var(--ring-size);
-    border-radius: 50%;
-    background: conic-gradient(var(--ring-color) var(--ring-progress), #e5e7eb 0);
-    -webkit-mask: radial-gradient(circle, transparent 62%, black 63%);
-    mask: radial-gradient(circle, transparent 62%, black 63%);
-}
-
-.insightRingLegend {
-    position: absolute;
-    left: 0;
-    top: 2px;
-    display: grid;
-    gap: 2px;
-    font-size: 0.65rem;
-    font-weight: 600;
-}
-
-.insightDonutsGrid {
-    display: grid;
-    gap: 10px;
-}
-
-.insightDonutCard {
-    display: grid;
-    gap: 6px;
-}
-
-.insightDonutCard strong {
-    font-size: 0.72rem;
-    color: #111827;
-}
-
-.insightDonutChart {
-    width: 116px;
-    height: 116px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    border: 1px solid rgba(31, 41, 55, 0.12);
-}
-
-.insightDonutHole {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    display: grid;
-    place-items: center;
-    font-size: 0.66rem;
-    font-weight: 700;
-    color: #1f2937;
-}
-
-.insightDonutLegend {
-    display: grid;
-    gap: 3px;
-}
-
-.insightDonutLegendRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    font-size: 0.68rem;
-    color: #374151;
-}
-
-.insightDonutTotal {
-    font-size: 0.68rem;
-    color: #4b5563;
-}
-
-.insightDonutTotalsOnly {
-    display: grid;
-    gap: 2px;
-    font-size: 0.68rem;
-    color: #27303a;
-    width: auto;
-    min-width: 114px;
-    max-width: 100%;
-}
-
-.insightDonutTotalsOnly > span {
-    width: auto;
-    min-width: 114px;
-    max-width: 100%;
-}
-
-.dayModalBackdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    display: grid;
-    place-items: center;
-    z-index: 1100;
-}
-
-.dayModalCard {
-    width: min(680px, calc(100vw - 28px));
-    max-height: calc(100vh - 28px);
-    overflow: auto;
-    border-radius: 14px;
-    background: #ffffff;
-    color: #1f2937;
-    padding: 14px;
-}
-
-.dayModalHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.dayModalDate {
-    margin: 4px 0 10px;
-    font-size: 0.82rem;
-    color: #4b5563;
-}
-
-.dayModalColumns {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.dayModalColumns h5 {
-    margin: 0 0 5px;
-}
-
-.dayModalRow {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-
-.seeMoreButton {
-    margin-top: 8px;
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
-    border-radius: 8px;
-    padding: 5px 9px;
-    cursor: pointer;
-}
-
-.dayModalAllCategories {
-    display: grid;
-    gap: 4px;
-    margin-top: 8px;
-}
-
-.dayModalSavings {
-    margin-top: 10px;
-    font-weight: 600;
 }
 
 .panelStateText,

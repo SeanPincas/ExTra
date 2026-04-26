@@ -1,0 +1,174 @@
+.heatmapSectionCard {
+    display: grid;
+    gap: 9px;
+    padding: 10px 8px;
+}
+
+.contentBlockHeader {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+}
+
+.contentBlockTitle {
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--text-primary);
+}
+
+.heatmapMonthControls {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 24px 1fr 24px;
+    align-items: center;
+    gap: 8px;
+}
+
+.heatmapMonthButton {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.heatmapMonthLabel {
+    justify-self: center;
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+}
+
+.heatmapGridContainer {
+    padding: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.heatmapCalendarGrid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 5px;
+}
+
+.heatmapWeekdayGrid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.heatmapWeekdayLabel {
+    display: grid;
+    place-items: center;
+    font-size: 0.62rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+}
+
+.heatmapDayCell {
+    height: 22px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+.heatmapDayCellMuted {
+    opacity: 0.35;
+}
+
+.heatmapDayNumber {
+    font-size: 0.64rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.dayModalBackdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: grid;
+    place-items: center;
+    z-index: 1100;
+}
+
+.dayModalCard {
+    width: min(680px, calc(100vw - 28px));
+    max-height: calc(100vh - 28px);
+    overflow: auto;
+    border-radius: 14px;
+    background: #ffffff;
+    color: #1f2937;
+    padding: 14px;
+}
+
+.dayModalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dayModalDate {
+    margin: 4px 0 10px;
+    font-size: 0.82rem;
+    color: #4b5563;
+}
+
+.dayModalColumns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.dayModalColumns h5 {
+    margin: 0 0 5px;
+}
+
+.dayModalRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.seeMoreButton {
+    margin-top: 8px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 5px 9px;
+    cursor: pointer;
+}
+
+.dayModalAllCategories {
+    display: grid;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.dayModalSavings {
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.panelStateText {
+    margin: 0 12px 10px;
+    font-size: 0.73rem;
+    color: var(--text-secondary);
+}
+
+.heatmapInsightCloudMuted {
+    margin: 0;
+    font-size: 0.72rem;
+    color: #6b7280;
+}

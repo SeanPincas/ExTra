@@ -154,13 +154,6 @@ function formatMonthShort(date: Date) {
     return date.toLocaleDateString("en-US", { month: "short" })
 }
 
-function formatSlashDateLabel(date: Date) {
-    const year = date.getFullYear()
-    const month = formatMonthShort(date)
-    const day = String(date.getDate()).padStart(2, "0")
-    return `${year} / ${month} / ${day}`
-}
-
 function formatSelectedDateLabel(date: Date) {
     const month = formatMonthShort(date)
     const day = date.getDate()
@@ -193,9 +186,12 @@ function getRangeWindow(rangeFilter: Exclude<RangeFilter, "ALL">, anchorDateKey:
     }
 
     if (rangeFilter === "WEEK") {
+        const startDate = addDays(anchorDate, -6)
+        const endDate = new Date(anchorDate)
         return {
-            start: startOfWeek(anchorDate),
-            end: endOfWeek(anchorDate),
+            // Rolling 7-day window ending on the selected anchor day.
+            start: startOfDay(startDate),
+            end: endOfDay(endDate),
         }
     }
 
@@ -215,7 +211,7 @@ function formatNavigatorDateLabel(selectedDate: string | null, rangeFilter: Rang
     }
 
     if (rangeFilter === "TODAY") {
-        return formatSlashDateLabel(new Date(`${rangeAnchorDate}T00:00:00`))
+        return formatSelectedDateLabel(new Date(`${rangeAnchorDate}T00:00:00`))
     }
 
     const { start, end } = getRangeWindow(rangeFilter, rangeAnchorDate)
@@ -264,27 +260,13 @@ function getInitialRangeFilter() {
 }
 
 function getInitialSelectedDate() {
-    const storedFilters = readStoredFinanceFilters()
-
-    if (typeof storedFilters?.selectedDate === "string") {
-        return storedFilters.selectedDate
-    }
-
+    // Always reset date-navigation selection on page refresh.
     return null
 }
 
 function getInitialRangeAnchorDate() {
     const todayKey = toDateKey(new Date())
-    const storedFilters = readStoredFinanceFilters()
-
-    if (typeof storedFilters?.rangeAnchorDate === "string") {
-        return storedFilters.rangeAnchorDate
-    }
-
-    if (typeof storedFilters?.selectedDate === "string") {
-        return storedFilters.selectedDate
-    }
-
+    // Always anchor date-navigation to current day on page refresh.
     return todayKey
 }
 

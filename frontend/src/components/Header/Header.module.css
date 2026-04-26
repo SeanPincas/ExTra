@@ -16,9 +16,31 @@
 ===================================================== */
 
 .leftSection {
+    position: relative;
     display: flex;
     align-items: center;
     justify-self: start;
+}
+
+.headerBrandTitle {
+    position: absolute;
+    left: 44px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: clamp(1.36rem, 3vw, 1.95rem);
+    font-weight: 700;
+    font-family: "Times New Roman", "Georgia", serif;
+    letter-spacing: 0.1em;
+    font-stretch: expanded;
+    background: linear-gradient(135deg, #c08a18 0%, #f3d17a 45%, #b17707 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow:
+        0 0 1px rgba(255, 229, 155, 0.38),
+        0 1px 8px rgba(176, 121, 12, 0.22);
+    pointer-events: none;
+    white-space: nowrap;
 }
 
 .panelToggleButton {
@@ -187,6 +209,11 @@
     .settingsLabel {
         font-size: 0.75rem;
     }
+
+    .headerBrandTitle {
+        left: 42px;
+        font-size: clamp(1.18rem, 2.5vw, 1.55rem);
+    }
 }
 
 @media (max-width: 480px) {
@@ -213,6 +240,11 @@
         min-width: 34px;
         padding-inline: 8px;
         border-radius: 10px;
+    }
+
+    .headerBrandTitle {
+        left: 38px;
+        font-size: 1.1rem;
     }
 
 }

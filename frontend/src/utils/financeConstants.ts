@@ -91,7 +91,8 @@ export function getDefaultFinanceCategory(type: FinanceEntryType): FinanceCatego
 }
 
 export function isValidFinanceCategory(type: FinanceEntryType, category: string): category is FinanceCategory {
-    return FINANCE_CATEGORIES[type].includes(category as (typeof FINANCE_CATEGORIES)[FinanceEntryType][number])
+    const categoryList: readonly string[] = FINANCE_CATEGORIES[type]
+    return categoryList.includes(category)
 }
 
 export function getFinanceEntryTypeOptions() {

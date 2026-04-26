@@ -39,6 +39,7 @@ function Header({ onToggleLeftPanel, showLeftPanelToggle = false, onOpenSettings
                 >
                     <Icons.menu size={18} />
                 </button>
+                <span className={styles.headerBrandTitle} aria-hidden="true">ExTra</span>
             </div>
 
             {/* CENTER: LOGO */}

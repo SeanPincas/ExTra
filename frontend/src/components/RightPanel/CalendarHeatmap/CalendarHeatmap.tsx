@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import styles from "../RightPanel.module.css"
+import styles from "./CalendarHeatmap.module.css"
 import { Icons } from "../../../utils/iconLibrary"
 import type { HeatmapDayInsightData, StatsDailyTotal } from "../../../types/stats"
 import { getDashboardStats, getHeatmapDayInsight } from "../../../api/statsAPI"
 import { useFinance } from "../../../context/FinanceContext"
+import DailyInsightCloud from "./DailyInsightCloud/DailyInsightCloud"
 
 interface HeatmapDayCell {
     dateKey: string
@@ -13,6 +14,8 @@ interface HeatmapDayCell {
     intensityLevel: number
     isCurrentMonth: boolean
 }
+
+const weekdayLabels = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"] as const
 
 function formatCurrency(amount: number) {
     return new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP", maximumFractionDigits: 0 }).format(amount)
@@ -76,28 +79,6 @@ function buildHeatmapGrid(activeMonth: string, dailyTotals: StatsDailyTotal[]) {
         })
     }
     return days
-}
-
-function InsightRings({ insight }: { insight: HeatmapDayInsightData }) {
-    const getConicGradient = (income: number, expense: number, net: number) => {
-        const netValue = Math.abs(net)
-        const total = income + expense + netValue
-        if (total <= 0) return "conic-gradient(#e5e7eb 0 100%)"
-        const incomePercent = (income / total) * 100
-        const expensePercent = (expense / total) * 100
-        const netPercent = Math.max(0, 100 - incomePercent - expensePercent)
-        return `conic-gradient(var(--text-income) 0% ${incomePercent}%, var(--text-expense) ${incomePercent}% ${incomePercent + expensePercent}%, var(--accent-gold) ${incomePercent + expensePercent}% ${incomePercent + expensePercent + netPercent}%)`
-    }
-
-    return (
-        <div className={styles.insightDonutsGrid}>
-            <div className={styles.insightDonutCard}>
-                <div className={styles.insightDonutChart} style={{ background: getConicGradient(insight.income, insight.expense, insight.netBalance) }}>
-                    <div className={styles.insightDonutHole}>Daily</div>
-                </div>
-            </div>
-        </div>
-    )
 }
 
 function CalendarHeatmap() {
@@ -213,6 +194,11 @@ function CalendarHeatmap() {
 
                 {!isHeatmapLoading ? (
                     <div className={styles.heatmapGridContainer}>
+                        <div className={styles.heatmapWeekdayGrid}>
+                            {weekdayLabels.map((label) => (
+                                <span key={label} className={styles.heatmapWeekdayLabel}>{label}</span>
+                            ))}
+                        </div>
                         <div className={styles.heatmapCalendarGrid}>
                             {monthGridDays.map((day) => (
                                 <button
@@ -256,30 +242,14 @@ function CalendarHeatmap() {
             </section>
 
             {selectedHeatmapDate && insightCloudPosition ? (
-                <div className={styles.heatmapInsightCloud} style={{ top: insightCloudPosition.top, left: insightCloudPosition.left }}>
-                    <div className={styles.heatmapInsightCloudGrid}>
-                        <div className={styles.heatmapInsightCloudInfo}>
-                            <h4 className={styles.heatmapInsightCloudTitle}>Daily Insight</h4>
-                            <p className={styles.heatmapInsightCloudDate}>{selectedHeatmapDate}</p>
-                            <p className={styles.heatmapInsightCloudMixLabel}>Daily Financial Mix</p>
-                            {isDayInsightLoading ? <p className={styles.heatmapInsightCloudMuted}>Loading...</p> : null}
-                            {!isDayInsightLoading && dayInsightError ? <p className={styles.heatmapInsightCloudMuted}>{dayInsightError}</p> : null}
-                            {!isDayInsightLoading && selectedDayInsight ? (
-                                <div className={styles.insightDonutTotalsOnly}>
-                                    <span>Income: {formatCurrency(selectedDayInsight.income)}</span>
-                                    <span>Expense: {formatCurrency(selectedDayInsight.expense)}</span>
-                                    <span>Net: {formatCurrency(selectedDayInsight.netBalance)}</span>
-                                    <span>Total Savings: {formatCurrency(selectedDayInsight.savings)}</span>
-                                </div>
-                            ) : null}
-                        </div>
-                        {!isDayInsightLoading && selectedDayInsight ? (
-                            <div className={styles.heatmapInsightCloudChartCol}>
-                                <InsightRings insight={selectedDayInsight} />
-                            </div>
-                        ) : null}
-                    </div>
-                </div>
+                <DailyInsightCloud
+                    date={selectedHeatmapDate}
+                    position={insightCloudPosition}
+                    insight={selectedDayInsight}
+                    isLoading={isDayInsightLoading}
+                    error={dayInsightError}
+                    formatCurrency={formatCurrency}
+                />
             ) : null}
 
             {isDayModalOpen && modalDate ? (
@@ -295,7 +265,6 @@ function CalendarHeatmap() {
                         {!isDayInsightLoading && dayInsightError ? <p className={styles.heatmapInsightCloudMuted}>{dayInsightError}</p> : null}
                         {!isDayInsightLoading && selectedDayInsight ? (
                             <>
-                                <InsightRings insight={selectedDayInsight} />
                                 <div className={styles.dayModalColumns}>
                                     <div>
                                         <h5>Top Income</h5>

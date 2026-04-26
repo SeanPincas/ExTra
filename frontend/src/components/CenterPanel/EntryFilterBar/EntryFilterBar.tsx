@@ -42,6 +42,7 @@ function EntryFilterBar({
 }: EntryFilterBarProps) {
     const isRangeDisabled = Boolean(selectedDate)
     const rangeDisplayValue = isRangeDisabled ? "~~~" : rangeFilter
+    const safeRangeValue = isRangeDisabled && rangeFilter === "ALL" ? "TODAY" : rangeFilter
 
     return (
         <div className={styles.filterBar}>
@@ -56,12 +57,20 @@ function EntryFilterBar({
                     </span>
                     <select
                         className={styles.inlineSelect}
-                        value={rangeFilter}
-                        disabled={isRangeDisabled}
-                        onChange={(event) => onRangeChange(event.target.value as RangeFilter)}
+                        value={safeRangeValue}
+                        onChange={(event) => {
+                            const nextRange = event.target.value as RangeFilter
+                            // Block "ALL" only while date-navigation is active.
+                            if (isRangeDisabled && nextRange === "ALL") return
+                            onRangeChange(nextRange)
+                        }}
                     >
                         {rangeOptions.map((option) => (
-                            <option key={option} value={option}>
+                            <option
+                                key={option}
+                                value={option}
+                                disabled={isRangeDisabled && option === "ALL"}
+                            >
                                 {option}
                             </option>
                         ))}
