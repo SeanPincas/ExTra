@@ -4,6 +4,7 @@ import { Icons } from "../../utils/iconLibrary"
 import type { DashboardStatsData } from "../../types/stats"
 import { getDashboardStats } from "../../api/statsAPI"
 import { useFinance } from "../../context/FinanceContext"
+import { useAuth } from "../../context/AuthContext"
 import CalendarHeatmap from "./CalendarHeatmap/CalendarHeatmap"
 import StatisticsSection from "./statistics/StatisticsSection"
 
@@ -47,7 +48,8 @@ const SavingsSection = memo(function SavingsSection({ stats }: { stats: Dashboar
 })
 
 function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps) {
-    const { rangeFilter } = useFinance()
+    const { entriesRevision } = useFinance()
+    const { token } = useAuth()
     const [stats, setStats] = useState<DashboardStatsData>(defaultStats)
     const [isMainLoading, setIsMainLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState("")
@@ -55,12 +57,19 @@ function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps)
     const hintContainerRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
+        if (!token) {
+            setStats(defaultStats)
+            setIsMainLoading(false)
+            setErrorMessage("")
+            return
+        }
+
         let isActive = true
         const fetchMainStats = async () => {
             setIsMainLoading(true)
             setErrorMessage("")
             try {
-                const data = await getDashboardStats({ range: rangeFilter === "ALL" ? undefined : rangeFilter.toLowerCase() as "today" | "week" | "month" })
+                const data = await getDashboardStats()
                 if (!isActive) return
                 setStats(data)
             } catch (error: any) {
@@ -73,7 +82,7 @@ function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps)
         }
         fetchMainStats()
         return () => { isActive = false }
-    }, [rangeFilter])
+    }, [token, entriesRevision])
 
     useEffect(() => {
         if (!isHintOpen) {

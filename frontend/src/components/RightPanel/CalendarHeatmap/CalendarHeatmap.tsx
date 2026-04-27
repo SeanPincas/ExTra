@@ -4,6 +4,7 @@ import { Icons } from "../../../utils/iconLibrary"
 import type { HeatmapDayInsightData, StatsDailyTotal } from "../../../types/stats"
 import { getDashboardStats, getHeatmapDayInsight } from "../../../api/statsAPI"
 import { useFinance } from "../../../context/FinanceContext"
+import { useAuth } from "../../../context/AuthContext"
 import DailyInsightCloud from "./DailyInsightCloud/DailyInsightCloud"
 
 interface HeatmapDayCell {
@@ -15,7 +16,7 @@ interface HeatmapDayCell {
     isCurrentMonth: boolean
 }
 
-const weekdayLabels = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"] as const
+const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const
 
 function formatCurrency(amount: number) {
     return new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP", maximumFractionDigits: 0 }).format(amount)
@@ -82,28 +83,42 @@ function buildHeatmapGrid(activeMonth: string, dailyTotals: StatsDailyTotal[]) {
 }
 
 function CalendarHeatmap() {
-    const { rangeFilter, setSelectedDate, financeEntries } = useFinance()
+    const { setSelectedDate, entriesRevision } = useFinance()
+    const { token } = useAuth()
     const [activeMonth, setActiveMonth] = useState(() => getCurrentMonthKey())
     const [heatmapTotals, setHeatmapTotals] = useState<StatsDailyTotal[]>([])
     const [isHeatmapLoading, setIsHeatmapLoading] = useState(true)
 
-    const [selectedHeatmapDate, setSelectedHeatmapDate] = useState<string | null>(null)
-    const [selectedDayInsight, setSelectedDayInsight] = useState<HeatmapDayInsightData | null>(null)
-    const [isDayInsightLoading, setIsDayInsightLoading] = useState(false)
-    const [dayInsightError, setDayInsightError] = useState("")
-    const [insightCloudPosition, setInsightCloudPosition] = useState<{ top: number, left: number } | null>(null)
+    const [hoveredHeatmapDate, setHoveredHeatmapDate] = useState<string | null>(null)
+    const [hoveredDayInsight, setHoveredDayInsight] = useState<HeatmapDayInsightData | null>(null)
+    const [isHoveredInsightLoading, setIsHoveredInsightLoading] = useState(false)
+    const [hoveredInsightError, setHoveredInsightError] = useState("")
+    const [activeModalDate, setActiveModalDate] = useState<string | null>(null)
+    const [modalDayInsight, setModalDayInsight] = useState<HeatmapDayInsightData | null>(null)
+    const [isModalInsightLoading, setIsModalInsightLoading] = useState(false)
+    const [modalInsightError, setModalInsightError] = useState("")
+    const [insightCloudPosition, setInsightCloudPosition] = useState<{
+        top: number
+        left: number
+    } | null>(null)
+    const [emptyTooltipPosition, setEmptyTooltipPosition] = useState<{ top: number, left: number } | null>(null)
     const [isDayModalOpen, setIsDayModalOpen] = useState(false)
-    const [modalDate, setModalDate] = useState<string | null>(null)
     const [showAllCategories, setShowAllCategories] = useState(false)
     const dayInsightCacheRef = useRef<Map<string, HeatmapDayInsightData>>(new Map())
+    const todayDateKey = useMemo(() => toDateKey(new Date()), [])
 
     useEffect(() => {
+        if (!token) {
+            setHeatmapTotals([])
+            setIsHeatmapLoading(false)
+            return
+        }
+
         let isActive = true
         const fetchHeatmap = async () => {
             setIsHeatmapLoading(true)
             try {
                 const data = await getDashboardStats({
-                    range: rangeFilter === "ALL" ? undefined : rangeFilter.toLowerCase() as "today" | "week" | "month",
                     month: activeMonth,
                 })
                 if (!isActive) return
@@ -117,59 +132,154 @@ function CalendarHeatmap() {
         }
         fetchHeatmap()
         return () => { isActive = false }
-    }, [activeMonth, rangeFilter, financeEntries])
+    }, [activeMonth, token, entriesRevision])
 
     useEffect(() => {
         let isActive = true
-        if (!selectedHeatmapDate) {
-            setSelectedDayInsight(null)
-            setDayInsightError("")
-            setIsDayInsightLoading(false)
+        if (!hoveredHeatmapDate) {
+            setHoveredDayInsight(null)
+            setHoveredInsightError("")
+            setIsHoveredInsightLoading(false)
             return () => { isActive = false }
         }
 
-        const cached = dayInsightCacheRef.current.get(selectedHeatmapDate)
+        const cached = dayInsightCacheRef.current.get(hoveredHeatmapDate)
         if (cached) {
-            setSelectedDayInsight(cached)
-            setDayInsightError("")
-            setIsDayInsightLoading(false)
+            setHoveredDayInsight(cached)
+            setHoveredInsightError("")
+            setIsHoveredInsightLoading(false)
             return () => { isActive = false }
         }
 
-        const fetchInsight = async () => {
-            setIsDayInsightLoading(true)
-            setDayInsightError("")
+        const fetchHoveredInsight = async () => {
+            setIsHoveredInsightLoading(true)
+            setHoveredInsightError("")
             try {
-                const data = await getHeatmapDayInsight(selectedHeatmapDate)
+                const data = await getHeatmapDayInsight(hoveredHeatmapDate)
                 if (!isActive) return
-                dayInsightCacheRef.current.set(selectedHeatmapDate, data)
-                setSelectedDayInsight(data)
+                dayInsightCacheRef.current.set(hoveredHeatmapDate, data)
+                setHoveredDayInsight(data)
             } catch (error: any) {
                 if (!isActive) return
-                setSelectedDayInsight(null)
-                setDayInsightError(error?.response?.data?.message || error?.message || "Unable to load day insight.")
+                setHoveredDayInsight(null)
+                setHoveredInsightError(error?.response?.data?.message || error?.message || "Unable to load day insight.")
             } finally {
-                if (isActive) setIsDayInsightLoading(false)
+                if (isActive) setIsHoveredInsightLoading(false)
             }
         }
 
-        fetchInsight()
+        fetchHoveredInsight()
         return () => { isActive = false }
-    }, [selectedHeatmapDate])
+    }, [hoveredHeatmapDate])
+
+    useEffect(() => {
+        let isActive = true
+        if (!activeModalDate) {
+            setModalDayInsight(null)
+            setModalInsightError("")
+            setIsModalInsightLoading(false)
+            return () => { isActive = false }
+        }
+
+        const cached = dayInsightCacheRef.current.get(activeModalDate)
+        if (cached) {
+            setModalDayInsight(cached)
+            setModalInsightError("")
+            setIsModalInsightLoading(false)
+            return () => { isActive = false }
+        }
+
+        const fetchModalInsight = async () => {
+            setIsModalInsightLoading(true)
+            setModalInsightError("")
+            try {
+                const data = await getHeatmapDayInsight(activeModalDate)
+                if (!isActive) return
+                dayInsightCacheRef.current.set(activeModalDate, data)
+                setModalDayInsight(data)
+            } catch (error: any) {
+                if (!isActive) return
+                setModalDayInsight(null)
+                setModalInsightError(error?.response?.data?.message || error?.message || "Unable to load day insight.")
+            } finally {
+                if (isActive) setIsModalInsightLoading(false)
+            }
+        }
+
+        fetchModalInsight()
+        return () => { isActive = false }
+    }, [activeModalDate])
 
     const monthGridDays = useMemo(() => buildHeatmapGrid(activeMonth, heatmapTotals), [activeMonth, heatmapTotals])
 
+    const resolvePanelBounds = (target: HTMLElement) => {
+        const panel = target.closest("aside")
+        if (!panel) return null
+        return panel.getBoundingClientRect()
+    }
+
+    const clampWithinBounds = (
+        value: number,
+        min: number,
+        max: number,
+    ) => Math.max(min, Math.min(max, value))
+
     const updateInsightCloudPosition = (target: HTMLElement) => {
         const rect = target.getBoundingClientRect()
-        const left = Math.min(rect.right + 12, window.innerWidth - 320)
-        const top = Math.min(Math.max(12, rect.top - 120), window.innerHeight - 300)
-        setInsightCloudPosition({ top, left })
+        const cloudWidth = 284
+        const cloudHeight = 206
+        const offsetX = 0
+        const offsetY = 4
+        const viewportBounds = {
+            left: 8,
+            top: 8,
+            right: window.innerWidth - 8,
+            bottom: window.innerHeight - 8,
+        }
+
+        const bounds = viewportBounds
+
+        const rightAnchorX = clampWithinBounds(
+            rect.left + offsetX,
+            bounds.left + cloudWidth,
+            bounds.right,
+        )
+
+        const clampedTop = clampWithinBounds(
+            rect.bottom + offsetY,
+            bounds.top,
+            bounds.bottom - cloudHeight,
+        )
+
+        setInsightCloudPosition({ top: clampedTop, left: rightAnchorX })
+    }
+
+    const updateEmptyTooltipPosition = (target: HTMLElement) => {
+        const rect = target.getBoundingClientRect()
+        const panelBounds = resolvePanelBounds(target)
+        const tooltipWidth = 92
+        const tooltipHeight = 30
+
+        let left = rect.left + rect.width / 2 - tooltipWidth / 2
+        let top = rect.top - tooltipHeight - 8
+
+        if (panelBounds) {
+            left = clampWithinBounds(left, panelBounds.left + 6, panelBounds.right - tooltipWidth - 6)
+            top = clampWithinBounds(top, panelBounds.top + 6, panelBounds.bottom - tooltipHeight - 6)
+        } else {
+            left = clampWithinBounds(left, 6, window.innerWidth - tooltipWidth - 6)
+            top = clampWithinBounds(top, 6, window.innerHeight - tooltipHeight - 6)
+        }
+
+        setEmptyTooltipPosition({ top, left })
     }
 
     const openDayModal = (day: HeatmapDayCell) => {
         if (day.total <= 0) return
-        setSelectedHeatmapDate(day.dateKey)
-        setModalDate(day.dateKey)
+        setHoveredHeatmapDate(null)
+        setInsightCloudPosition(null)
+        setEmptyTooltipPosition(null)
+        setActiveModalDate(day.dateKey)
         setSelectedDate(day.dateKey)
         setShowAllCategories(false)
         setIsDayModalOpen(true)
@@ -192,89 +302,129 @@ function CalendarHeatmap() {
                     </button>
                 </div>
 
-                {!isHeatmapLoading ? (
-                    <div className={styles.heatmapGridContainer}>
-                        <div className={styles.heatmapWeekdayGrid}>
-                            {weekdayLabels.map((label) => (
-                                <span key={label} className={styles.heatmapWeekdayLabel}>{label}</span>
-                            ))}
-                        </div>
-                        <div className={styles.heatmapCalendarGrid}>
-                            {monthGridDays.map((day) => (
-                                <button
-                                    key={day.dateKey}
-                                    type="button"
-                                    className={`${styles.heatmapDayCell} ${!day.isCurrentMonth ? styles.heatmapDayCellMuted : ""}`}
-                                    style={{ backgroundColor: getHeatCellColorByType(day.dominantType, day.intensityLevel) }}
-                                    title={`${day.dateKey}: ${formatCurrency(day.total)}`}
-                                    onMouseEnter={(event) => {
-                                        if (day.total <= 0) {
-                                            setSelectedHeatmapDate(null)
-                                            setInsightCloudPosition(null)
-                                            return
-                                        }
-                                        setSelectedHeatmapDate(day.dateKey)
-                                        updateInsightCloudPosition(event.currentTarget)
-                                    }}
+                <div className={styles.heatmapBody}>
+                    {!isHeatmapLoading ? (
+                        <div className={styles.heatmapGridContainer}>
+                            <div className={styles.heatmapWeekdayGrid}>
+                                {weekdayLabels.map((label) => (
+                                    <span key={label} className={styles.heatmapWeekdayLabel}>{label}</span>
+                                ))}
+                            </div>
+                            <div className={styles.heatmapCalendarGrid}>
+                                {monthGridDays.map((day) => (
+                                    <button
+                                        key={day.dateKey}
+                                        type="button"
+                                        className={`${styles.heatmapDayCell} ${day.dateKey === todayDateKey ? styles.heatmapDayCellToday : ""} ${!day.isCurrentMonth ? styles.heatmapDayCellMuted : ""}`}
+                                        style={{ backgroundColor: getHeatCellColorByType(day.dominantType, day.intensityLevel) }}
+                                        aria-label={`${day.dateKey}: ${formatCurrency(day.total)}`}
+                                        onMouseEnter={(event) => {
+                                            if (isDayModalOpen) return
+                                            if (day.total <= 0) {
+                                                setHoveredHeatmapDate(null)
+                                                setInsightCloudPosition(null)
+                                                updateEmptyTooltipPosition(event.currentTarget)
+                                                return
+                                            }
+                                            setEmptyTooltipPosition(null)
+                                            setHoveredHeatmapDate(day.dateKey)
+                                            updateInsightCloudPosition(event.currentTarget)
+                                        }}
                                     onMouseLeave={() => {
-                                        setSelectedHeatmapDate(null)
+                                        setHoveredHeatmapDate(null)
                                         setInsightCloudPosition(null)
+                                        setEmptyTooltipPosition(null)
                                     }}
                                     onFocus={(event) => {
-                                        if (day.total <= 0) return
-                                        setSelectedHeatmapDate(day.dateKey)
+                                        if (isDayModalOpen) return
+                                        if (day.total <= 0) {
+                                            setHoveredHeatmapDate(null)
+                                            setInsightCloudPosition(null)
+                                            updateEmptyTooltipPosition(event.currentTarget)
+                                            return
+                                        }
+                                        setEmptyTooltipPosition(null)
+                                        setHoveredHeatmapDate(day.dateKey)
                                         updateInsightCloudPosition(event.currentTarget)
                                     }}
                                     onBlur={() => {
-                                        setSelectedHeatmapDate(null)
+                                        setHoveredHeatmapDate(null)
                                         setInsightCloudPosition(null)
+                                        setEmptyTooltipPosition(null)
                                     }}
                                     onClick={() => openDayModal(day)}
                                 >
-                                    <span className={styles.heatmapDayNumber}>{day.dayNumber}</span>
-                                </button>
-                            ))}
+                                        <span className={styles.heatmapDayNumber}>{day.dayNumber}</span>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ) : (
-                    <p className={styles.panelStateText}>Loading heatmap...</p>
-                )}
+                    ) : (
+                        <p className={styles.heatmapLoadingState}>Loading heatmap...</p>
+                    )}
+                </div>
             </section>
 
-            {selectedHeatmapDate && insightCloudPosition ? (
+            {!isDayModalOpen && hoveredHeatmapDate && insightCloudPosition ? (
                 <DailyInsightCloud
-                    date={selectedHeatmapDate}
-                    position={insightCloudPosition}
-                    insight={selectedDayInsight}
-                    isLoading={isDayInsightLoading}
-                    error={dayInsightError}
+                    date={hoveredHeatmapDate}
+                    position={{ top: insightCloudPosition.top, left: insightCloudPosition.left }}
+                    insight={hoveredDayInsight}
+                    isLoading={isHoveredInsightLoading}
+                    error={hoveredInsightError}
                     formatCurrency={formatCurrency}
                 />
             ) : null}
 
-            {isDayModalOpen && modalDate ? (
-                <div className={styles.dayModalBackdrop} onClick={() => { setIsDayModalOpen(false); setModalDate(null) }}>
+            {!isDayModalOpen && emptyTooltipPosition ? (
+                <div
+                    className={styles.noEntriesTooltip}
+                    style={{ top: emptyTooltipPosition.top, left: emptyTooltipPosition.left }}
+                    role="status"
+                    aria-live="polite"
+                >
+                    No Entries
+                </div>
+            ) : null}
+
+            {isDayModalOpen && activeModalDate ? (
+                <div className={styles.dayModalBackdrop} onClick={() => { setIsDayModalOpen(false); setActiveModalDate(null) }}>
                     <div className={styles.dayModalCard} onClick={(event) => event.stopPropagation()}>
                         <div className={styles.dayModalHeader}>
                             <h4>Daily Insight</h4>
-                            <button type="button" onClick={() => { setIsDayModalOpen(false); setModalDate(null) }}>Close</button>
+                            <button type="button" onClick={() => { setIsDayModalOpen(false); setActiveModalDate(null) }}>Close</button>
                         </div>
-                        <p className={styles.dayModalDate}>{modalDate}</p>
+                        <p className={styles.dayModalDate}>{activeModalDate}</p>
 
-                        {isDayInsightLoading ? <p className={styles.heatmapInsightCloudMuted}>Loading...</p> : null}
-                        {!isDayInsightLoading && dayInsightError ? <p className={styles.heatmapInsightCloudMuted}>{dayInsightError}</p> : null}
-                        {!isDayInsightLoading && selectedDayInsight ? (
+                        {isModalInsightLoading ? <p className={styles.heatmapInsightCloudMuted}>Loading...</p> : null}
+                        {!isModalInsightLoading && modalInsightError ? <p className={styles.heatmapInsightCloudMuted}>{modalInsightError}</p> : null}
+                        {!isModalInsightLoading && modalDayInsight ? (
                             <>
+                                <div className={styles.dayModalTotalsGrid}>
+                                    <div className={styles.dayModalTotalCard}>
+                                        <span className={styles.dayModalTotalLabel}>Income</span>
+                                        <strong className={styles.dayModalIncomeValue}>{formatCurrency(modalDayInsight.income)}</strong>
+                                    </div>
+                                    <div className={styles.dayModalTotalCard}>
+                                        <span className={styles.dayModalTotalLabel}>Expense</span>
+                                        <strong className={styles.dayModalExpenseValue}>{formatCurrency(modalDayInsight.expense)}</strong>
+                                    </div>
+                                    <div className={styles.dayModalTotalCard}>
+                                        <span className={styles.dayModalTotalLabel}>Net</span>
+                                        <strong className={styles.dayModalNetValue}>{formatCurrency(modalDayInsight.netBalance)}</strong>
+                                    </div>
+                                </div>
+
                                 <div className={styles.dayModalColumns}>
-                                    <div>
+                                    <div className={`${styles.dayModalColumn} ${styles.dayModalIncomeColumn}`}>
                                         <h5>Top Income</h5>
-                                        {(selectedDayInsight.topEntries.income || []).slice(0, 5).map((item) => (
+                                        {(modalDayInsight.topEntries.income || []).slice(0, 5).map((item) => (
                                             <div key={`income-${item.title}`} className={styles.dayModalRow}><span>{item.title}</span><span>{formatCurrency(item.amount)}</span></div>
                                         ))}
                                     </div>
-                                    <div>
+                                    <div className={`${styles.dayModalColumn} ${styles.dayModalExpenseColumn}`}>
                                         <h5>Top Expense</h5>
-                                        {(selectedDayInsight.topEntries.expense || []).slice(0, 5).map((item) => (
+                                        {(modalDayInsight.topEntries.expense || []).slice(0, 5).map((item) => (
                                             <div key={`expense-${item.title}`} className={styles.dayModalRow}><span>{item.title}</span><span>{formatCurrency(item.amount)}</span></div>
                                         ))}
                                     </div>
@@ -286,13 +436,13 @@ function CalendarHeatmap() {
 
                                 {showAllCategories ? (
                                     <div className={styles.dayModalAllCategories}>
-                                        {[...selectedDayInsight.topCategories].sort((a, b) => b.amount - a.amount).map((item) => (
+                                        {[...modalDayInsight.topCategories].sort((a, b) => b.amount - a.amount).map((item) => (
                                             <div key={`all-${item.type}-${item.category}`} className={styles.dayModalRow}><span>{item.category}</span><span>{formatCurrency(item.amount)}</span></div>
                                         ))}
                                     </div>
                                 ) : null}
 
-                                <p className={styles.dayModalSavings}>Total Savings: {formatCurrency(selectedDayInsight.savings)}</p>
+                                <p className={styles.dayModalSavings}>Total Savings: {formatCurrency(modalDayInsight.savings)}</p>
                             </>
                         ) : null}
                     </div>

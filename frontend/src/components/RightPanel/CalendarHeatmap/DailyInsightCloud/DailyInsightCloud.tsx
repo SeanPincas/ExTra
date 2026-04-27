@@ -22,7 +22,10 @@ function getDonutGradient(income: number, expense: number, net: number) {
 
 function DailyInsightCloud({ date, position, insight, isLoading, error, formatCurrency }: DailyInsightCloudProps) {
     return (
-        <div className={styles.heatmapInsightCloud} style={{ top: position.top, left: position.left }}>
+        <div
+            className={styles.heatmapInsightCloud}
+            style={{ top: position.top, left: position.left }}
+        >
             <div className={styles.heatmapInsightCloudGrid}>
                 <div className={styles.heatmapInsightCloudInfo}>
                     <h4 className={styles.heatmapInsightCloudTitle}>Daily Insight</h4>
