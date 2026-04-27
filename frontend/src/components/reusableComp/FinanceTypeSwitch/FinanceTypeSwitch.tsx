@@ -24,7 +24,13 @@ function FinanceTypeSwitch({ value, onChange, options = FINANCE_TYPE_SWITCH_OPTI
                         type="button"
                         role="tab"
                         aria-selected={isActive}
-                        className={`${styles.switchOption} ${isActive ? styles.switchOptionActive : ""} ${option.tone === "expense" ? styles.expenseTone : styles.incomeTone}`}
+                        className={`${styles.switchOption} ${isActive ? styles.switchOptionActive : ""} ${
+                            option.tone === "expense"
+                                ? styles.expenseTone
+                                : option.tone === "neutral"
+                                    ? styles.neutralTone
+                                    : styles.incomeTone
+                        }`}
                         onClick={() => onChange(option.value)}
                         onKeyDown={(event) => {
                             if (event.key === "ArrowLeft" || event.key === "ArrowRight") {

@@ -4,8 +4,8 @@
     max-height: 100%;
     display: grid;
     align-content: start;
-    gap: 10px;
-    padding: 3px 16px;
+    gap: 7px;
+    padding: 2px 12px;
     overflow-x: hidden;
     overflow-y: auto;
     scrollbar-width: thin;
@@ -13,7 +13,7 @@
 }
 
 .listArea::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
 }
 
 .listArea::-webkit-scrollbar-track {
@@ -53,8 +53,8 @@
 }
 
 .entryCard {
-    --entry-row-height: 50px;
-    --entry-actions-width: 154px;
+    --entry-row-height: 48px;
+    --entry-actions-width: 146px;
     display: grid;
     gap: 0;
 }
@@ -81,10 +81,10 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 3px;
-    padding: 3px 3px 3px 35px;
+    padding: 3px 3px 3px 28px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(255, 255, 255, 0.03);
-    border-radius: 0 14px 14px 0;
+    border-radius: 0 12px 12px 0;
     overflow: hidden;
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.03),
@@ -120,14 +120,14 @@
     width: 100%;
     min-height: var(--entry-row-height);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
+    border-radius: 12px;
     background:
         radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.022), transparent 34%),
         linear-gradient(180deg, rgba(27, 28, 30, 0.985), rgba(15, 16, 18, 0.985)),
         var(--panel-texture);
     background-size: auto, cover, 760px;
     background-blend-mode: screen, normal, soft-light;
-    padding: 6px 12px;
+    padding: 2px 15px;
     cursor: pointer;
     transition:
         width 220ms ease,
@@ -157,8 +157,8 @@
 
 .entrySurfaceActionsOpen {
     width: calc(100% - 121px);
-    border-top-right-radius: 14px;
-    border-bottom-right-radius: 14px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
     box-shadow: 12px 0 24px rgba(0, 0, 0, 0.16);
 }
 
@@ -179,18 +179,18 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
+    gap: 1px;
     width: 100%;
     min-height: 100%;
     border: 1px solid rgba(255, 255, 255, 0.06);
     background: rgba(255, 255, 255, 0.055);
     color: var(--text-primary);
     font: inherit;
-    font-size: 0.64rem;
+    font-size: 0.62rem;
     line-height: 1;
     padding: 0 8px;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 8px;
     transition:
         filter 160ms ease,
         background-color 160ms ease,
@@ -218,7 +218,7 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
-    gap: 12px;
+    gap: 9px;
 }
 
 .entryMain {
@@ -304,13 +304,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
 }
 
 .entryCompactContent {
     min-width: 0;
     display: none;
-    gap: 5px;
+    gap: 4px;
 }
 
 .entryTopLine,
@@ -319,11 +319,12 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .entryTitle {
-    font-size: 0.94rem;
+    font-size: 0.88rem;
+    font-weight: 600;
     color: var(--text-primary);
     line-height: 1.1;
     white-space: nowrap;
@@ -333,6 +334,7 @@
 
 .entryAmount {
     font-size: 0.9rem;
+    font-weight: 700;
     color: var(--text-primary);
     line-height: 1.1;
     white-space: nowrap;
@@ -341,7 +343,7 @@
 .entryMetaGroup,
 .entryTime {
     color: var(--text-secondary);
-    font-size: 0.74rem;
+    font-size: 0.69rem;
     line-height: 1.1;
 }
 
@@ -349,7 +351,7 @@
     min-width: 0;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     white-space: nowrap;
     overflow: hidden;
 }
@@ -360,7 +362,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text-secondary);
-    font-size: 0.74rem;
+    font-size: 0.69rem;
     line-height: 1.1;
 }
 
@@ -368,7 +370,7 @@
     min-width: 0;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     overflow: hidden;
     white-space: nowrap;
 }
@@ -381,12 +383,12 @@
     min-width: 0;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     overflow: hidden;
 }
 
 .entryEmoji {
-    font-size: 1rem;
+    font-size: 0.92rem;
     line-height: 1;
     flex-shrink: 0;
 }
@@ -406,23 +408,23 @@
     display: inline-flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 8px;
     flex-shrink: 0;
     white-space: nowrap;
 }
 
 .breakdownArea {
     display: grid;
-    gap: 5px;
+    gap: 4px;
 }
 
 .breakdownShell {
     box-sizing: border-box;
     width: calc(100% - 38px);
     margin: 0 auto;
-    padding: 8px 12px;
+    padding: 7px 10px;
     border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 0 0 14px 14px;
+    border-radius: 0 0 12px 12px;
     background:
         linear-gradient(180deg, rgba(34, 34, 40, 0.44), rgba(24, 24, 30, 0.5)),
         url("/src/assets/leather.png");
@@ -434,8 +436,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 5px 0;
+    gap: 9px;
+    padding: 4px 0;
 }
 
 .breakdownRow:not(:last-child) {
@@ -444,7 +446,7 @@
 
 .breakdownName,
 .breakdownAmount {
-    font-size: 0.74rem;
+    font-size: 0.69rem;
     color: var(--text-secondary);
 }
 
@@ -466,40 +468,40 @@
 
 @media (max-width: 980px) {
     .listArea {
-        gap: 8px;
-        padding: 3px 12px;
+        gap: 7px;
+        padding: 2px 10px;
     }
 
     .entryCard {
-        --entry-row-height: 48px;
-        --entry-actions-width: 146px;
+        --entry-row-height: 47px;
+        --entry-actions-width: 142px;
     }
 
     .entrySurface {
-        padding: 5px 10px;
+        padding: 5px 9px;
     }
 
     .entryTopLine,
     .entryBottomLine {
-        gap: 10px;
+        gap: 9px;
     }
 
     .entryTitle {
-        font-size: 0.88rem;
+        font-size: 0.85rem;
     }
 
     .entryMetaGroup,
     .entryMetaInline,
     .entryTime {
-        font-size: 0.71rem;
+        font-size: 0.68rem;
     }
 
     .entryAmount {
-        font-size: 0.84rem;
+        font-size: 0.82rem;
     }
 
     .entryActions {
-        padding-left: 29px;
+        padding-left: 28px;
     }
 
     .entrySurfaceActionsOpen {
@@ -508,7 +510,7 @@
 
     .breakdownShell {
         width: calc(100% - 32px);
-        padding: 7px 10px;
+        padding: 6px 9px;
     }
 }
 
@@ -525,7 +527,7 @@
     .entryTopLine,
     .entryBottomLine {
         grid-template-columns: minmax(0, 1fr) max-content;
-        gap: 8px;
+        gap: 7px;
         align-items: start;
     }
 
@@ -536,11 +538,11 @@
 
 @media (max-width: 640px) {
     .listArea {
-        padding: 8px 14px;
+        padding: 6px 12px;
     }
 
     .entryCard {
-        --entry-row-height: 46px;
+        --entry-row-height: 45px;
     }
 
     .breakdownShell {
@@ -549,8 +551,8 @@
     }
 
     .entryActions {
-        width: 138px;
-        padding-left: 33px;
+        width: 134px;
+        padding-left: 30px;
     }
 
     .entrySurfaceActionsOpen {
@@ -564,12 +566,12 @@
     }
 
     .entryCard {
-        --entry-row-height: 44px;
-        --entry-actions-width: 132px;
+        --entry-row-height: 43px;
+        --entry-actions-width: 128px;
     }
 
     .entrySurface {
-        padding: 4px 9px;
+        padding: 4px 8px;
     }
 
     .entryToggleSlot,
@@ -579,21 +581,21 @@
     }
 
     .entryTitle {
-        font-size: 0.84rem;
+        font-size: 0.82rem;
     }
 
     .entryMetaGroup,
     .entryMetaInline,
     .entryTime {
-        font-size: 0.68rem;
+        font-size: 0.66rem;
     }
 
     .entryAmount {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
     }
 
     .entryActions {
-        padding-left: 28px;
+        padding-left: 27px;
     }
 
     .actionButton {

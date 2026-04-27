@@ -1,15 +1,14 @@
 .filterBar {
     display: grid;
-    gap: 5px;
-    padding: 10px 18px;
+    gap: 7px;
+    padding: 9px 10px;
     border-top: 1px solid color-mix(in srgb, var(--accent-gold) 38%, transparent);
     border-bottom: 1px solid color-mix(in srgb, var(--accent-gold) 38%, transparent);
     background:
-        radial-gradient(circle at 20% 20%, rgba(96, 120, 102, 0.08), transparent 34%),
-        radial-gradient(circle at 80% 30%, rgba(128, 99, 19, 0.08), transparent 28%),
-        linear-gradient(180deg, rgba(26, 28, 29, 0.82), rgba(15, 15, 16, 0.92)),
-        var(--panel-texture);
-    background-size: auto, auto, cover, 1000px;
+        radial-gradient(circle at 82% 20%, rgba(156, 118, 51, 0.12), transparent 36%),
+        linear-gradient(180deg, rgba(34, 31, 27, 0.5), rgba(20, 19, 18, 0.58)),
+        url("/src/assets/leather.png");
+    background-size: auto, cover, cover;
 }
 
 .topRow,
@@ -17,14 +16,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
 .topActions {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     margin-left: auto;
     flex-wrap: wrap;
     flex-shrink: 0;
@@ -39,13 +38,13 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
-    min-height: 28px;
-    padding: 0 10px;
+    min-height: 31px;
+    padding: 0 11px;
     border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
+    border-radius: 9px;
     background: rgba(255, 255, 255, 0.055);
     font: inherit;
-    font-size: 0.68rem;
+    font-size: 0.74rem;
     line-height: 1;
     cursor: pointer;
     transition:
@@ -72,23 +71,24 @@
 }
 
 .rangeShell {
-    --filter-shell-width: clamp(132px, 13.5vw, 164px);
-    flex: 0 1 var(--filter-shell-width);
-    width: var(--filter-shell-width);
+    --range-shell-width: clamp(180px, 12vw, 200px);
+    flex: 0 1 var(--range-shell-width);
+    width: var(--range-shell-width);
 }
 
 .inlineControl {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    min-height: 32px;
+    gap: 6px;
+    min-height: 28px;
     color: var(--text-primary);
     min-width: 0;
 }
 
 .categoryShell {
-    flex: 0 1 var(--filter-shell-width);
-    width: var(--filter-shell-width);
+    --category-shell-width: clamp(180px, 12vw, 200px);
+    flex: 0 1 var(--category-shell-width);
+    width: var(--category-shell-width);
 }
 
 .inlineLabel {
@@ -98,7 +98,7 @@
 
 .categorySelectShell {
     height: 100%;
-    min-height: 32px;
+    min-height: 28px;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -169,6 +169,7 @@
     border: none;
     border-radius: 0;
     background: transparent;
+    min-height: 28px;
 }
 
 .typeButton {
@@ -223,7 +224,7 @@
 .utilityActions {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 9px;
     margin-left: auto;
     flex-shrink: 0;
 }
@@ -231,13 +232,14 @@
 .utilityButton {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     border: none;
     background: transparent;
     color: var(--text-secondary);
-    padding: 0;
+    min-height: 30px;
+    padding: 0 4px;
     font: inherit;
-    font-size: 0.78rem;
+    font-size: 0.74rem;
     cursor: pointer;
     transition: color 160ms ease;
 }
@@ -255,7 +257,7 @@
 .bottomLeft {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
     min-width: 0;
     flex: 1 1 auto;
@@ -263,8 +265,8 @@
 
 @media (max-width: 1080px) {
     .filterBar {
-        gap: 4px;
-        padding: 9px 14px;
+        gap: 6px;
+        padding: 8px 10px;
     }
 
     .topRow,
@@ -273,33 +275,20 @@
     }
 
     .modeActionButton {
-        min-height: 27px;
-        padding: 0 9px;
-        font-size: 0.66rem;
-    }
-
-    .rangeCompact,
-    .rangeOption,
-    .inlineLabel,
-    .categoryValue,
-    .inlineSelect,
-    .utilityButton {
-        font-size: 0.74rem;
-    }
-
-    .typeButton {
-        font-size: 0.7rem;
+        min-height: 30px;
+        padding: 0 10px;
+        font-size: 0.72rem;
     }
 
     .rangeShell,
     .categoryShell {
-        --filter-shell-width: clamp(140px, 14.5vw, 148px);
-        padding-inline: 10px;
+        --range-shell-width: clamp(180px, 12vw, 190px);
+        --category-shell-width: clamp(180px, 12vw, 190px);
     }
 
     .rangeExpanded {
         padding-inline: 10px;
-        clip-path: inset(0 calc(100% - var(--filter-shell-width)) 0 0 round 12px);
+        clip-path: inset(0 calc(100% - var(--range-shell-width)) 0 0 round 12px);
     }
 
     .bottomLeft {
@@ -307,14 +296,14 @@
     }
 
     .utilityActions {
-        gap: 10px;
+        gap: 8px;
     }
 }
 
 @media (max-width: 860px) {
     .filterBar {
-        gap: 4px;
-        padding: 8px 12px;
+        gap: 6px;
+        padding: 8px 10px;
     }
 
     .topRow,
@@ -340,49 +329,27 @@
 
     .rangeShell,
     .categoryShell {
-        --filter-shell-width: clamp(140px, 17vw, 148px);
         justify-self: start;
     }
 
-    .rangeCompact,
-    .rangeOption,
-    .inlineLabel,
-    .categoryValue,
-    .inlineSelect,
-    .utilityButton {
-        font-size: 0.72rem;
+    .rangeShell {
+        --range-shell-width: clamp(180px, 17vw, 200px);
+    }
+
+    .categoryShell {
+        --category-shell-width: clamp(180px, 17vw, 200px);
     }
 
     .typeButton {
-        font-size: 0.68rem;
+        font-size: 0.72rem;
         padding-inline: 10px;
-    }
-
-    .rangeExpanded {
-        max-width: 236px;
-        gap: 3px;
-        padding-inline: 9px;
-        clip-path: inset(0 calc(100% - var(--filter-shell-width)) 0 0 round 12px);
     }
 }
 
 @media (max-width: 640px) {
     .filterBar {
-        gap: 3px;
-        padding: 12px 14px 11px;
-    }
-
-    .rangeCompact,
-    .rangeOption,
-    .inlineLabel,
-    .categoryValue,
-    .inlineSelect,
-    .utilityButton {
-        font-size: 0.7rem;
-    }
-
-    .typeButton {
-        font-size: 0.66rem;
+        gap: 6px;
+        padding: 9px 10px;
     }
 
     .topRow {
@@ -411,15 +378,15 @@
         display: inline-flex;
         align-items: center;
         justify-content: flex-end;
-        gap: 6px;
+        gap: 7px;
         order: 1;
         margin-left: auto;
     }
 
     .modeActionButton,
     .utilityButton {
-        min-width: 30px;
-        min-height: 30px;
+        min-width: 31px;
+        min-height: 31px;
         padding: 0;
         justify-content: center;
     }
@@ -444,7 +411,14 @@
     .rangeShell,
     .categoryShell {
         flex: none;
-        --filter-shell-width: 112px;
+    }
+
+    .rangeShell {
+        --range-shell-width: 180px;
+    }
+
+    .categoryShell {
+        --category-shell-width: 180px;
     }
 
     .typeSwitch {
@@ -459,7 +433,7 @@
 
 @media (max-width: 420px) {
     .filterBar {
-        padding: 10px 11px;
+        padding: 8px 9px;
     }
 
     .topActions {
@@ -467,7 +441,7 @@
     }
 
     .modeActionButton {
-        min-width: 28px;
+        min-width: 30px;
     }
 
     .compactUtilityActions {
@@ -485,20 +459,12 @@
     .typeButton {
         flex: 1 1 0;
         padding-inline: 9px;
-        font-size: 0.64rem;
-    }
-
-    .rangeCompact,
-    .rangeOption,
-    .inlineLabel,
-    .categoryValue,
-    .inlineSelect,
-    .utilityButton {
-        font-size: 0.68rem;
+        font-size: 0.7rem;
     }
 
     .rangeShell,
     .categoryShell {
-        --filter-shell-width: 106px;
+        --range-shell-width: 108px;
+        --category-shell-width: 128px;
     }
 }

@@ -52,15 +52,7 @@ function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps)
     const [isMainLoading, setIsMainLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState("")
     const [isHintOpen, setIsHintOpen] = useState(false)
-    const [hintPosition, setHintPosition] = useState<{ top: number, left: number } | null>(null)
-    const hintButtonRef = useRef<HTMLButtonElement | null>(null)
-
-    const updateHintPosition = () => {
-        const button = hintButtonRef.current
-        if (!button) return
-        const rect = button.getBoundingClientRect()
-        setHintPosition({ top: rect.top - 8, left: rect.right })
-    }
+    const hintContainerRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
         let isActive = true
@@ -83,6 +75,32 @@ function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps)
         return () => { isActive = false }
     }, [rangeFilter])
 
+    useEffect(() => {
+        if (!isHintOpen) {
+            return
+        }
+
+        function handlePointerDown(event: MouseEvent) {
+            if (!hintContainerRef.current?.contains(event.target as Node)) {
+                setIsHintOpen(false)
+            }
+        }
+
+        function handleEscape(event: KeyboardEvent) {
+            if (event.key === "Escape") {
+                setIsHintOpen(false)
+            }
+        }
+
+        document.addEventListener("mousedown", handlePointerDown)
+        document.addEventListener("keydown", handleEscape)
+
+        return () => {
+            document.removeEventListener("mousedown", handlePointerDown)
+            document.removeEventListener("keydown", handleEscape)
+        }
+    }, [isHintOpen])
+
     return (
         <aside className={styles.rightPanelRoot}>
             {showPanelHandle ? (
@@ -97,30 +115,29 @@ function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps)
             ) : null}
 
             <div className={styles.rightPanelHeader}>
-                <div className={styles.rightPanelTitleRow}>
-                    <div className={styles.rightPanelTitleGroup}>
-                        <h2 className={styles.rightPanelTitle}>Insights</h2>
+                <div ref={hintContainerRef} className={styles.hintContainer}>
+                    <div className={styles.rightPanelTitleRow}>
+                        <div className={styles.rightPanelTitleGroup}>
+                            <h2 className={styles.rightPanelTitle}>Insights</h2>
+                        </div>
+                        <button
+                            type="button"
+                            className={styles.insightsHintButton}
+                            aria-label="Show insights help"
+                            aria-expanded={isHintOpen}
+                            onClick={() => setIsHintOpen((isOpen) => !isOpen)}
+                        >
+                            ?
+                        </button>
                     </div>
-                    <button
-                        ref={hintButtonRef}
-                        type="button"
-                        className={styles.insightsHintButton}
-                        aria-label="Show insights help"
-                        onClick={() => {
-                            if (!isHintOpen) updateHintPosition()
-                            setIsHintOpen((isOpen) => !isOpen)
-                        }}
-                    >
-                        ?
-                    </button>
+
+                    {isHintOpen ? (
+                        <div className={styles.floatingHintCloud} role="tooltip">
+                            Analytics, trends, and supporting panel tools are shown here to support the transaction workflow.
+                        </div>
+                    ) : null}
                 </div>
             </div>
-
-            {isHintOpen && hintPosition ? (
-                <div className={styles.floatingHintCloud} style={{ top: hintPosition.top, left: hintPosition.left }}>
-                    Analytics, trends, and supporting panel tools are shown here to support the transaction workflow.
-                </div>
-            ) : null}
 
             <div className={styles.rightPanelBody}>
                 <CalendarHeatmap />
