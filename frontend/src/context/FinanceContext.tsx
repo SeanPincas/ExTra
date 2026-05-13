@@ -552,6 +552,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
                 hour: "numeric",
                 minute: "2-digit",
             }),
+            amountValue: Number.isFinite(entry.totalAmount) ? entry.totalAmount : 0,
             amountLabel: formatCurrency(entry.totalAmount),
             tone: entry.type === "income" ? "income" : "expense",
             items: entry.items,

@@ -233,13 +233,13 @@
     display: grid;
     grid-template-columns: 18px minmax(0, 1fr) auto auto;
     align-items: center;
-    gap: 7px;
+    gap: 5px;
     padding: 6px 9px;
     border-radius: 8px;
     cursor: pointer;
     color: var(--text-primary);
     font-size: 0.73rem;
-    line-height: 1.26;
+    line-height: 1.2;
     background:
         linear-gradient(180deg, rgba(34, 35, 38, 0.94), rgba(20, 21, 24, 0.96)),
         var(--panel-texture);

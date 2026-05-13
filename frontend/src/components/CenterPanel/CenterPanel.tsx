@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useFinance } from "../../context/FinanceContext"
 import type { FinanceDisplayEntry } from "../../types/finance"
+import type { AmountSort } from "../../types/financeFilters"
 import styles from "./CenterPanel.module.css"
 import CenterHeaderArea from "./CenterHeaderArea/CenterHeaderArea"
 import DateNavigator from "./DateNavigator/DateNavigator"
@@ -25,6 +26,7 @@ function CenterPanel({ onOpenStatsPanel, showStatsButton = false, isStatsPanelOp
     const [selectedDeleteEntryIds, setSelectedDeleteEntryIds] = useState<string[]>([])
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
     const [pendingDeleteEntry, setPendingDeleteEntry] = useState<FinanceDisplayEntry | null>(null)
+    const [amountSort, setAmountSort] = useState<AmountSort>(null)
     const navigatorShellRef = useRef<HTMLDivElement | null>(null)
     const {
         rangeFilter,
@@ -61,6 +63,24 @@ function CenterPanel({ onOpenStatsPanel, showStatsButton = false, isStatsPanelOp
     const showDateNavigator = rangeFilter !== "ALL" || Boolean(selectedDate) || isNavigatorPeekOpen
     const isNavigatorTemporary = isNavigatorPeekOpen && rangeFilter === "ALL" && !selectedDate
     const navigatorLabel = isNavigatorTemporary ? "Select Date" : navigatorDateLabel
+    const sortedFinanceEntries = useMemo(() => {
+        if (!amountSort) {
+            return financeEntries
+        }
+
+        const nextEntries = [...financeEntries]
+
+        nextEntries.sort((entryA, entryB) => {
+            const leftAmount = Number.isFinite(entryA.amountValue) ? entryA.amountValue : 0
+            const rightAmount = Number.isFinite(entryB.amountValue) ? entryB.amountValue : 0
+
+            return amountSort === "DESC"
+                ? rightAmount - leftAmount
+                : leftAmount - rightAmount
+        })
+
+        return nextEntries
+    }, [amountSort, financeEntries])
 
     useEffect(() => {
         if (rangeFilter !== "ALL" || selectedDate) {
@@ -172,6 +192,11 @@ function CenterPanel({ onOpenStatsPanel, showStatsButton = false, isStatsPanelOp
         ))
     }
 
+    const handleResetFilters = () => {
+        setAmountSort(null)
+        resetFilters()
+    }
+
     return (
         <>
         <section className={styles.centerPanel}>
@@ -193,10 +218,12 @@ function CenterPanel({ onOpenStatsPanel, showStatsButton = false, isStatsPanelOp
                     categoryFilter={categoryFilter}
                     categories={categories}
                     typeFilter={typeFilter}
+                    amountSort={amountSort}
                     onRangeChange={setRangeFilter}
                     onCategoryChange={setCategoryFilter}
                     onTypeChange={setTypeFilter}
-                    onReset={resetFilters}
+                    onAmountSortChange={setAmountSort}
+                    onReset={handleResetFilters}
                     onToday={jumpToToday}
                     onAdd={handleOpenAddEntry}
                     onBatchDeleteToggle={() => {
@@ -244,7 +271,7 @@ function CenterPanel({ onOpenStatsPanel, showStatsButton = false, isStatsPanelOp
             </div>
 
             <EntryListArea
-                entries={financeEntries}
+                entries={sortedFinanceEntries}
                 isLoading={isFinanceLoading}
                 errorMessage={financeErrorMessage}
                 onEditEntry={handleEditEntry}

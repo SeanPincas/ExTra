@@ -39,7 +39,7 @@
 
 .content {
     width: 100%;
-    min-height: 31px;
+    min-height: 28px;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -158,5 +158,8 @@
 @media (max-width: 640px) {
     .menu {
         max-height: 188px;
+    }
+    .valueCluster {
+        gap: 0;
     }
 }

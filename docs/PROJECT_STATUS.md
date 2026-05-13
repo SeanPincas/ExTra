@@ -83,6 +83,60 @@ The right panel is still a lighter support area compared to the rest of the dash
 - Expand right-panel insights and connected analytics
 - Continue polishing account settings and profile tooling
 
+## Next Right Panel UI Reform Targets
+
+The next right-panel work should be handled in phased UI reformation passes instead of one broad density pass.
+
+Important layout principle:
+
+- first fix right-panel zone composition
+- then fix feature shell/container fit inside each zone
+- then fix responsive internals inside each feature
+
+Do not start by forcing all right-panel sections into rigid equal-height behavior across every screen size.
+
+The preferred phase order is:
+
+1. Right Panel zone system
+   - define heatmap zone
+   - define statistics zone
+   - define savings progress tracker zone
+   - make territory allocation responsive by breakpoint
+
+2. Feature shell fit
+   - make each feature card/container properly occupy its assigned zone
+   - remove dead space caused by shell/zone mismatch
+
+3. Heatmap internal responsiveness
+   - scale month header, nav controls, weekday labels, cells, and spacing with the heatmap shell
+
+4. Statistics stack structure
+   - fix charts stack behavior
+   - remove false empty space
+   - preserve sibling consistency between bar chart, line chart, and multi-ring chart
+
+5. Individual chart internal responsiveness
+   - Bar Chart internals
+   - Line Chart internals
+   - Multi-Ring internals
+
+6. Savings Progress Tracker internal responsiveness
+   - stabilize content density across no-goal, active, and completed states
+   - preserve bottom-anchor role in the right panel
+
+7. Final right-panel polish
+   - clean remaining dead space
+   - tune spacing/dividers
+   - audit monitor, laptop, tablet, and phone layouts
+
+The working rule is:
+
+- zone first
+- shell second
+- content third
+
+This should be treated as the source-of-truth approach for the next right-panel UI optimization passes.
+
 ## Known Notes
 
 - The right panel is less complete than the left and center panels.

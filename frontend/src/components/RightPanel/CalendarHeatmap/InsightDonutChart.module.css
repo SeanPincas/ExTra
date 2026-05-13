@@ -1,0 +1,109 @@
+.chartRoot {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: grid;
+    place-items: center;
+    isolation: isolate;
+}
+
+.chartSvg {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.trackRing {
+    stroke: rgba(255, 255, 255, 0.08);
+}
+
+.incomeRing {
+    stroke: var(--text-income);
+}
+
+.expenseRing {
+    stroke: var(--text-expense);
+}
+
+.partLabel {
+    fill: rgba(15, 15, 15, 0.94);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    pointer-events: none;
+    paint-order: stroke;
+    stroke: color-mix(in srgb, var(--accent-gold) 84%, #f4dd9d 16%);
+    stroke-width: 1px;
+    stroke-linejoin: round;
+}
+
+.innerGoldRing {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 55%;
+    aspect-ratio: 1 / 1;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 5px solid color-mix(in srgb, var(--accent-gold) 84%, #f4dd9d 50%);
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.28) inset,
+        0 0 0 1px rgba(224, 178, 74, 0.12);
+    z-index: 3;
+    pointer-events: none;
+}
+
+.chartCenter {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background: rgba(10, 11, 13, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: block;
+    text-align: center;
+    z-index: 6;
+    overflow: visible;
+}
+
+.centerLabel {
+    position: absolute;
+    left: 50%;
+    top: 34%;
+    transform: translateX(-50%);
+    font-size: 0.4rem;
+    line-height: 1;
+    color: color-mix(in srgb, var(--accent-gold) 74%, #f5e6b3 26%);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.centerPercent {
+    position: absolute;
+    left: 50%;
+    top: 61%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    font-size: 0.77rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.96);
+    font-weight: 700;
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.5);
+    text-shadow:
+        -1px 0 rgba(0, 0, 0, 0.9),
+        1px 0 rgba(0, 0, 0, 0.9),
+        0 -1px rgba(0, 0, 0, 0.9),
+        0 1px rgba(0, 0, 0, 0.9);
+    white-space: nowrap;
+    text-align: center;
+    pointer-events: none;
+}
+
+.centerPercentNegative {
+    color: var(--text-expense);
+}

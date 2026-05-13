@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react"
 import { Icons } from "../../../utils/iconLibrary"
-import type { EntryTypeFilter, RangeFilter } from "../../../types/financeFilters"
+import type { AmountSort, EntryTypeFilter, RangeFilter } from "../../../types/financeFilters"
 import type { FinanceCategory } from "../../../utils/financeConstants"
 import FinanceTypeSwitch from "../../reusableComp/FinanceTypeSwitch/FinanceTypeSwitch"
 import InlineSelectControl from "../../reusableComp/InlineSelectControl/InlineSelectControl"
@@ -11,9 +12,11 @@ interface EntryFilterBarProps {
     categoryFilter: "ALL" | FinanceCategory
     categories: ("ALL" | FinanceCategory)[]
     typeFilter: EntryTypeFilter
+    amountSort: AmountSort
     onRangeChange: (nextRange: RangeFilter) => void
     onCategoryChange: (nextCategory: "ALL" | FinanceCategory) => void
     onTypeChange: (nextType: EntryTypeFilter) => void
+    onAmountSortChange: (nextSort: AmountSort) => void
     onReset: () => void
     onToday: () => void
     onAdd: () => void
@@ -29,6 +32,7 @@ const typeFilterOptions = [
     { value: "INCOME", label: "INCOME", tone: "income" },
     { value: "EXPENSE", label: "EXPENSE", tone: "expense" },
 ] as const
+const PHONE_MEDIA_QUERY = "(max-width: 640px)"
 
 function EntryFilterBar({
     rangeFilter,
@@ -36,9 +40,11 @@ function EntryFilterBar({
     categoryFilter,
     categories,
     typeFilter,
+    amountSort,
     onRangeChange,
     onCategoryChange,
     onTypeChange,
+    onAmountSortChange,
     onReset,
     onToday,
     onAdd,
@@ -47,9 +53,35 @@ function EntryFilterBar({
     isBatchDeleteMode,
     selectedDeleteCount,
 }: EntryFilterBarProps) {
+    const [isPhoneLayout, setIsPhoneLayout] = useState(() => {
+        if (typeof window === "undefined") {
+            return false
+        }
+
+        return window.matchMedia(PHONE_MEDIA_QUERY).matches
+    })
     const isRangeDisabled = Boolean(selectedDate)
     const rangeDisplayValue = isRangeDisabled ? "~~~" : rangeFilter
     const safeRangeValue = isRangeDisabled && rangeFilter === "ALL" ? "TODAY" : rangeFilter
+    const categoryLabel = isPhoneLayout && categoryFilter !== "ALL" ? "" : "Category"
+
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return
+        }
+
+        const mediaQuery = window.matchMedia(PHONE_MEDIA_QUERY)
+        const handleChange = (event: MediaQueryListEvent) => {
+            setIsPhoneLayout(event.matches)
+        }
+
+        setIsPhoneLayout(mediaQuery.matches)
+        mediaQuery.addEventListener("change", handleChange)
+
+        return () => {
+            mediaQuery.removeEventListener("change", handleChange)
+        }
+    }, [])
 
     return (
         <div className={styles.filterBar}>
@@ -137,7 +169,7 @@ function EntryFilterBar({
                 <div className={styles.bottomLeft}>
                     <InlineSelectControl
                         className={styles.categoryShell}
-                        label="Category"
+                        label={categoryLabel}
                         displayValue={categoryFilter}
                         selectValue={categoryFilter}
                         options={categories.map((category) => ({
@@ -153,6 +185,30 @@ function EntryFilterBar({
                             options={typeFilterOptions}
                             onChange={(nextType) => onTypeChange(nextType as EntryTypeFilter)}
                         />
+                    </div>
+
+                    <div className={styles.amountSortSwitch} role="group" aria-label="Sort entries by amount">
+                        <button
+                            type="button"
+                            className={`${styles.amountSortButton} ${amountSort === "DESC" ? styles.amountSortButtonActive : ""}`}
+                            aria-label="Sort by highest to lowest amount"
+                            title="Highest to Lowest"
+                            aria-pressed={amountSort === "DESC"}
+                            onClick={() => onAmountSortChange(amountSort === "DESC" ? null : "DESC")}
+                        >
+                            <Icons.expense size={14} />
+                        </button>
+
+                        <button
+                            type="button"
+                            className={`${styles.amountSortButton} ${amountSort === "ASC" ? styles.amountSortButtonActive : ""}`}
+                            aria-label="Sort by lowest to highest amount"
+                            title="Lowest to Highest"
+                            aria-pressed={amountSort === "ASC"}
+                            onClick={() => onAmountSortChange(amountSort === "ASC" ? null : "ASC")}
+                        >
+                            <Icons.income size={14} />
+                        </button>
                     </div>
                 </div>
 
