@@ -4,7 +4,7 @@ import {
     legalDocuments,
     type LegalDocumentKey,
 } from "../../../utils/legalDocuments"
-import logo from "../../../assets/logo.png"
+import logo from "../../../assets/logo.webp"
 import { Icons } from "../../../utils/iconLibrary"
 
 interface LegalModalProps {

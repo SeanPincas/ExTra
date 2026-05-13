@@ -4,7 +4,7 @@
 
 import styles from "./Header.module.css"
 import { Icons } from "../../utils/iconLibrary"
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.webp";
 import { useState } from "react";
 import AddEntryModal from "../Finance/AddEntryModal/AddEntryModal";
 

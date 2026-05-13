@@ -1,5 +1,5 @@
 import styles from "./Footer.module.css"
-import logo from "../../assets/logo.png"
+import logo from "../../assets/logo.webp"
 
 function Footer() {
     return (

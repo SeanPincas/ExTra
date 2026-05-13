@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 import { motion, useAnimation } from "framer-motion"
 import styles from "./Intro.module.css"
 
-import coin from "../../assets/extracoin.png"
+import coin from "../../assets/extracoin.webp"
 
 interface IntroProps {
     onFinish: () => void

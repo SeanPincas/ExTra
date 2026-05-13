@@ -4,7 +4,7 @@
 // ======================================================
 
 import styles from "./AppBackground.module.css"
-import bg from "../../assets/bg-matte.jpg";
+import bg from "../../assets/bg-matte.webp";
 
 function AppBackground() {
 
