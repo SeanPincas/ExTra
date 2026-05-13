@@ -111,7 +111,7 @@
     display: grid;
     place-items: center;
     cursor: pointer;
-    padding: 0;
+    padding: 2px 0;
 }
 
 .heatmapDayCellMuted {
@@ -154,7 +154,9 @@
 
 .noEntriesTooltip {
     position: fixed;
-    min-width: 92px;
+    width: max-content;
+    min-width: 0;
+    max-width: calc(100vw - 16px);
     height: 30px;
     padding: 0 10px;
     border: 1px solid color-mix(in srgb, var(--accent-gold) 38%, transparent);
@@ -163,6 +165,8 @@
     color: color-mix(in srgb, var(--accent-gold) 86%, #fff6d6 14%);
     font-size: 0.66rem;
     font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -198,6 +202,100 @@
         --heatmap-weekday-font: 0.5rem;
         --heatmap-day-font: 0.5rem;
         --heatmap-title-font: 0.86rem;
+    }
+}
+
+@media (max-width: 900px) and (min-width: 641px) {
+    .heatmapSectionCard {
+        --heatmap-shell-gap: 4px;
+        --heatmap-shell-pad-y: 6px;
+        --heatmap-shell-pad-x: 6px;
+        --heatmap-controls-size: 20px;
+        --heatmap-controls-gap: 4px;
+        --heatmap-month-font: 0.65rem;
+        --heatmap-grid-pad: 4px;
+        --heatmap-grid-gap: 2px;
+        --heatmap-weekday-font: 0.52rem;
+        --heatmap-day-font: 0.54rem;
+        --heatmap-title-font: 0.88rem;
+    }
+
+    .heatmapGridContainer {
+        height: 100%;
+        min-height: 0;
+        border-radius: 9px;
+    }
+
+    .heatmapWeekdayGrid {
+        margin-bottom: 2px;
+    }
+
+    .heatmapDayCell {
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 640px) {
+    .heatmapSectionCard {
+        --heatmap-shell-gap: 4px;
+        --heatmap-shell-pad-y: 6px;
+        --heatmap-shell-pad-x: 6px;
+        --heatmap-controls-size: 19px;
+        --heatmap-controls-gap: 4px;
+        --heatmap-month-font: 0.64rem;
+        --heatmap-grid-pad: 4px;
+        --heatmap-grid-gap: 2px;
+        --heatmap-weekday-font: 0.52rem;
+        --heatmap-day-font: 0.53rem;
+        --heatmap-title-font: 0.87rem;
+    }
+
+    .heatmapGridContainer {
+        height: 100%;
+        min-height: 0;
+        border-radius: 9px;
+    }
+
+    .heatmapWeekdayGrid {
+        margin-bottom: 2px;
+    }
+
+    .heatmapDayCell {
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 425px) {
+    .heatmapSectionCard {
+        --heatmap-shell-gap: 4px;
+        --heatmap-shell-pad-y: 6px;
+        --heatmap-shell-pad-x: 6px;
+        --heatmap-controls-size: 19px;
+        --heatmap-controls-gap: 4px;
+        --heatmap-month-font: 0.66rem;
+        --heatmap-grid-pad: 4px;
+        --heatmap-grid-gap: 2px;
+        --heatmap-weekday-font: 0.52rem;
+        --heatmap-day-font: 0.54rem;
+        --heatmap-title-font: 0.88rem;
+    }
+
+    .heatmapGridContainer {
+        height: 100%;
+        min-height: 0;
+        border-radius: 9px;
+    }
+
+    .heatmapWeekdayGrid {
+        margin-bottom: 2px;
+    }
+
+    .heatmapCalendarGrid {
+        min-height: 0;
+    }
+
+    .heatmapDayCell {
+        border-radius: 6px;
     }
 }
 

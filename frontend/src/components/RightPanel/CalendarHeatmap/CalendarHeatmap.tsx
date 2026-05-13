@@ -101,6 +101,13 @@ function CalendarHeatmap() {
     const [activeMonth, setActiveMonth] = useState(() => getCurrentMonthKey())
     const [heatmapTotals, setHeatmapTotals] = useState<StatsDailyTotal[]>([])
     const [isHeatmapLoading, setIsHeatmapLoading] = useState(true)
+    const [canPreviewInsightCloud, setCanPreviewInsightCloud] = useState(() => {
+        if (typeof window === "undefined") {
+            return false
+        }
+
+        return window.innerWidth > 900 && window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    })
 
     const [hoveredHeatmapDate, setHoveredHeatmapDate] = useState<string | null>(null)
     const [hoveredDayInsight, setHoveredDayInsight] = useState<HeatmapDayInsightData | null>(null)
@@ -124,6 +131,29 @@ function CalendarHeatmap() {
     const [reminderError, setReminderError] = useState("")
     const dayInsightCacheRef = useRef<Map<string, HeatmapDayInsightData>>(new Map())
     const todayDateKey = useMemo(() => toDateKey(new Date()), [])
+
+    useEffect(() => {
+        const updatePreviewCapability = () => {
+            setCanPreviewInsightCloud(
+                window.innerWidth > 900 && window.matchMedia("(hover: hover) and (pointer: fine)").matches
+            )
+        }
+
+        updatePreviewCapability()
+        window.addEventListener("resize", updatePreviewCapability)
+
+        return () => {
+            window.removeEventListener("resize", updatePreviewCapability)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!canPreviewInsightCloud) {
+            setHoveredHeatmapDate(null)
+            setInsightCloudPosition(null)
+            setEmptyTooltipPosition(null)
+        }
+    }, [canPreviewInsightCloud])
 
     useEffect(() => {
         if (!token) {
@@ -514,7 +544,7 @@ function CalendarHeatmap() {
                                         style={{ backgroundColor: getHeatCellColorByType(day.dominantType, day.intensityLevel) }}
                                         aria-label={`${day.dateKey}: ${formatCurrency(day.total)}`}
                                         onMouseEnter={(event) => {
-                                            if (isDayModalOpen) return
+                                            if (isDayModalOpen || !canPreviewInsightCloud) return
                                             if (day.total <= 0) {
                                                 setHoveredHeatmapDate(null)
                                                 setInsightCloudPosition(null)
@@ -526,12 +556,13 @@ function CalendarHeatmap() {
                                             updateInsightCloudPosition(event.currentTarget)
                                         }}
                                     onMouseLeave={() => {
+                                        if (!canPreviewInsightCloud) return
                                         setHoveredHeatmapDate(null)
                                         setInsightCloudPosition(null)
                                         setEmptyTooltipPosition(null)
                                     }}
                                     onFocus={(event) => {
-                                        if (isDayModalOpen) return
+                                        if (isDayModalOpen || !canPreviewInsightCloud) return
                                         if (day.total <= 0) {
                                             setHoveredHeatmapDate(null)
                                             setInsightCloudPosition(null)
@@ -543,6 +574,7 @@ function CalendarHeatmap() {
                                         updateInsightCloudPosition(event.currentTarget)
                                     }}
                                     onBlur={() => {
+                                        if (!canPreviewInsightCloud) return
                                         setHoveredHeatmapDate(null)
                                         setInsightCloudPosition(null)
                                         setEmptyTooltipPosition(null)
@@ -560,7 +592,7 @@ function CalendarHeatmap() {
                 </div>
             </section>
 
-            {!isDayModalOpen && hoveredHeatmapDate && insightCloudPosition ? (
+            {!isDayModalOpen && canPreviewInsightCloud && hoveredHeatmapDate && insightCloudPosition ? (
                 <DailyInsightCloud
                     date={hoveredHeatmapDate}
                     position={{ top: insightCloudPosition.top, left: insightCloudPosition.left }}
@@ -571,7 +603,7 @@ function CalendarHeatmap() {
                 />
             ) : null}
 
-            {!isDayModalOpen && emptyTooltipPosition ? (
+            {!isDayModalOpen && canPreviewInsightCloud && emptyTooltipPosition ? (
                 <div
                     className={styles.noEntriesTooltip}
                     style={{ top: emptyTooltipPosition.top, left: emptyTooltipPosition.left }}
