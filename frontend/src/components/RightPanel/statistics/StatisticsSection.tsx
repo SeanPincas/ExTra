@@ -23,6 +23,8 @@ interface StatisticsSectionProps {
 }
 
 type StatisticsRangeValue = "1D" | "7D" | "30D" | "ALL"
+const STATISTICS_TYPE_STORAGE_KEY = "extra_statistics_type_filter"
+const STATISTICS_RANGE_STORAGE_KEY = "extra_statistics_range_filter"
 
 const STATISTICS_RANGE_OPTIONS: readonly FinanceTypeSwitchOption[] = [
     { value: "1D", label: "1d", tone: "neutral" },
@@ -36,6 +38,14 @@ const STATISTICS_TYPE_OPTIONS: readonly FinanceTypeSwitchOption[] = [
     { value: FINANCE_ENTRY_TYPES.income, label: "Income", tone: "income" },
     { value: FINANCE_ENTRY_TYPES.expense, label: "Expense", tone: "expense" },
 ] as const
+
+function isValidStatisticsType(value: string | null): value is StatisticsFinanceType {
+    return value === "all" || value === FINANCE_ENTRY_TYPES.income || value === FINANCE_ENTRY_TYPES.expense
+}
+
+function isValidStatisticsRange(value: string | null): value is StatisticsRangeValue {
+    return value === "1D" || value === "7D" || value === "30D" || value === "ALL"
+}
 
 function toStatsRangeParam(range: StatisticsRangeValue): "today" | "week" | "month" | undefined {
     if (range === "1D") return "today"
@@ -83,10 +93,32 @@ async function buildAllHistoryTrendFromEntries() {
 
 const StatisticsSection = memo(function StatisticsSection({ stats }: StatisticsSectionProps) {
     const { token } = useAuth()
-    const [activeType, setActiveType] = useState<StatisticsFinanceType>("all")
-    const [activeRange, setActiveRange] = useState<StatisticsRangeValue>("30D")
+    const [activeType, setActiveType] = useState<StatisticsFinanceType>(() => {
+        if (typeof window === "undefined") {
+            return "all"
+        }
+
+        const storedType = window.localStorage.getItem(STATISTICS_TYPE_STORAGE_KEY)
+        return isValidStatisticsType(storedType) ? storedType : "all"
+    })
+    const [activeRange, setActiveRange] = useState<StatisticsRangeValue>(() => {
+        if (typeof window === "undefined") {
+            return "7D"
+        }
+
+        const storedRange = window.localStorage.getItem(STATISTICS_RANGE_STORAGE_KEY)
+        return isValidStatisticsRange(storedRange) ? storedRange : "7D"
+    })
     const [rangeStats, setRangeStats] = useState<DashboardStatsData>(stats)
     const [lineRangeStats, setLineRangeStats] = useState<DashboardStatsData>(stats)
+
+    useEffect(() => {
+        window.localStorage.setItem(STATISTICS_TYPE_STORAGE_KEY, activeType)
+    }, [activeType])
+
+    useEffect(() => {
+        window.localStorage.setItem(STATISTICS_RANGE_STORAGE_KEY, activeRange)
+    }, [activeRange])
 
     useEffect(() => {
         setRangeStats(stats)
