@@ -3,6 +3,7 @@ import { Icons } from "../../../utils/iconLibrary"
 import type { AmountSort, EntryTypeFilter, RangeFilter } from "../../../types/financeFilters"
 import type { FinanceCategory } from "../../../utils/financeConstants"
 import FinanceTypeSwitch from "../../reusableComp/FinanceTypeSwitch/FinanceTypeSwitch"
+import type { FinanceTypeSwitchOption } from "../../../utils/financeTypeSwitch.utils"
 import InlineSelectControl from "../../reusableComp/InlineSelectControl/InlineSelectControl"
 import styles from "./EntryFilterBar.module.css"
 
@@ -59,7 +60,7 @@ function EntryFilterBar({
     const rangeDisplayValue = isRangeDisabled ? "~~~" : rangeFilter
     const safeRangeValue = isRangeDisabled && rangeFilter === "ALL" ? "TODAY" : rangeFilter
     const categoryLabel = isPhoneLayout && categoryFilter !== "ALL" ? "" : "Category"
-    const typeFilterOptions = isPhoneLayout
+    const typeFilterOptions: FinanceTypeSwitchOption[] = isPhoneLayout
         ? [
             { value: "ALL", label: "ALL", tone: "neutral", ariaLabel: "All entries" },
             { value: "INCOME", label: <Icons.income size={13} />, tone: "income", ariaLabel: "Income entries" },
@@ -202,7 +203,7 @@ function EntryFilterBar({
                             aria-pressed={amountSort === "DESC"}
                             onClick={() => onAmountSortChange(amountSort === "DESC" ? null : "DESC")}
                         >
-                            <Icons.sortHighToLow size={14} />
+                            <Icons.sortHighToLow width={14} height={14} />
                         </button>
 
                         <button
@@ -213,7 +214,7 @@ function EntryFilterBar({
                             aria-pressed={amountSort === "ASC"}
                             onClick={() => onAmountSortChange(amountSort === "ASC" ? null : "ASC")}
                         >
-                            <Icons.sortLowToHigh size={14} />
+                            <Icons.sortLowToHigh width={14} height={14} />
                         </button>
                     </div>
                 </div>

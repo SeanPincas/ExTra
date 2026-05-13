@@ -473,6 +473,17 @@ function SettingsPage({
                                     </div>
                                 </div>
 
+                                <div className={styles.sessionActionBar}>
+                                    <button
+                                        type="button"
+                                        className={`btnBase btnMatteDark ${styles.logoutButton}`}
+                                        onClick={handleLogout}
+                                    >
+                                        <Icons.logout size={16} />
+                                        Logout
+                                    </button>
+                                </div>
+
                                 <div className={styles.sensitivePanel}>
                                     <div className={styles.sensitiveHeader}>
                                         <h3>Sensitive actions</h3>
@@ -480,23 +491,17 @@ function SettingsPage({
                                     </div>
 
                                     <div className={styles.sensitiveBody}>
-                                        <button
-                                            type="button"
-                                            className={`btnBase ${styles.deleteButton}`}
-                                            onClick={() => setIsDeleteModalOpen(true)}
-                                        >
-                                            <Icons.delete size={16} />
-                                            Delete Account
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className={`btnBase btnMatteDark ${styles.logoutButton}`}
-                                            onClick={handleLogout}
-                                        >
-                                            <Icons.logout size={16} />
-                                            Logout
-                                        </button>
+                                        <div className={styles.dangerActionBlock}>
+                                            <span className={styles.sensitiveActionLabel}>Danger Zone</span>
+                                            <button
+                                                type="button"
+                                                className={`btnBase ${styles.deleteButton}`}
+                                                onClick={() => setIsDeleteModalOpen(true)}
+                                            >
+                                                <Icons.delete size={16} />
+                                                Delete Account
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

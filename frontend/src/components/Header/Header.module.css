@@ -196,6 +196,7 @@
 @media (max-width: 640px) {
 
     .headerContainer {
+        min-height: 48px;
         gap: 7px;
         padding-inline: 8px;
     }
@@ -206,11 +207,11 @@
 
     .logoWrapper {
         /* Mobile capsule length can be tuned here. */
-        padding: 4px 20px;
+        padding: 3px 20px;
     }
 
     .headerActionButton {
-        min-height: 30px;
+        min-height: 28px;
         padding-inline: 8px;
         font-size: 0.72rem;
     }
@@ -229,6 +230,7 @@
 
     .headerContainer {
         grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        min-height: 46px;
     }
 
     .logoWrapper {
@@ -245,7 +247,7 @@
     }
 
     .headerActionButton {
-        min-height: 30px;
+        min-height: 28px;
         min-width: 32px;
         padding-inline: 7px;
         border-radius: 9px;
