@@ -419,6 +419,7 @@
 @media (max-width: 480px) {
     .loginPage {
         align-items: flex-start;
+        height: 100dvh;
         min-height: 100dvh;
         padding: 6px;
         overflow-y: auto;
@@ -429,10 +430,11 @@
 
     .loginShell {
         width: 100%;
-        min-height: auto;
+        min-height: max-content;
         gap: 6px;
         padding: 8px;
         border-radius: 14px;
+        padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     }
 
     .logoCapsule {
