@@ -116,6 +116,14 @@
     gap: 6px;
 }
 
+.noGoalState {
+    flex: 1;
+    min-height: 0;
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+}
+
 .goalChoiceTitle {
     margin: 0;
     font-size: 0.68rem;
@@ -234,6 +242,11 @@
     color: #edfff1;
     justify-self: start;
     opacity: 1;
+}
+
+.noGoalState .primaryAction {
+    width: 100%;
+    justify-self: stretch;
 }
 
 .secondaryAction {

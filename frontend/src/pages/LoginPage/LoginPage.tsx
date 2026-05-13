@@ -23,6 +23,7 @@ function LoginPage({ onRegisterClick }: LoginPageProps) {
     const [showPassword, setShowPassword] = useState(false)
     const [acceptedLegal, setAcceptedLegal] = useState(false)
     const [activeLegalDocument, setActiveLegalDocument] = useState<LegalDocumentKey | null>(null)
+    const [isBrandPanelCollapsed, setIsBrandPanelCollapsed] = useState(false)
 
     useEffect(() => {
         if (!errorMessage) {
@@ -37,6 +38,21 @@ function LoginPage({ onRegisterClick }: LoginPageProps) {
             window.clearTimeout(timeoutId)
         }
     }, [errorMessage])
+
+    useEffect(() => {
+        const syncBrandPanelState = () => {
+            if (window.innerWidth > 900) {
+                setIsBrandPanelCollapsed(false)
+            }
+        }
+
+        syncBrandPanelState()
+        window.addEventListener("resize", syncBrandPanelState)
+
+        return () => {
+            window.removeEventListener("resize", syncBrandPanelState)
+        }
+    }, [])
 
     const handleChange = (field: keyof typeof formData, value: string) => {
         setFormData((current) => ({
@@ -103,28 +119,42 @@ function LoginPage({ onRegisterClick }: LoginPageProps) {
                 </div>
 
                 <div className={styles.panelGrid}>
-                    <div className={styles.brandPanel}>
+                    <div
+                        className={`${styles.brandPanel} ${isBrandPanelCollapsed ? styles.brandPanelCollapsed : ""}`}
+                    >
                         <div className={styles.brandCopy}>
+                            <button
+                                type="button"
+                                className={styles.brandPanelToggle}
+                                onClick={() => setIsBrandPanelCollapsed((current) => !current)}
+                                aria-label={isBrandPanelCollapsed ? "Expand brand panel" : "Collapse brand panel"}
+                                aria-expanded={!isBrandPanelCollapsed}
+                            >
+                                {isBrandPanelCollapsed ? <Icons.down size={16} /> : <Icons.close size={16} />}
+                            </button>
                             <h1 className={styles.pageTitle}>Welcome Back to ExTra</h1>
+                        </div>
+
+                        <div className={styles.brandPanelContent}>
                             <p className={styles.pageSubtitle}>
                                 Continue your expense tracking flow to review summaries,
                                 monitor spending, manage reminders, and stay in control
                                 of your daily financial activity.
                             </p>
-                        </div>
 
-                        <ul className={styles.featureList}>
-                            <li>Resume tracking income and expenses in one dashboard</li>
-                            <li>Review balance, reminders, and upcoming activity faster</li>
-                            <li>Jump straight back into your ExTra workspace</li>
-                        </ul>
+                            <ul className={styles.featureList}>
+                                <li>Resume tracking income and expenses in one dashboard</li>
+                                <li>Review balance, reminders, and upcoming activity faster</li>
+                                <li>Jump straight back into your ExTra workspace</li>
+                            </ul>
 
-                        <div className={styles.brandIllustration}>
-                            <img
-                                src={saveMoney}
-                                alt="Saving money illustration"
-                                className={styles.illustrationImage}
-                            />
+                            <div className={styles.brandIllustration}>
+                                <img
+                                    src={saveMoney}
+                                    alt="Saving money illustration"
+                                    className={styles.illustrationImage}
+                                />
+                            </div>
                         </div>
                     </div>
 

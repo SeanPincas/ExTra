@@ -303,15 +303,17 @@ function SavingsProgressTracker() {
                     <Icons.chart width={16} height={16} />
                     <h3 className={styles.title}>Savings Progress Tracker</h3>
                 </div>
-                <button
-                    type="button"
-                    className={styles.editGoalButton}
-                    onClick={() => openGoalEditor("edit")}
-                    aria-label={hasGoal ? "Edit savings goal" : "Create savings goal"}
-                    title={hasGoal ? "Edit savings goal" : "Create savings goal"}
-                >
-                    <Icons.edit width={12} height={12} />
-                </button>
+                {hasGoal ? (
+                    <button
+                        type="button"
+                        className={styles.editGoalButton}
+                        onClick={() => openGoalEditor("edit")}
+                        aria-label="Edit savings goal"
+                        title="Edit savings goal"
+                    >
+                        <Icons.edit width={12} height={12} />
+                    </button>
+                ) : null}
             </div>
 
             {trackerError ? (
@@ -321,6 +323,7 @@ function SavingsProgressTracker() {
             {isGoalEditorOpen ? (
                 <form
                     className={styles.goalEditor}
+                    autoComplete="off"
                     onSubmit={(event) => {
                         event.preventDefault()
                         void handleGoalDraftSubmit()
@@ -334,6 +337,7 @@ function SavingsProgressTracker() {
                         aria-label="Savings goal amount"
                         type="text"
                         inputMode="decimal"
+                        autoComplete="off"
                         value={goalDraft}
                         onChange={(event) => setGoalDraft(event.target.value)}
                         className={styles.goalInput}
@@ -390,6 +394,7 @@ function SavingsProgressTracker() {
             ) : isAddProgressOpen ? (
                 <form
                     className={styles.goalEditor}
+                    autoComplete="off"
                     onSubmit={(event) => {
                         event.preventDefault()
                         void handleAddProgressSave()
@@ -403,6 +408,7 @@ function SavingsProgressTracker() {
                         aria-label="Savings progress amount"
                         type="text"
                         inputMode="decimal"
+                        autoComplete="off"
                         value={progressAmountDraft}
                         onChange={(event) => setProgressAmountDraft(event.target.value)}
                         className={styles.goalInput}

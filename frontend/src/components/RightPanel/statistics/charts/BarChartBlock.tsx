@@ -105,9 +105,11 @@ function BarChartBlock({ data, activeType, activeRange }: BarChartBlockProps) {
             </div>
 
             {visibleItems.length === 0 ? (
-                <p className={styles.emptyState}>
-                    {activeType === "all" ? "No categories available." : `No ${activeType} categories available.`}
-                </p>
+                <div className={styles.emptyStateShell}>
+                    <p className={styles.emptyState}>
+                        {activeType === "all" ? "No categories available yet." : `No ${activeType} categories available yet.`}
+                    </p>
+                </div>
             ) : (
                 <div className={styles.chartArea}>
                     <div className={isExpanded ? styles.chartViewportExpanded : styles.chartViewport}>

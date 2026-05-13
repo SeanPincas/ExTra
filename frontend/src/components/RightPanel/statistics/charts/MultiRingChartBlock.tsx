@@ -95,7 +95,9 @@ function MultiRingChartBlock({ data, activeType, activeRange }: MultiRingChartBl
             </div>
 
             {!hasData ? (
-                <p className={styles.emptyState}>No category distribution yet.</p>
+                <div className={styles.emptyStateShell}>
+                    <p className={styles.emptyState}>No category distribution available yet.</p>
+                </div>
             ) : (
                 <div className={styles.contentShell}>
                     <div className={styles.chartColumn}>

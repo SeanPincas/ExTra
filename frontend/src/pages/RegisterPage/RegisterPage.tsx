@@ -38,6 +38,7 @@ function RegisterPage({ onLoginClick }: RegisterPageProps) {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [acceptedLegal, setAcceptedLegal] = useState(false)
     const [activeLegalDocument, setActiveLegalDocument] = useState<LegalDocumentKey | null>(null)
+    const [isBrandPanelCollapsed, setIsBrandPanelCollapsed] = useState(false)
 
     useEffect(() => {
         if (!errorMessage) {
@@ -52,6 +53,21 @@ function RegisterPage({ onLoginClick }: RegisterPageProps) {
             window.clearTimeout(timeoutId)
         }
     }, [errorMessage])
+
+    useEffect(() => {
+        const syncBrandPanelState = () => {
+            if (window.innerWidth > 900) {
+                setIsBrandPanelCollapsed(false)
+            }
+        }
+
+        syncBrandPanelState()
+        window.addEventListener("resize", syncBrandPanelState)
+
+        return () => {
+            window.removeEventListener("resize", syncBrandPanelState)
+        }
+    }, [])
 
     const handleChange = (field: keyof typeof formData, value: string) => {
         setFormData((current) => ({
@@ -164,28 +180,42 @@ function RegisterPage({ onLoginClick }: RegisterPageProps) {
                 </div>
 
                 <div className={styles.panelGrid}>
-                <div className={styles.brandPanel}>
+                <div
+                    className={`${styles.brandPanel} ${isBrandPanelCollapsed ? styles.brandPanelCollapsed : ""}`}
+                >
                     <div className={styles.brandCopy}>
+                        <button
+                            type="button"
+                            className={styles.brandPanelToggle}
+                            onClick={() => setIsBrandPanelCollapsed((current) => !current)}
+                            aria-label={isBrandPanelCollapsed ? "Expand brand panel" : "Collapse brand panel"}
+                            aria-expanded={!isBrandPanelCollapsed}
+                        >
+                            {isBrandPanelCollapsed ? <Icons.down size={16} /> : <Icons.close size={16} />}
+                        </button>
                         <h1 className={styles.pageTitle}>Create Your ExTra Account</h1>
+                    </div>
+
+                    <div className={styles.brandPanelContent}>
                         <p className={styles.pageSubtitle}>
                             Build your expense tracking workspace to record spending,
                             review financial summaries, manage reminders, and stay in
                             control of your daily money flow.
                         </p>
-                    </div>
 
-                    <ul className={styles.featureList}>
-                        <li>Track income and expenses with structured entries</li>
-                        <li>Review totals, balance, and upcoming reminders in one place</li>
-                        <li>Grow into the full ExTra dashboard after sign up</li>
-                    </ul>
+                        <ul className={styles.featureList}>
+                            <li>Track income and expenses with structured entries</li>
+                            <li>Review totals, balance, and upcoming reminders in one place</li>
+                            <li>Grow into the full ExTra dashboard after sign up</li>
+                        </ul>
 
-                    <div className={styles.brandIllustration}>
-                        <img
-                            src={saveMoney}
-                            alt="Saving money illustration"
-                            className={styles.illustrationImage}
-                        />
+                        <div className={styles.brandIllustration}>
+                            <img
+                                src={saveMoney}
+                                alt="Saving money illustration"
+                                className={styles.illustrationImage}
+                            />
+                        </div>
                     </div>
                 </div>
 
