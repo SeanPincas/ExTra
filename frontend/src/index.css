@@ -127,7 +127,7 @@ body,
      PANEL TEXTURE SYSTEM
   =============================== */
 
-    --panel-texture: url("/src/assets/panel-texture.jpg");
+    --panel-texture: url("/src/assets/panel-texture.webp");
 
     --panel-gradient:
         radial-gradient(circle at center,

@@ -81,7 +81,7 @@
     border-radius: 16px;
     background:
         linear-gradient(180deg, rgba(24, 24, 28, 0.58), rgba(18, 18, 22, 0.64)),
-        url("/src/assets/leather.png");
+        url("/src/assets/leather.webp");
     background-size: cover, cover;
     padding: 12px;
     display: grid;

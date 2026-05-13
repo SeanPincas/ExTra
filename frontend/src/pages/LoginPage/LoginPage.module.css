@@ -421,11 +421,15 @@
         align-items: flex-start;
         min-height: 100dvh;
         padding: 6px;
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
     }
 
     .loginShell {
         width: 100%;
-        min-height: calc(100dvh - 12px);
+        min-height: auto;
         gap: 6px;
         padding: 8px;
         border-radius: 14px;
