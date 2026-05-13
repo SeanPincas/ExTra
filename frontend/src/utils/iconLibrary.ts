@@ -15,6 +15,7 @@ import {
     ChevronLeft,
     ChevronRight,
     ChevronDown,
+    ChevronUp,
     RefreshCcw,
     Wallet,
     TrendingUp,
@@ -31,7 +32,8 @@ import {
     CalendarDays,
     PenLine,
     Trash2,
-    Camera
+    Camera,
+    PiggyBank
 } from "lucide-react"
 
 function TripleChevronLeft(props: SVGProps<SVGSVGElement>) {
@@ -154,6 +156,102 @@ function StatsDockIcon(props: SVGProps<SVGSVGElement>) {
     )
 }
 
+function SortHighToLowIcon(props: SVGProps<SVGSVGElement>) {
+    const width = props.width ?? props.height ?? 18
+    const height = props.height ?? props.width ?? 18
+
+    return createElement(
+        "svg",
+        {
+            ...props,
+            width,
+            height,
+            viewBox: "0 0 24 24",
+            fill: "none",
+            xmlns: "http://www.w3.org/2000/svg",
+        },
+        createElement("path", {
+            d: "M4 6.5H18",
+            stroke: "currentColor",
+            strokeWidth: "1.9",
+            strokeLinecap: "round",
+        }),
+        createElement("path", {
+            d: "M4 11.5H15",
+            stroke: "currentColor",
+            strokeWidth: "1.9",
+            strokeLinecap: "round",
+        }),
+        createElement("path", {
+            d: "M4 16.5H11",
+            stroke: "currentColor",
+            strokeWidth: "1.9",
+            strokeLinecap: "round",
+        }),
+        createElement("path", {
+            d: "M17.5 19V8.2",
+            stroke: "currentColor",
+            strokeWidth: "1.9",
+            strokeLinecap: "round",
+        }),
+        createElement("path", {
+            d: "M14.5 11.2L17.5 8.2L20.5 11.2",
+            stroke: "currentColor",
+            strokeWidth: "1.9",
+            strokeLinecap: "round",
+            strokeLinejoin: "round",
+        }),
+    )
+}
+
+function SortLowToHighIcon(props: SVGProps<SVGSVGElement>) {
+    const width = props.width ?? props.height ?? 18
+    const height = props.height ?? props.width ?? 18
+
+    return createElement(
+        "svg",
+        {
+            ...props,
+            width,
+            height,
+            viewBox: "0 0 24 24",
+            fill: "none",
+            xmlns: "http://www.w3.org/2000/svg",
+        },
+        createElement("path", {
+            d: "M4 6.5H11",
+            stroke: "currentColor",
+            strokeWidth: "1.9",
+            strokeLinecap: "round",
+        }),
+        createElement("path", {
+            d: "M4 11.5H15",
+            stroke: "currentColor",
+            strokeWidth: "1.9",
+            strokeLinecap: "round",
+        }),
+        createElement("path", {
+            d: "M4 16.5H18",
+            stroke: "currentColor",
+            strokeWidth: "1.9",
+            strokeLinecap: "round",
+        }),
+        createElement("path", {
+            d: "M17.5 5V15.8",
+            stroke: "currentColor",
+            strokeWidth: "1.9",
+            strokeLinecap: "round",
+        }),
+        createElement("path", {
+            d: "M14.5 12.8L17.5 15.8L20.5 12.8",
+            stroke: "currentColor",
+            strokeWidth: "1.9",
+            strokeLinecap: "round",
+            strokeLinejoin: "round",
+        }),
+    )
+}
+
 // ======================================================
 // EXPORT ICONS
 // ======================================================
@@ -167,6 +265,7 @@ export const Icons = {
     tripleBack: TripleChevronLeft,
     tripleForward: TripleChevronRight,
     down: ChevronDown,
+    up: ChevronUp,
 
     // ACTIONS
     add: Plus,
@@ -190,6 +289,7 @@ export const Icons = {
 
     // FINANCE
     wallet: Wallet,
+    savings: PiggyBank,
     income: TrendingUp,
     expense: TrendingDown,
 
@@ -197,6 +297,8 @@ export const Icons = {
     chart: BarChart3,
     pie: PieChart,
     stats: StatsDockIcon,
+    sortHighToLow: SortHighToLowIcon,
+    sortLowToHigh: SortLowToHighIcon,
 
     // SYSTEM
     notification: Bell,

@@ -287,7 +287,7 @@ function SavingsProgressTracker() {
             <section id="savings-progress-tracker" className={styles.trackerCard} aria-label="Savings progress tracker">
                 <div className={styles.headerRow}>
                     <div className={styles.titleGroup}>
-                        <Icons.chart width={16} height={16} />
+                        <Icons.savings width={16} height={16} />
                         <h3 className={styles.title}>Savings Progress Tracker</h3>
                     </div>
                 </div>
@@ -300,7 +300,7 @@ function SavingsProgressTracker() {
         <section id="savings-progress-tracker" className={styles.trackerCard} aria-label="Savings progress tracker">
             <div className={styles.headerRow}>
                 <div className={styles.titleGroup}>
-                    <Icons.chart width={16} height={16} />
+                    <Icons.savings width={16} height={16} />
                     <h3 className={styles.title}>Savings Progress Tracker</h3>
                 </div>
                 {hasGoal ? (

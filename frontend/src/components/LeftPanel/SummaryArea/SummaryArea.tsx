@@ -4,6 +4,7 @@ import type { RangeFilter } from "../../../types/financeFilters"
 import type { DashboardTotals } from "../../../types/stats"
 import { useRotatingQuote } from "../../../hooks/useRotatingQuote"
 import { formatCurrency } from "../../../utils/formatCurrency"
+import { useFinance } from "../../../context/FinanceContext"
 import styles from "./SummaryArea.module.css"
 import Filter from "../../reusableComp/Filter/Filter"
 
@@ -43,6 +44,7 @@ function SummaryArea() {
     const [activeRange, setActiveRange] = useState<RangeFilter>(() => readStoredSummaryRangeFilter() ?? "ALL")
     const [totals, setTotals] = useState<DashboardTotals>(defaultTotals)
     const { currentQuote, isLoading: isQuoteLoading, error: quoteError, isEmpty: isQuoteEmpty } = useRotatingQuote()
+    const { entriesRevision } = useFinance()
 
     useEffect(() => {
         if (typeof window === "undefined") {
@@ -54,7 +56,7 @@ function SummaryArea() {
         } catch {
             // ignore storage issues
         }
-    }, [activeRange])
+    }, [activeRange, entriesRevision])
 
     useEffect(() => {
         let isActive = true

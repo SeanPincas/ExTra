@@ -27,11 +27,6 @@ interface EntryFilterBarProps {
 }
 
 const rangeOptions: RangeFilter[] = ["TODAY", "WEEK", "MONTH", "ALL"]
-const typeFilterOptions = [
-    { value: "ALL", label: "ALL", tone: "neutral" },
-    { value: "INCOME", label: "INCOME", tone: "income" },
-    { value: "EXPENSE", label: "EXPENSE", tone: "expense" },
-] as const
 const PHONE_MEDIA_QUERY = "(max-width: 640px)"
 
 function EntryFilterBar({
@@ -64,6 +59,17 @@ function EntryFilterBar({
     const rangeDisplayValue = isRangeDisabled ? "~~~" : rangeFilter
     const safeRangeValue = isRangeDisabled && rangeFilter === "ALL" ? "TODAY" : rangeFilter
     const categoryLabel = isPhoneLayout && categoryFilter !== "ALL" ? "" : "Category"
+    const typeFilterOptions = isPhoneLayout
+        ? [
+            { value: "ALL", label: "ALL", tone: "neutral", ariaLabel: "All entries" },
+            { value: "INCOME", label: <Icons.income size={13} />, tone: "income", ariaLabel: "Income entries" },
+            { value: "EXPENSE", label: <Icons.expense size={13} />, tone: "expense", ariaLabel: "Expense entries" },
+        ]
+        : [
+            { value: "ALL", label: "ALL", tone: "neutral", ariaLabel: "All entries" },
+            { value: "INCOME", label: "INCOME", tone: "income", ariaLabel: "Income entries" },
+            { value: "EXPENSE", label: "EXPENSE", tone: "expense", ariaLabel: "Expense entries" },
+        ]
 
     useEffect(() => {
         if (typeof window === "undefined") {
@@ -196,7 +202,7 @@ function EntryFilterBar({
                             aria-pressed={amountSort === "DESC"}
                             onClick={() => onAmountSortChange(amountSort === "DESC" ? null : "DESC")}
                         >
-                            <Icons.expense size={14} />
+                            <Icons.sortHighToLow size={14} />
                         </button>
 
                         <button
@@ -207,7 +213,7 @@ function EntryFilterBar({
                             aria-pressed={amountSort === "ASC"}
                             onClick={() => onAmountSortChange(amountSort === "ASC" ? null : "ASC")}
                         >
-                            <Icons.income size={14} />
+                            <Icons.sortLowToHigh size={14} />
                         </button>
                     </div>
                 </div>

@@ -6,7 +6,7 @@
     --line-chip-pad-x: 6px;
     --line-chip-font: 0.52rem;
     --line-chart-pad-top: 4px;
-    --line-chart-pad-side: 5px;
+    --line-chart-pad-side: 2px;
     --line-chart-pad-bottom: 3px;
     --line-viewport-height: 78px;
     --line-month-font: 0.5rem;
@@ -269,7 +269,7 @@
         --line-chip-pad-x: 5px;
         --line-chip-font: 0.48rem;
         --line-chart-pad-top: 3px;
-        --line-chart-pad-side: 4px;
+        --line-chart-pad-side: 2px;
         --line-chart-pad-bottom: 3px;
         --line-viewport-height: 70px;
         --line-month-font: 0.46rem;
