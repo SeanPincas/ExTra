@@ -18,7 +18,7 @@ import quoteRoutes from "./routes/quoteRoutes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
-const allowedOrigins = [
+const configuredOrigins = [
     "http://localhost:5173",
     ...(process.env.CLIENT_URL
         ? process.env.CLIENT_URL
@@ -27,14 +27,28 @@ const allowedOrigins = [
             .filter(Boolean)
         : []),
 ];
+
+function isAllowedOrigin(origin) {
+    if (!origin) {
+        return true;
+    }
+
+    if (configuredOrigins.includes(origin)) {
+        return true;
+    }
+
+    // Allow Vercel-hosted frontends during production deployment and preview flows.
+    if (/^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) {
+        return true;
+    }
+
+    return false;
+}
+
 const corsOptions = {
     origin(origin, callback) {
         // Allow non-browser/server-to-server requests that do not send an Origin header.
-        if (!origin) {
-            return callback(null, true);
-        }
-
-        if (allowedOrigins.includes(origin)) {
+        if (isAllowedOrigin(origin)) {
             return callback(null, true);
         }
 
@@ -43,6 +57,7 @@ const corsOptions = {
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    optionsSuccessStatus: 204,
 };
 
 // --------------------------------------------------
