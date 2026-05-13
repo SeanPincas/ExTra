@@ -169,14 +169,6 @@ function ReminderArea() {
         setActiveReminderId(null)
     }
 
-    const openEditModal = () => {
-        if (!activeReminder) {
-            return
-        }
-
-        setIsEditModalOpen(true)
-    }
-
     const openViewModal = (reminderId: string) => {
         setActiveReminderId(reminderId)
         setIsViewModalOpen(true)

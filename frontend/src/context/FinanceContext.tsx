@@ -514,14 +514,14 @@ function FinanceProvider({ children }: FinanceProviderProps) {
 
     const categories = useMemo(() => {
         if (typeFilter === "INCOME") {
-            return ["ALL", ...getFinanceCategories(FINANCE_ENTRY_TYPES.income)]
+            return ["ALL", ...getFinanceCategories(FINANCE_ENTRY_TYPES.income)] as ("ALL" | FinanceCategory)[]
         }
 
         if (typeFilter === "EXPENSE") {
-            return ["ALL", ...getFinanceCategories(FINANCE_ENTRY_TYPES.expense)]
+            return ["ALL", ...getFinanceCategories(FINANCE_ENTRY_TYPES.expense)] as ("ALL" | FinanceCategory)[]
         }
 
-        return ["ALL", ...getAllFinanceCategories()]
+        return ["ALL", ...getAllFinanceCategories()] as ("ALL" | FinanceCategory)[]
     }, [typeFilter])
 
     const financeEntries = useMemo(() => {
@@ -537,7 +537,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
             return true
         })
 
-        return nextEntries.map((entry) => ({
+        return nextEntries.map((entry): FinanceDisplayEntry => ({
             id: entry._id,
             title: entry.title,
             type: entry.type === "income" ? "Income" : "Expense",
@@ -680,7 +680,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
     }
 
     const navigatorDateLabel = formatNavigatorDateLabel(selectedDate, rangeFilter, rangeAnchorDate)
-    const effectiveMode = selectedDate ? "DATE" : rangeFilter
+    const effectiveMode: "DATE" | RangeFilter = selectedDate ? "DATE" : rangeFilter
     const canNavigateBackward = effectiveMode !== "ALL"
     const canNavigateForward = useMemo(() => {
         if (selectedDate) {

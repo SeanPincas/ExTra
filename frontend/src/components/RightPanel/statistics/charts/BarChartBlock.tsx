@@ -12,6 +12,7 @@ interface BarChartBlockProps {
 }
 
 function BarChartBlock({ data, activeType, activeRange }: BarChartBlockProps) {
+    void activeRange
     const [isExpanded, setIsExpanded] = useState(false)
     const [overflowingCategories, setOverflowingCategories] = useState<Record<string, boolean>>({})
     const labelRefs = useRef<Record<string, HTMLSpanElement | null>>({})
