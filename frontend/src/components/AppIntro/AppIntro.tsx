@@ -13,7 +13,7 @@ function AppIntro({ children }: AppIntroProps) {
 
     return (
 
-        <div style={{ position: "relative" }}>
+        <div style={{ position: "relative", minHeight: "100dvh", width: "100%" }}>
 
             <AnimatePresence>
 
@@ -34,8 +34,9 @@ function AppIntro({ children }: AppIntroProps) {
                 transition={{ duration: 0.2 }}
 
                 style={{
-                    position: "absolute",
-                    inset: 0,
+                    position: "relative",
+                    minHeight: "100dvh",
+                    width: "100%",
                     pointerEvents: introDone ? "auto" : "none"
                 }}
             >
