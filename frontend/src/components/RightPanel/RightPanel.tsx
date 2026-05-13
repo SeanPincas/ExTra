@@ -7,7 +7,7 @@ import { useFinance } from "../../context/FinanceContext"
 import { useAuth } from "../../context/AuthContext"
 import CalendarHeatmap from "./CalendarHeatmap/CalendarHeatmap"
 import StatisticsSection from "./statistics/StatisticsSection"
-import SavingsProgressTracker from "../LeftPanel/SavingsProgressTracker/SavingsProgressTracker"
+import SavingsProgressTracker from "./SavingsProgressTracker/SavingsProgressTracker"
 
 const defaultStats: DashboardStatsData = {
     totals: { income: 0, expense: 0, balance: 0 },
