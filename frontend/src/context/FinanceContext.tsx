@@ -45,6 +45,7 @@ interface FinanceContextValue {
     canNavigateBackward: boolean
     canNavigateForward: boolean
     financeEntries: FinanceDisplayEntry[]
+    entriesRevision: number
     totalPages: number
     currentPage: number
     isFinanceLoading: boolean
@@ -154,13 +155,6 @@ function formatMonthShort(date: Date) {
     return date.toLocaleDateString("en-US", { month: "short" })
 }
 
-function formatSlashDateLabel(date: Date) {
-    const year = date.getFullYear()
-    const month = formatMonthShort(date)
-    const day = String(date.getDate()).padStart(2, "0")
-    return `${year} / ${month} / ${day}`
-}
-
 function formatSelectedDateLabel(date: Date) {
     const month = formatMonthShort(date)
     const day = date.getDate()
@@ -193,9 +187,12 @@ function getRangeWindow(rangeFilter: Exclude<RangeFilter, "ALL">, anchorDateKey:
     }
 
     if (rangeFilter === "WEEK") {
+        const startDate = addDays(anchorDate, -6)
+        const endDate = new Date(anchorDate)
         return {
-            start: startOfWeek(anchorDate),
-            end: endOfWeek(anchorDate),
+            // Rolling 7-day window ending on the selected anchor day.
+            start: startOfDay(startDate),
+            end: endOfDay(endDate),
         }
     }
 
@@ -215,7 +212,7 @@ function formatNavigatorDateLabel(selectedDate: string | null, rangeFilter: Rang
     }
 
     if (rangeFilter === "TODAY") {
-        return formatSlashDateLabel(new Date(`${rangeAnchorDate}T00:00:00`))
+        return formatSelectedDateLabel(new Date(`${rangeAnchorDate}T00:00:00`))
     }
 
     const { start, end } = getRangeWindow(rangeFilter, rangeAnchorDate)
@@ -264,27 +261,13 @@ function getInitialRangeFilter() {
 }
 
 function getInitialSelectedDate() {
-    const storedFilters = readStoredFinanceFilters()
-
-    if (typeof storedFilters?.selectedDate === "string") {
-        return storedFilters.selectedDate
-    }
-
+    // Always reset date-navigation selection on page refresh.
     return null
 }
 
 function getInitialRangeAnchorDate() {
     const todayKey = toDateKey(new Date())
-    const storedFilters = readStoredFinanceFilters()
-
-    if (typeof storedFilters?.rangeAnchorDate === "string") {
-        return storedFilters.rangeAnchorDate
-    }
-
-    if (typeof storedFilters?.selectedDate === "string") {
-        return storedFilters.selectedDate
-    }
-
+    // Always anchor date-navigation to current day on page refresh.
     return todayKey
 }
 
@@ -342,6 +325,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
     const [currentPage, setCurrentPage] = useState(1)
     const [todayKey, setTodayKey] = useState(() => toDateKey(new Date()))
     const [rawFinanceEntries, setRawFinanceEntries] = useState<FinanceEntry[]>([])
+    const [entriesRevision, setEntriesRevision] = useState(0)
     const [totalPages, setTotalPages] = useState(1)
     const [isFinanceLoading, setIsFinanceLoading] = useState(false)
     const [financeErrorMessage, setFinanceErrorMessage] = useState("")
@@ -486,6 +470,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         }
 
         await createFinanceEntryRequest(payload)
+        setEntriesRevision((currentRevision) => currentRevision + 1)
         await refreshFinance()
     }
 
@@ -495,6 +480,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         }
 
         await updateFinanceEntryRequest(entryId, payload)
+        setEntriesRevision((currentRevision) => currentRevision + 1)
         await refreshFinance()
     }
 
@@ -504,6 +490,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         }
 
         await deleteFinanceEntryRequest(entryId)
+        setEntriesRevision((currentRevision) => currentRevision + 1)
         await refreshFinance()
     }
 
@@ -517,6 +504,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         }
 
         await Promise.all(entryIds.map((entryId) => deleteFinanceEntryRequest(entryId)))
+        setEntriesRevision((currentRevision) => currentRevision + 1)
         await refreshFinance()
     }
 
@@ -564,6 +552,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
                 hour: "numeric",
                 minute: "2-digit",
             }),
+            amountValue: Number.isFinite(entry.totalAmount) ? entry.totalAmount : 0,
             amountLabel: formatCurrency(entry.totalAmount),
             tone: entry.type === "income" ? "income" : "expense",
             items: entry.items,
@@ -727,6 +716,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         canNavigateBackward,
         canNavigateForward,
         financeEntries,
+        entriesRevision,
         totalPages,
         currentPage,
         isFinanceLoading,
@@ -762,6 +752,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         canNavigateBackward,
         canNavigateForward,
         financeEntries,
+        entriesRevision,
         totalPages,
         currentPage,
         isFinanceLoading,

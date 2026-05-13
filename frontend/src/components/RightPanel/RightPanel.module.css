@@ -1,4 +1,15 @@
 .rightPanelRoot {
+    --right-panel-pad-bottom: 0px;
+    --right-heatmap-height: 188px;
+    --right-spt-height: 132px;
+    --right-heatmap-row: var(--right-heatmap-height);
+    --right-statistics-row: minmax(0, 1fr);
+    --right-spt-row: var(--right-spt-height);
+    --right-zone-child-height: 100%;
+    --right-panel-header-pad-x: 10px;
+    --right-panel-header-pad-top: 8px;
+    --right-panel-header-pad-bottom: 7px;
+    position: relative;
     min-height: 0;
     height: 100%;
     display: grid;
@@ -9,27 +20,67 @@
     border-radius: 14px;
     overflow: visible;
     background:
-        radial-gradient(circle at 18% 18%, rgba(96, 120, 102, 0.08), transparent 34%),
-        radial-gradient(circle at 82% 22%, rgba(128, 99, 19, 0.08), transparent 30%),
-        linear-gradient(180deg, rgba(18, 19, 20, 0.96), rgba(10, 10, 11, 0.98)),
+        linear-gradient(180deg, rgba(19, 20, 22, 0.96), rgba(12, 12, 14, 0.98)),
         var(--panel-texture);
-    background-size: auto, auto, cover, 980px;
+    background-size: cover, 960px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.statsPanelHandle {
+    position: absolute;
+    left: -28px;
+    top: 12px;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(218, 165, 32, 0.34);
+    border-radius: 10px 0 0 10px;
+    background: rgba(18, 18, 19, 0.96);
+    color: var(--accent-gold);
+    padding: 0;
+    cursor: pointer;
+    z-index: 22;
+}
+
+.statsPanelHandle:hover {
+    border-color: rgba(218, 165, 32, 0.5);
+    background: rgba(28, 26, 22, 0.98);
 }
 
 .rightPanelHeader {
-    padding: 9px 14px 8px;
+    position: relative;
+    padding:
+        var(--right-panel-header-pad-top)
+        var(--right-panel-header-pad-x)
+        var(--right-panel-header-pad-bottom);
 }
 
 .rightPanelTitleRow {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 6px;
+}
+
+.rightPanelTitleGroup {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
 }
 
 .rightPanelTitle {
-    font-size: 1.38rem;
+    font-size: 1.1rem;
     line-height: 1;
     color: var(--text-primary);
+}
+
+.hintContainer {
+    position: relative;
+    min-height: 0;
 }
 
 .insightsHintButton {
@@ -44,9 +95,12 @@
 }
 
 .floatingHintCloud {
-    position: fixed;
-    transform: translate(-100%, -100%);
-    max-width: min(280px, 78vw);
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    transform: none;
+    width: min(248px, calc(100vw - 40px));
+    max-width: 248px;
     padding: 8px 10px;
     border: 1px solid rgba(218, 165, 32, 0.16);
     border-radius: 10px;
@@ -54,23 +108,136 @@
     color: var(--text-secondary);
     font-size: 0.72rem;
     line-height: 1.35;
-    z-index: 999;
+    z-index: 24;
+}
+
+@media (max-width: 980px) {
+    .floatingHintCloud {
+        width: min(230px, calc(100vw - 34px));
+        max-width: 230px;
+    }
 }
 
 .rightPanelBody {
     min-height: 0;
+    max-height: 100%;
     display: grid;
+    grid-template-rows:
+        var(--right-heatmap-row)
+        var(--right-statistics-row)
+        var(--right-spt-row);
     align-content: start;
-    gap: 0;
+    overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
 }
 
-.heatmapSectionCard,
-.statisticsSectionCard,
-.savingsSectionCard {
+.rightPanelBody::-webkit-scrollbar {
+    width: 4px;
+}
+
+.rightPanelBody::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.rightPanelBody::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.rightPanelBody::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.22);
+}
+
+.rightPanelBody > * {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.heatmapSlot,
+.statisticsSlot,
+.savingsTrackerSlot {
+    min-height: 0;
+}
+
+.heatmapSlot {
+    min-height: var(--right-heatmap-height);
+}
+
+.statisticsSlot {
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.savingsTrackerSlot {
+    min-height: var(--right-spt-height);
+    display: flex;
+    align-items: stretch;
+}
+
+.heatmapSlot > *,
+.statisticsSlot > *,
+.savingsTrackerSlot > * {
+    width: 100%;
+    height: var(--right-zone-child-height);
+    min-height: 0;
+}
+
+@media (max-width: 1180px), (max-height: 850px) {
+    .rightPanelRoot {
+        --right-heatmap-height: 176px;
+        --right-spt-height: 126px;
+        --right-panel-header-pad-x: 9px;
+        --right-panel-header-pad-top: 7px;
+        --right-panel-header-pad-bottom: 6px;
+    }
+
+    .rightPanelTitle {
+        font-size: 1.06rem;
+    }
+
+    .floatingHintCloud {
+        width: min(236px, calc(100vw - 34px));
+        max-width: 236px;
+    }
+}
+
+@media (max-width: 980px) {
+    .rightPanelRoot {
+        --right-heatmap-height: 168px;
+        --right-spt-height: 122px;
+        --right-panel-header-pad-x: 8px;
+        --right-panel-header-pad-top: 7px;
+        --right-panel-header-pad-bottom: 6px;
+    }
+
+    .rightPanelTitle {
+        font-size: 1.02rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .rightPanelRoot {
+        --right-heatmap-height: 160px;
+        --right-spt-height: 118px;
+        --right-panel-header-pad-x: 7px;
+        --right-panel-header-pad-top: 6px;
+        --right-panel-header-pad-bottom: 5px;
+    }
+}
+
+@media (max-width: 900px) {
+    .rightPanelRoot {
+        border-radius: 12px;
+    }
+}
+
+.statisticsSectionCard {
     display: grid;
-    gap: 9px;
-    padding: 10px 8px;
+    gap: 4px;
+    padding: 8px 7px;
 }
 
 .contentBlockHeader {
@@ -87,63 +254,14 @@
     color: var(--text-primary);
 }
 
-.heatmapMonthControls {
-    width: 100%;
+.statisticsChartsStack {
     display: grid;
-    grid-template-columns: 24px 1fr 24px;
-    align-items: center;
-    gap: 8px;
+    gap: 2px;
 }
 
-.heatmapMonthButton {
-    width: 24px;
-    height: 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 7px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.02);
-    color: var(--text-secondary);
-    cursor: pointer;
-}
-
-.heatmapMonthLabel {
-    justify-self: center;
-    font-size: 0.72rem;
-    color: var(--text-secondary);
-}
-
-.heatmapGridContainer {
-    padding: 7px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.heatmapCalendarGrid {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 5px;
-}
-
-.heatmapDayCell {
-    height: 22px;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    padding: 0;
-}
-
-.heatmapDayCellMuted {
-    opacity: 0.35;
-}
-
-.heatmapDayNumber {
-    font-size: 0.64rem;
-    color: rgba(255, 255, 255, 0.9);
+.statisticsChartBlock {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 2px;
 }
 
 .graphHeading {
@@ -244,305 +362,6 @@
 .distributionProgressMeta span {
     font-size: 0.68rem;
     color: var(--text-secondary);
-}
-
-.savingsValuesRow {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-}
-
-.savingsProgressTrack {
-    height: 9px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.09);
-    overflow: hidden;
-}
-
-.savingsProgressFill {
-    display: block;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(119, 186, 145, 0.95), rgba(85, 151, 112, 0.95));
-}
-
-.savingsProgressLabel {
-    font-size: 0.72rem;
-    color: var(--text-secondary);
-}
-
-.heatmapInsightCloud {
-    position: fixed;
-    width: min(332px, calc(100vw - 24px));
-    max-height: min(420px, calc(100vh - 24px));
-    overflow: auto;
-    padding: 10px 11px;
-    border: 1px solid rgba(129, 141, 155, 0.45);
-    border-radius: 12px;
-    background:
-        linear-gradient(156deg, rgba(244, 247, 250, 0.97) 0%, rgba(228, 234, 240, 0.96) 54%, rgba(214, 221, 229, 0.96) 100%),
-        repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 3px, rgba(0, 0, 0, 0.02) 3px 6px);
-    color: #1f2933;
-    z-index: 1000;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.75),
-        0 14px 30px rgba(3, 10, 18, 0.28);
-}
-
-.heatmapInsightCloudGrid {
-    display: flex;
-    align-items: center;
-    gap: 0;
-}
-
-.heatmapInsightCloudInfo {
-    display: grid;
-    gap: 6px;
-    flex: 1 1 auto;
-    min-width: 80px;
-    width: auto;
-    max-width: 100%;
-}
-
-.heatmapInsightCloudInfo > * {
-    width: auto;
-    min-width: 114px;
-    max-width: 100%;
-}
-
-/* Debug rainbow rows for first-column spacing diagnostics */
-.heatmapInsightCloudInfo > :nth-child(1) { background: rgba(255, 0, 0, 0.14); border-radius: 4px; }
-.heatmapInsightCloudInfo > :nth-child(2) { background: rgba(255, 127, 0, 0.14); border-radius: 4px; }
-.heatmapInsightCloudInfo > :nth-child(3) { background: rgba(255, 255, 0, 0.14); border-radius: 4px; }
-.heatmapInsightCloudInfo > :nth-child(4) { background: rgba(0, 255, 0, 0.14); border-radius: 4px; }
-.heatmapInsightCloudInfo > :nth-child(5) { background: rgba(0, 127, 255, 0.14); border-radius: 4px; }
-
-.insightDonutTotalsOnly > :nth-child(1) { background: rgba(75, 0, 130, 0.14); border-radius: 4px; }
-.insightDonutTotalsOnly > :nth-child(2) { background: rgba(148, 0, 211, 0.14); border-radius: 4px; }
-.insightDonutTotalsOnly > :nth-child(3) { background: rgba(0, 128, 128, 0.14); border-radius: 4px; }
-.insightDonutTotalsOnly > :nth-child(4) { background: rgba(255, 20, 147, 0.14); border-radius: 4px; }
-
-.heatmapInsightCloudChartCol {
-    display: grid;
-    place-items: center;
-    flex: 0 0 116px;
-    margin-left: -2px;
-}
-
-.heatmapInsightCloudTitle {
-    margin: 0;
-    font-size: 1.12rem;
-    color: #111827;
-    text-transform: none;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-}
-
-.heatmapInsightCloudDate {
-    margin: 1px 0 7px;
-    font-size: 0.74rem;
-    color: #475569;
-}
-
-.heatmapInsightCloudMixLabel {
-    margin: 0 0 4px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #1f2937;
-    letter-spacing: 0.02em;
-}
-
-.heatmapInsightCloudMuted {
-    margin: 0;
-    font-size: 0.72rem;
-    color: #6b7280;
-}
-
-.insightRingsWrap {
-    position: relative;
-    height: 172px;
-    margin-bottom: 8px;
-}
-
-.insightRingsCore {
-    position: absolute;
-    inset: 50% auto auto 50%;
-    transform: translate(-50%, -50%);
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background: #f3f4f6;
-    display: grid;
-    place-items: center;
-    font-size: 0.62rem;
-    text-align: center;
-    color: #1f2937;
-}
-
-.insightRing {
-    --ring-size: 160px;
-    --ring-color: #4f7cff;
-    --ring-progress: 0%;
-    position: absolute;
-    inset: 50% auto auto 50%;
-    transform: translate(-50%, -50%);
-    width: var(--ring-size);
-    height: var(--ring-size);
-    border-radius: 50%;
-    background: conic-gradient(var(--ring-color) var(--ring-progress), #e5e7eb 0);
-    -webkit-mask: radial-gradient(circle, transparent 62%, black 63%);
-    mask: radial-gradient(circle, transparent 62%, black 63%);
-}
-
-.insightRingLegend {
-    position: absolute;
-    left: 0;
-    top: 2px;
-    display: grid;
-    gap: 2px;
-    font-size: 0.65rem;
-    font-weight: 600;
-}
-
-.insightDonutsGrid {
-    display: grid;
-    gap: 10px;
-}
-
-.insightDonutCard {
-    display: grid;
-    gap: 6px;
-}
-
-.insightDonutCard strong {
-    font-size: 0.72rem;
-    color: #111827;
-}
-
-.insightDonutChart {
-    width: 116px;
-    height: 116px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    border: 1px solid rgba(31, 41, 55, 0.12);
-}
-
-.insightDonutHole {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    display: grid;
-    place-items: center;
-    font-size: 0.66rem;
-    font-weight: 700;
-    color: #1f2937;
-}
-
-.insightDonutLegend {
-    display: grid;
-    gap: 3px;
-}
-
-.insightDonutLegendRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    font-size: 0.68rem;
-    color: #374151;
-}
-
-.insightDonutTotal {
-    font-size: 0.68rem;
-    color: #4b5563;
-}
-
-.insightDonutTotalsOnly {
-    display: grid;
-    gap: 2px;
-    font-size: 0.68rem;
-    color: #27303a;
-    width: auto;
-    min-width: 114px;
-    max-width: 100%;
-}
-
-.insightDonutTotalsOnly > span {
-    width: auto;
-    min-width: 114px;
-    max-width: 100%;
-}
-
-.dayModalBackdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    display: grid;
-    place-items: center;
-    z-index: 1100;
-}
-
-.dayModalCard {
-    width: min(680px, calc(100vw - 28px));
-    max-height: calc(100vh - 28px);
-    overflow: auto;
-    border-radius: 14px;
-    background: #ffffff;
-    color: #1f2937;
-    padding: 14px;
-}
-
-.dayModalHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.dayModalDate {
-    margin: 4px 0 10px;
-    font-size: 0.82rem;
-    color: #4b5563;
-}
-
-.dayModalColumns {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.dayModalColumns h5 {
-    margin: 0 0 5px;
-}
-
-.dayModalRow {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    font-size: 0.8rem;
-    line-height: 1.4;
-}
-
-.seeMoreButton {
-    margin-top: 8px;
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
-    border-radius: 8px;
-    padding: 5px 9px;
-    cursor: pointer;
-}
-
-.dayModalAllCategories {
-    display: grid;
-    gap: 4px;
-    margin-top: 8px;
-}
-
-.dayModalSavings {
-    margin-top: 10px;
-    font-weight: 600;
 }
 
 .panelStateText,

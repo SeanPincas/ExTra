@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react"
 import { Icons } from "../../../utils/iconLibrary"
-import type { EntryTypeFilter, RangeFilter } from "../../../types/financeFilters"
+import type { AmountSort, EntryTypeFilter, RangeFilter } from "../../../types/financeFilters"
 import type { FinanceCategory } from "../../../utils/financeConstants"
+import FinanceTypeSwitch from "../../reusableComp/FinanceTypeSwitch/FinanceTypeSwitch"
+import InlineSelectControl from "../../reusableComp/InlineSelectControl/InlineSelectControl"
 import styles from "./EntryFilterBar.module.css"
 
 interface EntryFilterBarProps {
@@ -9,9 +12,11 @@ interface EntryFilterBarProps {
     categoryFilter: "ALL" | FinanceCategory
     categories: ("ALL" | FinanceCategory)[]
     typeFilter: EntryTypeFilter
+    amountSort: AmountSort
     onRangeChange: (nextRange: RangeFilter) => void
     onCategoryChange: (nextCategory: "ALL" | FinanceCategory) => void
     onTypeChange: (nextType: EntryTypeFilter) => void
+    onAmountSortChange: (nextSort: AmountSort) => void
     onReset: () => void
     onToday: () => void
     onAdd: () => void
@@ -22,6 +27,12 @@ interface EntryFilterBarProps {
 }
 
 const rangeOptions: RangeFilter[] = ["TODAY", "WEEK", "MONTH", "ALL"]
+const typeFilterOptions = [
+    { value: "ALL", label: "ALL", tone: "neutral" },
+    { value: "INCOME", label: "INCOME", tone: "income" },
+    { value: "EXPENSE", label: "EXPENSE", tone: "expense" },
+] as const
+const PHONE_MEDIA_QUERY = "(max-width: 640px)"
 
 function EntryFilterBar({
     rangeFilter,
@@ -29,9 +40,11 @@ function EntryFilterBar({
     categoryFilter,
     categories,
     typeFilter,
+    amountSort,
     onRangeChange,
     onCategoryChange,
     onTypeChange,
+    onAmountSortChange,
     onReset,
     onToday,
     onAdd,
@@ -40,33 +53,55 @@ function EntryFilterBar({
     isBatchDeleteMode,
     selectedDeleteCount,
 }: EntryFilterBarProps) {
+    const [isPhoneLayout, setIsPhoneLayout] = useState(() => {
+        if (typeof window === "undefined") {
+            return false
+        }
+
+        return window.matchMedia(PHONE_MEDIA_QUERY).matches
+    })
     const isRangeDisabled = Boolean(selectedDate)
     const rangeDisplayValue = isRangeDisabled ? "~~~" : rangeFilter
+    const safeRangeValue = isRangeDisabled && rangeFilter === "ALL" ? "TODAY" : rangeFilter
+    const categoryLabel = isPhoneLayout && categoryFilter !== "ALL" ? "" : "Category"
+
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return
+        }
+
+        const mediaQuery = window.matchMedia(PHONE_MEDIA_QUERY)
+        const handleChange = (event: MediaQueryListEvent) => {
+            setIsPhoneLayout(event.matches)
+        }
+
+        setIsPhoneLayout(mediaQuery.matches)
+        mediaQuery.addEventListener("change", handleChange)
+
+        return () => {
+            mediaQuery.removeEventListener("change", handleChange)
+        }
+    }, [])
 
     return (
         <div className={styles.filterBar}>
             <div className={styles.topRow}>
-                <label className={`${styles.inlineControl} ${styles.rangeShell}`}>
-                    <span className={styles.categorySelectShell}>
-                        <span className={styles.inlineLabel}>Filter</span>
-                        <span className={styles.rangeValueCluster}>
-                            <span className={styles.categoryValue}>{rangeDisplayValue}</span>
-                            <Icons.down size={15} />
-                        </span>
-                    </span>
-                    <select
-                        className={styles.inlineSelect}
-                        value={rangeFilter}
-                        disabled={isRangeDisabled}
-                        onChange={(event) => onRangeChange(event.target.value as RangeFilter)}
-                    >
-                        {rangeOptions.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </select>
-                </label>
+                <InlineSelectControl
+                    className={styles.rangeShell}
+                    label="Filter"
+                    displayValue={rangeDisplayValue}
+                    selectValue={safeRangeValue}
+                    options={rangeOptions.map((option) => ({
+                        value: option,
+                        label: option,
+                        disabled: isRangeDisabled && option === "ALL",
+                    }))}
+                    onChange={(nextValue) => {
+                        const nextRange = nextValue as RangeFilter
+                        if (isRangeDisabled && nextRange === "ALL") return
+                        onRangeChange(nextRange)
+                    }}
+                />
 
                 <div className={styles.topActions}>
                     <button
@@ -132,45 +167,48 @@ function EntryFilterBar({
 
             <div className={styles.bottomRow}>
                 <div className={styles.bottomLeft}>
-                    <label className={`${styles.inlineControl} ${styles.categoryShell}`}>
-                        <span className={styles.categorySelectShell}>
-                            <span className={styles.inlineLabel}>Category</span>
-                            <span className={styles.categoryValue}>{categoryFilter}</span>
-                            <Icons.down size={15} />
-                        </span>
-                        <select
-                            className={styles.inlineSelect}
-                            value={categoryFilter}
-                            onChange={(event) => onCategoryChange(event.target.value as "ALL" | FinanceCategory)}
+                    <InlineSelectControl
+                        className={styles.categoryShell}
+                        label={categoryLabel}
+                        displayValue={categoryFilter}
+                        selectValue={categoryFilter}
+                        options={categories.map((category) => ({
+                            value: category,
+                            label: category,
+                        }))}
+                        onChange={(nextValue) => onCategoryChange(nextValue as "ALL" | FinanceCategory)}
+                    />
+
+                    <div className={styles.typeSwitch}>
+                        <FinanceTypeSwitch
+                            value={typeFilter}
+                            options={typeFilterOptions}
+                            onChange={(nextType) => onTypeChange(nextType as EntryTypeFilter)}
+                        />
+                    </div>
+
+                    <div className={styles.amountSortSwitch} role="group" aria-label="Sort entries by amount">
+                        <button
+                            type="button"
+                            className={`${styles.amountSortButton} ${amountSort === "DESC" ? styles.amountSortButtonActive : ""}`}
+                            aria-label="Sort by highest to lowest amount"
+                            title="Highest to Lowest"
+                            aria-pressed={amountSort === "DESC"}
+                            onClick={() => onAmountSortChange(amountSort === "DESC" ? null : "DESC")}
                         >
-                            {categories.map((category) => (
-                                <option key={category} value={category}>
-                                    {category}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
+                            <Icons.expense size={14} />
+                        </button>
 
-                    <div className={styles.typeSwitch} role="group" aria-label="Type filter">
-                        {(["ALL", "INCOME", "EXPENSE"] as const).map((option) => {
-                            const activeClass =
-                                option === "INCOME"
-                                    ? styles.typeButtonIncomeActive
-                                    : option === "EXPENSE"
-                                        ? styles.typeButtonExpenseActive
-                                        : styles.typeButtonNeutralActive
-
-                            return (
-                            <button
-                                key={option}
-                                type="button"
-                                className={`${styles.typeButton} ${typeFilter === option ? `${styles.typeButtonActive} ${activeClass}` : ""}`}
-                                onClick={() => onTypeChange(option)}
-                            >
-                                <span className={styles.typeButtonLabel}>{option}</span>
-                            </button>
-                            )
-                        })}
+                        <button
+                            type="button"
+                            className={`${styles.amountSortButton} ${amountSort === "ASC" ? styles.amountSortButtonActive : ""}`}
+                            aria-label="Sort by lowest to highest amount"
+                            title="Lowest to Highest"
+                            aria-pressed={amountSort === "ASC"}
+                            onClick={() => onAmountSortChange(amountSort === "ASC" ? null : "ASC")}
+                        >
+                            <Icons.income size={14} />
+                        </button>
                     </div>
                 </div>
 

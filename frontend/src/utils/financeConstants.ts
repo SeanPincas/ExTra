@@ -61,18 +61,64 @@ export const FINANCE_CATEGORY_EMOJIS: Record<FinanceCategory, string> = {
     Allowance: "🪙",
     Groceries: "🛒",
     Rent: "🏠",
-    Utilities: "🔌",
+    Utilities: "🧾",
     Transportation: "🚌",
-    Food: "🍽️",
+    Food: "🍔",
     Shopping: "🛍️",
-    Subscriptions: "📺",
+    Subscriptions: "📦",
     Entertainment: "🎬",
-    Healthcare: "🩺",
+    Healthcare: "🏥",
     "Internet Bill": "📶",
     "Water Bill": "💧",
-    "Electricity Bill": "⚡",
+    "Electricity Bill": "💡",
     Charity: "🤝",
-    Tax: "🧾",
+    Tax: "📄",
+}
+
+export const FINANCE_CATEGORY_HEX_COLORS: Record<FinanceCategory, string> = {
+    Savings: "#22c55e",
+    Salary: "#38bdf8",
+    Bonuses: "#f59e0b",
+    Investments: "#a78bfa",
+    Freelance: "#14b8a6",
+    Allowance: "#eab308",
+    Groceries: "#84cc16",
+    Rent: "#f97316",
+    Utilities: "#06b6d4",
+    Transportation: "#3b82f6",
+    Food: "#ef4444",
+    Shopping: "#ec4899",
+    Subscriptions: "#8b5cf6",
+    Entertainment: "#d946ef",
+    Healthcare: "#10b981",
+    "Internet Bill": "#0ea5e9",
+    "Water Bill": "#2dd4bf",
+    "Electricity Bill": "#facc15",
+    Charity: "#fb7185",
+    Tax: "#94a3b8",
+}
+
+export const FINANCE_CATEGORY_COLORS: Record<FinanceCategory, string> = {
+    Savings: "var(--category-savings)",
+    Salary: "var(--category-salary)",
+    Bonuses: "var(--category-bonuses)",
+    Investments: "var(--category-investments)",
+    Freelance: "var(--category-freelance)",
+    Allowance: "var(--category-allowance)",
+    Groceries: "var(--category-groceries)",
+    Rent: "var(--category-rent)",
+    Utilities: "var(--category-utilities)",
+    Transportation: "var(--category-transportation)",
+    Food: "var(--category-food)",
+    Shopping: "var(--category-shopping)",
+    Subscriptions: "var(--category-subscriptions)",
+    Entertainment: "var(--category-entertainment)",
+    Healthcare: "var(--category-healthcare)",
+    "Internet Bill": "var(--category-internet-bill)",
+    "Water Bill": "var(--category-water-bill)",
+    "Electricity Bill": "var(--category-electricity-bill)",
+    Charity: "var(--category-charity)",
+    Tax: "var(--category-tax)",
 }
 
 export function getFinanceCategories(type: FinanceEntryType): FinanceCategory[] {
@@ -91,7 +137,8 @@ export function getDefaultFinanceCategory(type: FinanceEntryType): FinanceCatego
 }
 
 export function isValidFinanceCategory(type: FinanceEntryType, category: string): category is FinanceCategory {
-    return FINANCE_CATEGORIES[type].includes(category as (typeof FINANCE_CATEGORIES)[FinanceEntryType][number])
+    const categoryList: readonly string[] = FINANCE_CATEGORIES[type]
+    return categoryList.includes(category)
 }
 
 export function getFinanceEntryTypeOptions() {
@@ -108,4 +155,12 @@ export function isFinanceEntryType(value: string): value is FinanceEntryType {
 
 export function getFinanceCategoryEmoji(category: FinanceCategory) {
     return FINANCE_CATEGORY_EMOJIS[category]
+}
+
+export function getFinanceCategoryColor(category: FinanceCategory) {
+    return FINANCE_CATEGORY_COLORS[category]
+}
+
+export function getFinanceCategoryHexColor(category: FinanceCategory) {
+    return FINANCE_CATEGORY_HEX_COLORS[category]
 }

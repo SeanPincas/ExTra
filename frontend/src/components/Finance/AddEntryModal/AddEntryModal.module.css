@@ -300,8 +300,9 @@
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 18px;
     background:
-        radial-gradient(circle at 18% 20%, rgba(96, 120, 102, 0.06), transparent 28%),
-        rgba(255, 255, 255, 0.02);
+        linear-gradient(180deg, rgba(34, 34, 40, 0.44), rgba(24, 24, 30, 0.5)),
+        url("/src/assets/leather.png");
+    background-size: cover, cover;
 }
 
 .itemsHeader {

@@ -1,43 +1,59 @@
 .filterWrapper {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
+    gap: 18px;
+    min-height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
 }
 
 .filterLabel {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+    line-height: 1;
+    font-weight: 500;
     color: var(--text-secondary);
+    white-space: nowrap;
 }
 
 .filterOptions {
     display: inline-flex;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 0;
+    min-height: 26px;
 }
 
 .filterOption {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    min-height: 26px;
     padding: 0;
     border: none;
     background: transparent;
     color: var(--text-secondary);
     font: inherit;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
+    line-height: 1;
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 0.02em;
+    transition: color 160ms ease;
 }
 
 .filterOption + .filterOption {
-    margin-left: 8px;
+    margin-left: 6px;
+}
+
+.filterOption:hover {
+    color: color-mix(in srgb, var(--text-primary) 82%, white);
 }
 
 .active {
     color: var(--accent-gold);
+    font-weight: 600;
 }
 
 .optionDivider {

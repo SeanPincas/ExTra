@@ -80,10 +80,9 @@
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 16px;
     background:
-        radial-gradient(circle at 16% 16%, #4a3626 0%, #2b1e16 44%, #1c140f 100%),
-        var(--panel-texture),
-        var(--bg-leather);
-    background-size: auto, cover, auto;
+        linear-gradient(180deg, rgba(24, 24, 28, 0.58), rgba(18, 18, 22, 0.64)),
+        url("/src/assets/leather.png");
+    background-size: cover, cover;
     padding: 12px;
     display: grid;
     gap: 10px;

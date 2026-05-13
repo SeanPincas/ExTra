@@ -39,30 +39,27 @@ function ProfileArea() {
 
     return (
         <section className={styles.profileCard}>
-            <div className={styles.profileTopRow}>
-                <div className={styles.avatarBadge} aria-hidden="true">
-                    {avatarSrc ? (
-                        <img
-                            src={avatarSrc}
-                            alt=""
-                            className={styles.avatarImage}
-                        />
-                    ) : (
-                        <Icons.user size={18} />
-                    )}
-                </div>
-
-                <div className={styles.profileCopy}>
-                    <p className={styles.greeting}>Welcome,</p>
-                    <h2 className={styles.username}>{username}</h2>
-                </div>
+            <div className={styles.avatarBadge} aria-hidden="true">
+                {avatarSrc ? (
+                    <img
+                        src={avatarSrc}
+                        alt=""
+                        className={styles.avatarImage}
+                    />
+                ) : (
+                    <Icons.user size={20} />
+                )}
             </div>
 
-            <div className={styles.dateRow}>
-                <Icons.calendar size={14} />
-                <span>{today}</span>
-                <span className={styles.dateDivider}>|</span>
-                <span>{time}</span>
+            <div className={styles.profileCopy}>
+                <p className={styles.greeting}>Welcome,</p>
+                <h2 className={styles.username}>{username}</h2>
+                <div className={styles.dateRow}>
+                    <Icons.calendar size={12} />
+                    <span>{today}</span>
+                    <span className={styles.dateDivider}>|</span>
+                    <span>{time}</span>
+                </div>
             </div>
         </section>
     )

@@ -2,7 +2,8 @@ export interface UserPreferences {
     payDay: number
     salary: number
     currency: string
-    savingsGoal: number
+    savingsGoal: number | null
+    savingsGoalStartedAt?: string | null
     reminderLeadTime: number
     quoteChangeHours: number
 }

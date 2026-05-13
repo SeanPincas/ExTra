@@ -1,0 +1,47 @@
+.switchRoot {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    min-height: 28px;
+    padding: 2px;
+    border-radius: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    gap: 2px;
+}
+
+.switchOption {
+    min-width: 0;
+    min-height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 8px;
+    padding: 0 7px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.74rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 160ms ease, color 160ms ease;
+}
+
+.switchOptionActive {
+    color: #f3f5f7;
+}
+
+.neutralTone.switchOptionActive {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.expenseTone.switchOptionActive {
+    background: color-mix(in srgb, var(--accent-red) 28%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-red) 52%, transparent);
+}
+
+.incomeTone.switchOptionActive {
+    background: color-mix(in srgb, var(--accent-green) 30%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-green) 52%, transparent);
+}

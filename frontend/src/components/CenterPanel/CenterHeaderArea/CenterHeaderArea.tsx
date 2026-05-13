@@ -6,9 +6,17 @@ interface CenterHeaderAreaProps {
     searchDraft: string
     onSearchChange: (nextSearch: string) => void
     onOpenStatsPanel?: () => void
+    showStatsButton?: boolean
+    isStatsPanelOpen?: boolean
 }
 
-function CenterHeaderArea({ searchDraft, onSearchChange, onOpenStatsPanel }: CenterHeaderAreaProps) {
+function CenterHeaderArea({
+    searchDraft,
+    onSearchChange,
+    onOpenStatsPanel,
+    showStatsButton = false,
+    isStatsPanelOpen = false,
+}: CenterHeaderAreaProps) {
     const [isSearchOpen, setIsSearchOpen] = useState(Boolean(searchDraft))
     const searchInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -67,14 +75,16 @@ function CenterHeaderArea({ searchDraft, onSearchChange, onOpenStatsPanel }: Cen
                     )}
                 </div>
 
-                <button
-                    type="button"
-                    className={styles.statsButton}
-                    aria-label="Open insights panel"
-                    onClick={onOpenStatsPanel}
-                >
-                    <Icons.stats width={15} height={15} />
-                </button>
+                {showStatsButton ? (
+                    <button
+                        type="button"
+                        className={`${styles.statsButton} ${isStatsPanelOpen ? styles.statsButtonActive : ""}`}
+                        aria-label={isStatsPanelOpen ? "Close insights panel" : "Open insights panel"}
+                        onClick={onOpenStatsPanel}
+                    >
+                        <Icons.stats width={15} height={15} />
+                    </button>
+                ) : null}
             </div>
         </div>
     )
