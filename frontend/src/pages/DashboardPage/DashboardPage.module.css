@@ -165,7 +165,7 @@
 
     .savingsTrackerShortcut {
         right: 10px;
-        bottom: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
         width: 34px;
         height: 34px;
         border-radius: 11px;
