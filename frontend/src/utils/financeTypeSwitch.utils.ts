@@ -1,13 +1,14 @@
 import {
     FINANCE_ENTRY_TYPE_LABELS,
     FINANCE_ENTRY_TYPES,
-    type FinanceEntryType,
 } from "./financeConstants"
 
+export type FinanceTypeSwitchTone = "neutral" | "expense" | "income"
+
 export interface FinanceTypeSwitchOption {
-    value: FinanceEntryType
+    value: string
     label: string
-    tone: "expense" | "income"
+    tone: FinanceTypeSwitchTone
 }
 
 export const FINANCE_TYPE_SWITCH_OPTIONS: FinanceTypeSwitchOption[] = [
@@ -23,6 +24,17 @@ export const FINANCE_TYPE_SWITCH_OPTIONS: FinanceTypeSwitchOption[] = [
     },
 ]
 
-export function getNextFinanceType(value: FinanceEntryType): FinanceEntryType {
-    return value === FINANCE_ENTRY_TYPES.expense ? FINANCE_ENTRY_TYPES.income : FINANCE_ENTRY_TYPES.expense
+export function getNextFinanceType(value: string, options: readonly FinanceTypeSwitchOption[]): string {
+    if (options.length === 0) {
+        return value
+    }
+
+    const currentIndex = options.findIndex((option) => option.value === value)
+
+    if (currentIndex < 0) {
+        return options[0].value
+    }
+
+    const nextIndex = (currentIndex + 1) % options.length
+    return options[nextIndex].value
 }

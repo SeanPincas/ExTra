@@ -1,5 +1,6 @@
 import type { HeatmapDayInsightData } from "../../../../types/stats"
 import styles from "./DailyInsightCloud.module.css"
+import InsightDonutChart from "../InsightDonutChart"
 
 interface DailyInsightCloudProps {
     date: string
@@ -10,19 +11,12 @@ interface DailyInsightCloudProps {
     formatCurrency: (amount: number) => string
 }
 
-function getDonutGradient(income: number, expense: number, net: number) {
-    const netValue = Math.abs(net)
-    const total = income + expense + netValue
-    if (total <= 0) return "conic-gradient(#e5e7eb 0 100%)"
-    const incomePercent = (income / total) * 100
-    const expensePercent = (expense / total) * 100
-    const netPercent = Math.max(0, 100 - incomePercent - expensePercent)
-    return `conic-gradient(var(--text-income) 0% ${incomePercent}%, var(--text-expense) ${incomePercent}% ${incomePercent + expensePercent}%, var(--accent-gold) ${incomePercent + expensePercent}% ${incomePercent + expensePercent + netPercent}%)`
-}
-
 function DailyInsightCloud({ date, position, insight, isLoading, error, formatCurrency }: DailyInsightCloudProps) {
     return (
-        <div className={styles.heatmapInsightCloud} style={{ top: position.top, left: position.left }}>
+        <div
+            className={styles.heatmapInsightCloud}
+            style={{ top: position.top, left: position.left }}
+        >
             <div className={styles.heatmapInsightCloudGrid}>
                 <div className={styles.heatmapInsightCloudInfo}>
                     <h4 className={styles.heatmapInsightCloudTitle}>Daily Insight</h4>
@@ -41,9 +35,11 @@ function DailyInsightCloud({ date, position, insight, isLoading, error, formatCu
                 </div>
                 {!isLoading && insight ? (
                     <div className={styles.heatmapInsightCloudChartCol}>
-                        <div className={styles.insightDonutChart} style={{ background: getDonutGradient(insight.income, insight.expense, insight.netBalance) }}>
-                            <div className={styles.insightDonutHole}>Daily</div>
-                        </div>
+                        <InsightDonutChart
+                            income={insight.income}
+                            expense={insight.expense}
+                            className={styles.insightDonutChartWrapper}
+                        />
                     </div>
                 ) : null}
             </div>

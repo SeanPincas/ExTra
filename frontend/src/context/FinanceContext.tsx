@@ -45,6 +45,7 @@ interface FinanceContextValue {
     canNavigateBackward: boolean
     canNavigateForward: boolean
     financeEntries: FinanceDisplayEntry[]
+    entriesRevision: number
     totalPages: number
     currentPage: number
     isFinanceLoading: boolean
@@ -324,6 +325,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
     const [currentPage, setCurrentPage] = useState(1)
     const [todayKey, setTodayKey] = useState(() => toDateKey(new Date()))
     const [rawFinanceEntries, setRawFinanceEntries] = useState<FinanceEntry[]>([])
+    const [entriesRevision, setEntriesRevision] = useState(0)
     const [totalPages, setTotalPages] = useState(1)
     const [isFinanceLoading, setIsFinanceLoading] = useState(false)
     const [financeErrorMessage, setFinanceErrorMessage] = useState("")
@@ -468,6 +470,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         }
 
         await createFinanceEntryRequest(payload)
+        setEntriesRevision((currentRevision) => currentRevision + 1)
         await refreshFinance()
     }
 
@@ -477,6 +480,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         }
 
         await updateFinanceEntryRequest(entryId, payload)
+        setEntriesRevision((currentRevision) => currentRevision + 1)
         await refreshFinance()
     }
 
@@ -486,6 +490,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         }
 
         await deleteFinanceEntryRequest(entryId)
+        setEntriesRevision((currentRevision) => currentRevision + 1)
         await refreshFinance()
     }
 
@@ -499,6 +504,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         }
 
         await Promise.all(entryIds.map((entryId) => deleteFinanceEntryRequest(entryId)))
+        setEntriesRevision((currentRevision) => currentRevision + 1)
         await refreshFinance()
     }
 
@@ -546,6 +552,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
                 hour: "numeric",
                 minute: "2-digit",
             }),
+            amountValue: Number.isFinite(entry.totalAmount) ? entry.totalAmount : 0,
             amountLabel: formatCurrency(entry.totalAmount),
             tone: entry.type === "income" ? "income" : "expense",
             items: entry.items,
@@ -709,6 +716,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         canNavigateBackward,
         canNavigateForward,
         financeEntries,
+        entriesRevision,
         totalPages,
         currentPage,
         isFinanceLoading,
@@ -744,6 +752,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         canNavigateBackward,
         canNavigateForward,
         financeEntries,
+        entriesRevision,
         totalPages,
         currentPage,
         isFinanceLoading,
