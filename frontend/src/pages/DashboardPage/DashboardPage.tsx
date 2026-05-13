@@ -5,6 +5,7 @@ import LeftPanel from "../../components/LeftPanel/LeftPanel"
 import CenterPanel from "../../components/CenterPanel/CenterPanel"
 import RightPanel from "../../components/RightPanel/RightPanel"
 import MainLayout from "../../layout/MainLayout/MainLayout"
+import { Icons } from "../../utils/iconLibrary"
 import styles from "./DashboardPage.module.css"
 
 interface DashboardPageProps {
@@ -52,6 +53,16 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
         setIsRightPanelOpen(false)
     }
 
+    const handleOpenSavingsTracker = () => {
+        setIsLeftPanelOpen(false)
+        setIsRightPanelOpen(true)
+
+        window.setTimeout(() => {
+            const trackerSection = document.getElementById("savings-progress-tracker")
+            trackerSection?.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })
+        }, 280)
+    }
+
     return (
         <MainLayout
             header={
@@ -90,6 +101,18 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
                             onTogglePanel={handleToggleRightPanel}
                         />
                     </div>
+
+                    {isRightPanelOverlayMode && !isRightPanelOpen ? (
+                        <button
+                            type="button"
+                            className={styles.savingsTrackerShortcut}
+                            aria-label="Open savings progress tracker"
+                            title="Open savings progress tracker"
+                            onClick={handleOpenSavingsTracker}
+                        >
+                            <Icons.chart width={14} height={14} />
+                        </button>
+                    ) : null}
                 </div>
             }
             footer={<Footer />}

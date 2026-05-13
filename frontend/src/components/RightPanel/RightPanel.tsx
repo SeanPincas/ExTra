@@ -1,23 +1,16 @@
-import { memo, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import styles from "./RightPanel.module.css"
 import { Icons } from "../../utils/iconLibrary"
 import type { DashboardStatsData } from "../../types/stats"
 import { getDashboardStats } from "../../api/statsAPI"
 import { useFinance } from "../../context/FinanceContext"
+import { useAuth } from "../../context/AuthContext"
 import CalendarHeatmap from "./CalendarHeatmap/CalendarHeatmap"
 import StatisticsSection from "./statistics/StatisticsSection"
+import SavingsProgressTracker from "../LeftPanel/SavingsProgressTracker/SavingsProgressTracker"
 
 const defaultStats: DashboardStatsData = {
     totals: { income: 0, expense: 0, balance: 0 },
-}
-
-function formatCurrency(amount: number) {
-    return new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP", maximumFractionDigits: 0 }).format(amount)
-}
-
-function clampPercent(value: number) {
-    if (Number.isNaN(value)) return 0
-    return Math.max(0, Math.min(100, value))
 }
 
 interface RightPanelProps {
@@ -25,29 +18,9 @@ interface RightPanelProps {
     onTogglePanel?: () => void
 }
 
-const SavingsSection = memo(function SavingsSection({ stats }: { stats: DashboardStatsData }) {
-    const savingsGoal = stats.savingsTracker?.goal ?? 0
-    const currentSavings = stats.savingsTracker?.current ?? stats.totals.balance
-    const savingsProgress = clampPercent(stats.savingsTracker?.progress ?? 0)
-
-    return (
-        <section className={styles.savingsSectionCard}>
-            <div className={styles.contentBlockHeader}>
-                <Icons.wallet width={14} height={14} />
-                <h3 className={styles.contentBlockTitle}>Savings Progress Tracker</h3>
-            </div>
-            <div className={styles.savingsValuesRow}>
-                <span>Goal: {formatCurrency(savingsGoal)}</span>
-                <span>Current: {formatCurrency(currentSavings)}</span>
-            </div>
-            <div className={styles.savingsProgressTrack}><span className={styles.savingsProgressFill} style={{ width: `${savingsProgress}%` }} /></div>
-            <p className={styles.savingsProgressLabel}>{Math.round(savingsProgress)}% complete</p>
-        </section>
-    )
-})
-
 function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps) {
-    const { rangeFilter } = useFinance()
+    const { entriesRevision } = useFinance()
+    const { token } = useAuth()
     const [stats, setStats] = useState<DashboardStatsData>(defaultStats)
     const [isMainLoading, setIsMainLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState("")
@@ -55,12 +28,19 @@ function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps)
     const hintContainerRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
+        if (!token) {
+            setStats(defaultStats)
+            setIsMainLoading(false)
+            setErrorMessage("")
+            return
+        }
+
         let isActive = true
         const fetchMainStats = async () => {
             setIsMainLoading(true)
             setErrorMessage("")
             try {
-                const data = await getDashboardStats({ range: rangeFilter === "ALL" ? undefined : rangeFilter.toLowerCase() as "today" | "week" | "month" })
+                const data = await getDashboardStats()
                 if (!isActive) return
                 setStats(data)
             } catch (error: any) {
@@ -73,7 +53,7 @@ function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps)
         }
         fetchMainStats()
         return () => { isActive = false }
-    }, [rangeFilter])
+    }, [token, entriesRevision])
 
     useEffect(() => {
         if (!isHintOpen) {
@@ -140,11 +120,21 @@ function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps)
             </div>
 
             <div className={styles.rightPanelBody}>
-                <CalendarHeatmap />
+                <div className={styles.heatmapSlot}>
+                    <CalendarHeatmap />
+                </div>
                 {isMainLoading ? <p className={styles.panelStateText}>Loading insights...</p> : null}
                 {!isMainLoading && errorMessage ? <p className={styles.panelStateErrorText}>{errorMessage}</p> : null}
-                {!isMainLoading && !errorMessage ? <StatisticsSection stats={stats} /> : null}
-                {!isMainLoading && !errorMessage ? <SavingsSection stats={stats} /> : null}
+                {!isMainLoading && !errorMessage ? (
+                    <div className={styles.statisticsSlot}>
+                        <StatisticsSection stats={stats} />
+                    </div>
+                ) : null}
+                {!isMainLoading && !errorMessage ? (
+                    <div className={styles.savingsTrackerSlot}>
+                        <SavingsProgressTracker />
+                    </div>
+                ) : null}
             </div>
         </aside>
     )

@@ -101,6 +101,28 @@ body,
     --heatmap-expense-4: rgba(224, 105, 86, 0.58);
     --heatmap-expense-5: rgba(224, 105, 86, 0.72);
 
+    /* Category colors */
+    --category-savings: #22c55e;
+    --category-salary: #38bdf8;
+    --category-bonuses: #f59e0b;
+    --category-investments: #a78bfa;
+    --category-freelance: #14b8a6;
+    --category-allowance: #eab308;
+    --category-groceries: #84cc16;
+    --category-rent: #f97316;
+    --category-utilities: #06b6d4;
+    --category-transportation: #3b82f6;
+    --category-food: #ef4444;
+    --category-shopping: #ec4899;
+    --category-subscriptions: #8b5cf6;
+    --category-entertainment: #d946ef;
+    --category-healthcare: #10b981;
+    --category-internet-bill: #0ea5e9;
+    --category-water-bill: #2dd4bf;
+    --category-electricity-bill: #facc15;
+    --category-charity: #fb7185;
+    --category-tax: #94a3b8;
+
     /* ===============================
      PANEL TEXTURE SYSTEM
   =============================== */
