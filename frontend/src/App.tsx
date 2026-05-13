@@ -50,14 +50,13 @@ function App() {
                         />
                     )
                 ) : (
-                    <div style={{ position: "absolute", inset: 0 }}>
+                    <div style={{ minHeight: "100dvh", width: "100%" }}>
                         {/* While auth is bootstrapping we keep the same page frame,
                            so the screen does not jump between layouts. */}
                         {isAuthLoading ? (
                             <main
                                 style={{
-                                    position: "absolute",
-                                    inset: 0,
+                                    minHeight: "100dvh",
                                     display: "grid",
                                     placeItems: "center",
                                     color: "var(--text-secondary)",
