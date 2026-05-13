@@ -115,6 +115,10 @@
         border-radius: 0;
     }
 
+    .headerArea {
+        padding: 0 4px;
+    }
+
     .footerArea {
         padding-bottom: calc(1px + env(safe-area-inset-bottom, 0px));
     }
