@@ -18,9 +18,28 @@ import quoteRoutes from "./routes/quoteRoutes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 
 const app = express();
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = [
+    "http://localhost:5173",
+    ...(process.env.CLIENT_URL
+        ? process.env.CLIENT_URL
+            .split(",")
+            .map((origin) => origin.trim())
+            .filter(Boolean)
+        : []),
+];
 const corsOptions = {
-    origin: allowedOrigins,
+    origin(origin, callback) {
+        // Allow non-browser/server-to-server requests that do not send an Origin header.
+        if (!origin) {
+            return callback(null, true);
+        }
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -99,6 +118,12 @@ app.get("/", (req, res) => {
     name: "ExTra API",
     status: "running",
   });
+});
+
+app.get("/api/health", (req, res) => {
+    res.status(200).json({
+        status: "ok",
+    });
 });
 
 // --------------------------------------------------

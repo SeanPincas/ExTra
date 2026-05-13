@@ -121,8 +121,9 @@ function MultiRingChartBlock({ data, activeType, activeRange }: MultiRingChartBl
                                             ["--ring-color" as string]: ring.color,
                                             ["--ring-stroke-width" as string]: String(ring.strokeWidth),
                                         }}
-                                        title={`${ring.name}: ${formatCurrencyCompact(ring.total)} (${Math.round(ring.percentage)}%)`}
-                                    />
+                                    >
+                                        <title>{`${ring.name}: ${formatCurrencyCompact(ring.total)} (${Math.round(ring.percentage)}%)`}</title>
+                                    </path>
                                 </g>
                             ))}
 

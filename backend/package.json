@@ -5,7 +5,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "server": "nodemon --watch src server.js",
+    "dev": "nodemon --watch src server.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "keywords": [],

@@ -188,7 +188,7 @@ function buildDistributionRows(
     const remainingRows = normalizedRows.slice(5)
     const otherTotal = remainingRows.reduce((sum, row) => sum + row.total, 0)
 
-    const topCategories: MultiRingCategory[] = topRows.map((row, index) => ({
+    const topCategories: MultiRingCategory[] = topRows.map((row) => ({
         id: `${row.type}:${row.name}`,
         name: row.name,
         type: row.type,

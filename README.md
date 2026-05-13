@@ -46,6 +46,8 @@ ExTra/
 
 ## Running the Project
 
+See `docs/DEPLOYMENT_CONTEXT.md` for deployment architecture and deployment checklist.
+
 ### Docker
 
 ```powershell
