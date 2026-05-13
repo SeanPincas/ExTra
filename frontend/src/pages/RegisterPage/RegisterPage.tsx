@@ -11,8 +11,8 @@ import {
     validateUsername,
 } from "../../utils/authValidation"
 import styles from "./RegisterPage.module.css"
-import logo from "../../assets/logo.png"
-import saveMoney from "../../assets/save-money.jpg"
+import logo from "../../assets/logo.webp"
+import saveMoney from "../../assets/save-money.webp"
 
 interface RegisterPageProps {
     onLoginClick: () => void

@@ -7,7 +7,7 @@
     background:
         radial-gradient(circle at 82% 20%, rgba(156, 118, 51, 0.12), transparent 36%),
         linear-gradient(180deg, rgba(34, 31, 27, 0.5), rgba(20, 19, 18, 0.58)),
-        url("/src/assets/leather.png");
+        url("/src/assets/leather.webp");
     background-size: auto, cover, cover;
 }
 

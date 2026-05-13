@@ -427,7 +427,7 @@
     border-radius: 0 0 12px 12px;
     background:
         linear-gradient(180deg, rgba(34, 34, 40, 0.44), rgba(24, 24, 30, 0.5)),
-        url("/src/assets/leather.png");
+        url("/src/assets/leather.webp");
     background-size: cover, cover;
     animation: breakdownReveal 180ms ease;
 }
