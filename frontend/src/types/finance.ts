@@ -35,6 +35,7 @@ export interface FinanceDisplayEntry {
     categoryEmoji: string
     date: string
     timeLabel: string
+    amountValue: number
     amountLabel: string
     tone: "income" | "expense"
     items: FinanceItem[]

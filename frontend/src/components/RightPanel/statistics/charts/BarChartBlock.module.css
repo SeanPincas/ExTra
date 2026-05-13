@@ -1,0 +1,353 @@
+.block {
+    --bar-shell-gap: 2px;
+    --bar-header-height: 14px;
+    --bar-preview-columns: 5;
+    --bar-preview-column-min: 58px;
+    --bar-preview-gap: 7px;
+    --bar-canvas-height: 60px;
+    --bar-track-height: 70px;
+    --bar-track-width: 80%;
+    --bar-meta-min-height: 23px;
+    --bar-baseline-offset: calc(var(--bar-meta-min-height) + 1px);
+    --bar-name-size: 0.64rem;
+    --bar-value-size: 0.62rem;
+    --bar-emoji-size: 0.72rem;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: var(--bar-shell-gap);
+    height: 100%;
+    min-height: 0;
+    padding: 2px 4px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.015);
+    overflow: hidden;
+}
+
+.headerRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: var(--bar-header-height);
+}
+
+.title {
+    margin: 0;
+    font-size: 0.64rem;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.seeMoreButton {
+    border: none;
+    padding: 0;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.58rem;
+    line-height: 1;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.seeMoreButton:hover {
+    text-decoration: underline;
+}
+
+.seeMoreButton:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.chartArea {
+    display: grid;
+    grid-template-rows: 1fr;
+    align-content: stretch;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 1px 2px 1px;
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.chartViewport {
+    display: grid;
+    grid-template-rows: 1fr;
+    align-content: stretch;
+    align-items: stretch;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 2px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.chartViewport::-webkit-scrollbar {
+    height: 4px;
+}
+
+.chartViewport::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chartViewport::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.chartViewportExpanded {
+    display: grid;
+    grid-template-rows: 1fr;
+    align-content: stretch;
+    align-items: stretch;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    padding-bottom: 1px;
+}
+
+.chartPlane {
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr;
+    align-content: stretch;
+    align-items: end;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding-bottom: 0;
+}
+
+.sharedBaseline {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: var(--bar-baseline-offset);
+    height: 1px;
+    background: rgba(0, 0, 0, 0.82);
+    pointer-events: none;
+}
+
+.barRowPreview {
+    display: inline-grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(var(--bar-preview-column-min), calc((100% - (var(--bar-preview-gap) * (var(--bar-preview-columns) - 1))) / var(--bar-preview-columns)));
+    gap: var(--bar-preview-gap);
+    position: relative;
+    height: 100%;
+    align-items: end;
+    width: max-content;
+    min-width: max-content;
+}
+
+.barRowExpanded {
+    display: grid;
+    grid-template-columns: repeat(var(--bar-columns), minmax(0, 1fr));
+    gap: 2px;
+    height: 100%;
+    align-items: end;
+    position: relative;
+}
+
+.barItem {
+    min-width: 0;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: 2px;
+    height: 100%;
+    justify-items: center;
+}
+
+.barItemExpanded {
+    gap: 0;
+}
+
+.barCanvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: var(--bar-canvas-height);
+    display: flex;
+    align-items: end;
+}
+
+.barTrack {
+    position: relative;
+    width: var(--bar-track-width);
+    height: 100%;
+    max-height: var(--bar-track-height);
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+}
+
+.barFill {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    min-height: 2px;
+    border-radius: 0;
+}
+
+.barFillExpense {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--text-expense) 88%, white 12%), color-mix(in srgb, var(--text-expense) 64%, black 36%));
+}
+
+.barFillIncome {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--text-income) 88%, white 12%), color-mix(in srgb, var(--text-income) 64%, black 36%));
+}
+
+.barEmoji {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    font-size: var(--bar-emoji-size);
+    pointer-events: none;
+}
+
+.barMeta {
+    width: 100%;
+    display: grid;
+    gap: 0;
+    text-align: center;
+    min-height: var(--bar-meta-min-height);
+    padding-top: 1px;
+    align-content: start;
+}
+
+.barName {
+    width: 100%;
+    display: block;
+    font-size: var(--bar-name-size);
+    line-height: 0.95;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.barNameText {
+    display: inline-block;
+    min-width: 100%;
+    white-space: nowrap;
+    will-change: transform;
+}
+
+.barItem:hover .barNameTextOverflowing,
+.barItem:focus-within .barNameTextOverflowing {
+    animation: barNameMarquee 4.8s linear infinite alternate;
+}
+
+.barRowExpanded .barName {
+    font-size: 0.48rem;
+}
+
+.barRowExpanded .barValue {
+    font-size: 0.46rem;
+}
+
+.barRowExpanded .barEmoji {
+    font-size: 0.56rem;
+}
+
+.barRowExpanded .barTrack {
+    width: 62%;
+    height: 52px;
+}
+
+.barRowExpanded .barCanvas {
+    height: 56px;
+}
+
+.barRowExpanded .barMeta {
+    min-height: 14px;
+    padding-top: 2px;
+}
+
+.barMetaIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 15px;
+    font-size: 0.52rem;
+    line-height: 1;
+}
+
+.barValue {
+    width: 100%;
+    font-size: var(--bar-value-size);
+    line-height: 0.95;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.emptyState {
+    margin: 0;
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 1180px), (max-height: 850px) {
+    .block {
+        --bar-header-height: 13px;
+        --bar-preview-column-min: 52px;
+        --bar-preview-gap: 5px;
+        --bar-canvas-height: 56px;
+        --bar-track-height: 58px;
+        --bar-track-width: 78%;
+        --bar-meta-min-height: 18px;
+        --bar-baseline-offset: calc(var(--bar-meta-min-height) + 3px);
+        --bar-name-size: 0.58rem;
+        --bar-value-size: 0.58rem;
+        --bar-emoji-size: 0.66rem;
+        padding: 2px 3px;
+    }
+
+    .title {
+        font-size: 0.6rem;
+    }
+
+    .seeMoreButton {
+        font-size: 0.54rem;
+    }
+
+    .barRowExpanded .barCanvas {
+        height: 52px;
+    }
+
+    .barRowExpanded .barTrack {
+        height: 48px;
+    }
+}
+
+@media (max-width: 980px) {
+    .block {
+        --bar-preview-column-min: 48px;
+        --bar-canvas-height: 52px;
+        --bar-track-height: 54px;
+        --bar-name-size: 0.54rem;
+        --bar-value-size: 0.54rem;
+    }
+}
+
+@keyframes barNameMarquee {
+    0%,
+    18% {
+        transform: translateX(0);
+    }
+    82%,
+    100% {
+        transform: translateX(-32%);
+    }
+}

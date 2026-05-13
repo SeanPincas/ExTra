@@ -1,48 +1,12 @@
-# ExTra
+﻿# ExTra
 
 ExTra is a personal finance and expense tracking dashboard built with a React + TypeScript frontend and a Node.js + Express + MongoDB backend.
 
-The project is currently in an active build phase. The authentication flow is working, the dashboard shell is in place, the left panel is wired to live stats, the center panel already supports live finance entry workflows, and the account settings page is now functional. The right panel is still a lighter support area compared to the rest of the dashboard.
+It provides users with a compact, financial-focused dashboard to manage income, expenses, reminders, and analytics in a single interface.
 
 ## Current Status
 
-### Working now
-
-- User registration connected to the backend
-- User login connected to the backend
-- JWT-based auth bootstrap through frontend context
-- Protected dashboard rendering after successful auth
-- Intro animation and transition shell
-- Global dashboard background and matte textured theme
-- Header with centered capsule logo and authenticated user action button
-- Left panel modular structure with:
-  - profile card + avatar preview
-  - summary totals with persisted range filter
-  - notifications (fetched from backend)
-  - reminders with `dueDate` calendar picker + priority sorting
-- Center panel finance list with responsive filtering, date navigation, add/edit/delete flows, and batch delete mode UX
-- Floating date navigator with custom calendar modal, month picker, and year wheel picker
-- Account settings page with profile, preferences, avatar upload/reposition, logout, and account deletion confirmation
-- Quote rotation system fetched from the backend based on user preference
-- Reusable filter component
-- Docker setup for frontend and backend
-
-### Already present in the backend
-
-- Auth routes
-- User profile routes
-- Finance CRUD routes
-- Quote routes
-- Dashboard stats route
-- Reminder routes
-- Notification route
-
-### Still in progress on the frontend
-
-- Right panel real content (next focus)
-- Deeper analytics widgets and calendar insight workflows
-- Additional center-panel refinement and hotfix work
-- Extended account settings features such as password change and richer avatar handling
+ExTra is in active development. The core dashboard shell is already in place, and the right panel plus analytics systems are the current major focus areas.
 
 ## Tech Stack
 
@@ -54,269 +18,41 @@ The project is currently in an active build phase. The authentication flow is wo
 - CSS Modules
 - Framer Motion
 - Axios
-- Lucide React
 
 ### Backend
 
 - Node.js
-- Express 5
-- MongoDB with Mongoose
-- JWT authentication
-- Helmet
-- CORS
-- Morgan
-- Express rate limit
+- Express
+- MongoDB
+- Mongoose
+- JWT Auth
 
-### Dev / Runtime
+### Dev
 
 - Docker Compose
-
-## Design System
-
-The current UI direction is based on:
-
-- matte black base surfaces
-- brown leather accent panels
-- soft textured dashboard cards
-- gold highlight accents
-- green and red finance colors
-- fluid responsive layout using `clamp()`, `vw`, grid, and minimal breakpoints
-
-Typography currently uses:
-
-- `Cormorant Garamond` for display headings
-- `Inter` for body and UI text
 
 ## Project Structure
 
 ```text
 ExTra/
   backend/
-    src/
-      config/
-      controllers/
-      middleware/
-      models/
-      routes/
-      services/
-      utils/
-    server.js
   frontend/
-    src/
-      api/
-      assets/
-      components/
-      context/
-      layout/
-      pages/
-      types/
-      utils/
+  docs/
 ```
 
-## Frontend Overview
-
-### App flow
-
-The frontend starts inside `AuthProvider`, then decides whether to show:
-
-- the auth pages (`RegisterPage` or `LoginPage`), or
-- the dashboard shell once a valid token and user are available
-
-Main entry files:
-
-- [frontend/src/main.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\main.tsx)
-- [frontend/src/App.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\App.tsx)
-- [frontend/src/index.css](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\index.css)
-
-### Auth pages
-
-Current auth UI includes:
-
-- register page
-- login page
-- responsive auth shell
-- top-centered capsule logo
-- leather-themed brand panel
-- warning cloud UX for validation/server messages
-- password reveal interaction
-- legal modal support for privacy policy and terms
-
-Files:
-
-- [frontend/src/pages/RegisterPage/RegisterPage.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\pages\RegisterPage\RegisterPage.tsx)
-- [frontend/src/pages/LoginPage/LoginPage.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\pages\LoginPage\LoginPage.tsx)
-- [frontend/src/context/AuthContext.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\context\AuthContext.tsx)
-
-### API layer
-
-The frontend currently uses a centralized Axios instance and auth/user API helpers.
-
-Files:
-
-- [frontend/src/api/axios.ts](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\api\axios.ts)
-- [frontend/src/api/authAPI.ts](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\api\authAPI.ts)
-- [frontend/src/api/userAPI.ts](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\api\userAPI.ts)
-
-### Dashboard layout
-
-The current dashboard shell is composed of:
-
-- Header
-- Main 3-column grid
-- Footer
-
-The left column is already broken into modular components:
-
-- ProfileArea
-- SummaryArea
-- NotificationArea
-- ReminderArea
-
-Files:
-
-- [frontend/src/components/Header/Header.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\Header\Header.tsx)
-- [frontend/src/layout/MainLayout/MainLayout.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\layout\MainLayout\MainLayout.tsx)
-- [frontend/src/components/LeftPanel/LeftPanel.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\LeftPanel\LeftPanel.tsx)
-
-Reusable UI utilities currently include:
-
-- button utility classes
-- reusable filter component
-- centralized icon library
-- auth validation helpers
-
-### Account settings
-
-The settings page currently includes:
-
-- profile picture preview and avatar reposition modal
-- username and phone number editing
-- read-only connected email display
-- finance preference controls
-- quote rotation preference
-- sensitive actions area for logout and delete account
-- delete-account verification modal requiring username and password
-
-Files:
-
-- [frontend/src/pages/SettingsPage/SettingsPage.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\pages\SettingsPage\SettingsPage.tsx)
-- [frontend/src/components/Settings/AvatarPositionModal/AvatarPositionModal.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\Settings\AvatarPositionModal\AvatarPositionModal.tsx)
-- [frontend/src/components/Settings/DeleteAccountModal/DeleteAccountModal.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\Settings\DeleteAccountModal\DeleteAccountModal.tsx)
-
-### Center panel
-
-The center panel currently includes:
-
-- live finance entry fetching
-- responsive range and category filters
-- floating date navigator
-- custom calendar modal
-- add entry modal
-- edit entry modal
-- single-entry delete and batch delete mode
-- responsive entry list interactions
-
-Core files:
-
-- [frontend/src/components/CenterPanel/CenterPanel.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\CenterPanel\CenterPanel.tsx)
-- [frontend/src/components/CenterPanel/EntryFilterBar/EntryFilterBar.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\CenterPanel\EntryFilterBar\EntryFilterBar.tsx)
-- [frontend/src/components/CenterPanel/EntryListArea/EntryListArea.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\CenterPanel\EntryListArea\EntryListArea.tsx)
-- [frontend/src/components/CenterPanel/DateNavigator/DateNavigator.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\components\CenterPanel\DateNavigator\DateNavigator.tsx)
-- [frontend/src/context/FinanceContext.tsx](C:\Users\ACER\Desktop\WebProjects\ExTra\frontend\src\context\FinanceContext.tsx)
-
-## Backend Overview
-
-### Server boot
-
-The backend boots from:
-
-- [backend/server.js](C:\Users\ACER\Desktop\WebProjects\ExTra\backend\server.js)
-- [backend/src/app.js](C:\Users\ACER\Desktop\WebProjects\ExTra\backend\src\app.js)
-
-The API currently includes:
-
-- JSON parsing
-- Helmet security headers
-- CORS for `http://localhost:5173`
-- rate limiting on `/api`
-- request sanitization
-- morgan logging
-
-### Current routes
-
-#### Auth
-
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-
-#### User
-
-- `GET /api/users/me`
-- `PUT /api/users/me`
-- `DELETE /api/users/me`
-
-#### Finance
-
-- `POST /api/finance`
-- `GET /api/finance`
-- `PUT /api/finance/:id`
-- `DELETE /api/finance/:id`
-
-#### Quotes
-
-- `GET /api/quotes/current`
-- `GET /api/quotes/library`
-
-#### Stats
-
-- `GET /api/stats/dashboard`
-
-#### Reminders
-
-- `POST /api/reminders`
-- `GET /api/reminders`
-- `PUT /api/reminders/:id`
-- `DELETE /api/reminders/:id`
-
-#### Notifications
-
-- `GET /api/notifications`
-
-## Key Concepts (Current)
-
-### Reminders
-
-- Reminders store a full **`dueDate`** (year/month/day), not just a day-of-month.
-- Priority sorting is computed server-side:
-  - high priority: active reminders due within 3 days
-  - normal: active but not urgent
-  - completed: `active = false` (always last)
-- Frontend reminder UX:
-  - calendar-style due date picker in Add/Edit modals
-  - row click opens a view modal; edits happen in a dedicated edit modal
-  - multi-delete mode is explicit (trash enters mode; done confirms)
-
-### Notifications
-
-- Notifications are currently generated by the backend from live data (reminders + finance stats + payday checks) and fetched by the frontend.
-  - Route: `GET /api/notifications`
+- `backend/`: API server, routes, controllers, models, services, and backend utilities
+- `frontend/`: React application, UI components, pages, contexts, and frontend utilities
+- `docs/`: long-term system context, UI standards, chart/data rules, and project status
 
 ## Running the Project
 
 ### Docker
 
-From the project root:
-
 ```powershell
 docker compose up --build
 ```
 
-Expected local URLs:
-
-- Frontend: [http://localhost:5173](http://localhost:5173)
-- Backend API: [http://localhost:3501](http://localhost:3501)
-
-### Local dev without Docker
+### Local Dev
 
 Backend:
 
@@ -332,58 +68,587 @@ cd frontend
 npm run dev
 ```
 
-## Auth Flow
+## Core Features
 
-Current auth flow:
+- Authentication (register/login, JWT-based session bootstrap)
+- Finance entry management (add, edit, delete, filtering, date navigation)
+- Dashboard layout with left, center, and right panel workflows
+- Reminders with due-date support and priority behavior
+- Notifications generated from backend-driven signals
+- Analytics system synchronized by global range filter
+- Calendar heatmap for daily financial activity insight
 
-1. User registers or logs in from the frontend
-2. Backend returns a JWT token
-3. Frontend stores the token in local storage
-4. `AuthContext` fetches the current user from `/api/users/me`
-5. Dashboard renders only when both `token` and `user` are available
+## Dashboard Overview
 
-## Validation Rules
+- Left Panel: profile, summary totals, reminders, notifications
+- Center Panel: finance entry list and primary CRUD workflows
+- Right Panel: analytics, calendar heatmap, and statistics
 
-Current auth validation rules documented in the codebase:
+## Savings Progress Tracker (SPT) — Feature Plan
 
-### Username
+The Savings Progress Tracker (SPT) is a dashboard feature that tracks the user’s progress toward a savings target.
 
-- required
-- 3 to 24 characters
-- letters and numbers only
+The important rule is that the tracker should not store progress separately. The target goal is stored in the user preferences, but the actual progress comes from real finance entries.
 
-### Email
+In other words:
 
-- required
-- must follow valid email format
+```text
+Savings goal target = user.preference.savingsGoal
+Savings progress = total of finance entries where:
+type = income
+category = Savings
+```
 
-### Password
+This keeps the feature clean because every savings progress update is still a normal finance entry. It will automatically appear in the entry list, charts, statistics, heatmap, and dashboard totals.
 
-- required
-- 8 to 16 characters
-- must include uppercase, lowercase, and number
-- no spaces
+### Core Purpose
 
-## Current Next Plan
+The SPT answers:
 
-- continue center-panel refinements and hotfixes
-- improve responsive behavior across tablet and phone breakpoints
-- expand right-panel insights and connected analytics
-- continue polishing account settings and profile tooling
+```text
+How close am I to reaching my savings goal?
+```
 
-## Known Notes
+It should show:
 
-- The right panel is still less complete than the left and center panels.
-- Some backend capability still exists ahead of the matching final frontend UX.
-- This README documents the current repository state, even if parts of that functionality were originally generated or scaffolded with ChatGPT, as long as they already exist in the project.
+- current savings progress
+- target savings goal
+- percentage completed
+- remaining amount
+- progress line
+- action button
 
-## Git Workflow Note
+Example:
 
-Branch naming conventions are currently documented in:
+```text
+Savings Progress
+₱12,000 / ₱50,000
+24%
 
-- [GIT_CONVENTIONS.md](C:\Users\ACER\Desktop\WebProjects\ExTra\GIT_CONVENTIONS.md)
+[ horizontal progress line ]
 
-Recommended naming pattern:
+₱38,000 remaining
+[ Add Savings Progress ]
+```
+
+### Data Flow
+
+#### 1. Savings Goal Target
+
+The target goal comes from the user model preference:
+
+```text
+user.preference?.savingsGoal
+```
+
+Example:
+
+```json
+{
+  "preference": {
+    "savingsGoal": 50000
+  }
+}
+```
+
+This value represents the user’s current savings target.
+
+The goal should be:
+
+- `null / missing / 0` = no active goal
+- positive number = active goal
+
+#### 2. Savings Progress Source
+
+Progress is calculated from finance entries.
+
+Only entries that match this rule count toward the tracker:
+
+```ts
+entry.type === "income"
+entry.category === "Savings"
+```
+
+Example entry:
+
+```json
+{
+  "type": "income",
+  "category": "Savings",
+  "amount": 1000,
+  "date": "2026-05-11"
+}
+```
+
+This means that adding savings progress through the SPT should automatically create a real finance entry.
+
+### Calculation Logic
+
+#### Current Progress
+
+```text
+currentSavingsProgress = sum of all finance entries where:
+type === "income"
+category === "Savings"
+```
+
+#### Progress Percentage
+
+```text
+progressPercent = (currentSavingsProgress / savingsGoal) * 100
+```
+
+#### Visual Progress
+
+The visual progress line should be clamped between `0` and `100`.
+
+```text
+visualProgress = Math.min(Math.max(progressPercent, 0), 100)
+```
+
+This means if the user exceeds the goal, the progress line stays full instead of overflowing.
+
+#### Remaining Amount
+
+```text
+remainingAmount = savingsGoal - currentSavingsProgress
+```
+
+For display, remaining should not go below zero:
+
+```text
+displayRemaining = Math.max(remainingAmount, 0)
+```
+
+### UI States
+
+The SPT has three main states.
+
+#### State 1 — No Goal Yet
+
+Condition:
+
+```text
+!savingsGoal || savingsGoal <= 0
+```
+
+Display:
+
+```text
+Savings Progress Tracker
+No savings goal set yet.
+
+[ New Goal ]
+```
+
+The button label should be:
+
+```text
+New Goal
+```
+
+This button opens the goal setup flow.
+
+#### State 2 — Active Goal
+
+Condition:
+
+```text
+savingsGoal > 0 && currentSavingsProgress < savingsGoal
+```
+
+Display:
+
+```text
+Savings Progress
+₱12,000 / ₱50,000
+24%
+
+[ horizontal progress line ]
+
+₱38,000 remaining
+
+[ Add Savings Progress ]
+```
+
+The main button should be:
+
+```text
+Add Savings Progress
+```
+
+This button allows the user to add a new savings progress entry.
+
+#### State 3 — Goal Completed
+
+Condition:
+
+```text
+savingsGoal > 0 && currentSavingsProgress >= savingsGoal
+```
+
+Display:
+
+```text
+Savings Goal Completed
+₱50,000 / ₱50,000
+100%
+
+[ full horizontal progress line ]
+
+Goal reached
+
+[ New Goal ]
+```
+
+The button label should still be:
+
+```text
+New Goal
+```
+
+The wording stays vague and reusable. It works whether the user is setting their first goal or starting another goal after completion.
+
+### Button Logic
+
+The primary SPT action button should follow this logic:
+
+```ts
+const hasGoal = savingsGoal != null && savingsGoal > 0
+const isGoalCompleted = hasGoal && currentSavingsProgress >= savingsGoal
+
+if (!hasGoal) {
+  show "New Goal"
+}
+
+if (hasGoal && !isGoalCompleted) {
+  show "Add Savings Progress"
+}
+
+if (isGoalCompleted) {
+  show "New Goal"
+}
+```
+
+Summary:
+
+- No goal → `New Goal`
+- Active goal → `Add Savings Progress`
+- Completed goal → `New Goal`
+
+### New Goal Flow
+
+When the user clicks `New Goal`, the app should allow them to set or replace the current savings goal.
+
+The flow can be:
+
+```text
+Click New Goal
+→ open compact input/modal
+→ user enters target amount
+→ save to user.preference.savingsGoal
+→ tracker recalculates and displays active goal state
+```
+
+Example payload through user profile update:
+
+```json
+{
+  "preference": {
+    "savingsGoal": 50000
+  }
+}
+```
+
+The goal should be saved through the existing user profile/preferences backend flow if available.
+
+Recommended backend route:
+
+```text
+PUT /api/users/me
+```
+
+No separate savings route is necessary unless the existing user route cannot safely update preferences.
+
+### Add Savings Progress Flow
+
+When the user clicks `Add Savings Progress`, the app should allow them to add a savings-only finance entry.
+
+The flow:
+
+```text
+Click Add Savings Progress
+→ open compact input/modal
+→ user enters amount
+→ optional note/date
+→ create finance entry
+→ update finance context/list
+→ SPT recalculates progress
+```
+
+The finance entry should be automatically created as:
+
+```json
+{
+  "type": "income",
+  "category": "Savings",
+  "amount": "userEnteredAmount",
+  "date": "selectedDate || today",
+  "note": "Savings progress"
+}
+```
+
+This is important because the SPT progress depends on actual finance entries, not separate manual tracker data.
+
+### Backend Responsibilities
+
+The backend should support two things:
+
+#### 1. Store the Target Goal
+
+The user model should support:
+
+```text
+preference: {
+  savingsGoal: Number | null
+}
+```
+
+Recommended behavior:
+
+- default = `null`
+- must be a non-negative number if provided
+
+The existing user profile endpoint should return and update this value.
+
+#### 2. Create Savings Progress Entries
+
+The existing finance entry creation endpoint should be used.
+
+```text
+POST /api/finance
+```
+
+The SPT should create an entry with:
+
+```json
+{
+  "type": "income",
+  "category": "Savings"
+}
+```
+
+This keeps savings progress integrated with the rest of the finance system.
+
+### Frontend Responsibilities
+
+The frontend should:
+
+- fetch `user.preference.savingsGoal`
+- fetch finance entries
+- calculate current savings progress from Savings income entries
+- render the correct SPT state
+- allow setting a new goal
+- allow adding savings progress
+- refresh/update finance data after adding progress
+
+The SPT should update automatically when finance entries change.
+
+Examples:
+
+- Adding a Savings income entry → increases SPT progress
+- Deleting a Savings income entry → decreases SPT progress
+- Editing a Savings income entry amount → recalculates SPT progress
+- Changing the savings goal → recalculates percentage and remaining amount
+
+### Visual Design
+
+The SPT container should visually stand out from normal black cards, but still match the ExTra theme.
+
+Requested container style:
+
+```text
+green and dark green gradient center
+```
+
+Recommended feel:
+
+- premium dark green financial growth card
+- matte texture
+- compact progress display
+- green income/savings accent
+- gold highlight only if needed
+
+Possible background direction:
+
+```css
+background:
+  radial-gradient(circle at center, rgba(34, 197, 94, 0.22), transparent 58%),
+  linear-gradient(145deg, rgba(9, 42, 28, 0.96), rgba(4, 18, 13, 0.98));
+```
+
+The card should include:
+
+- title
+- current / goal amount
+- percentage
+- horizontal progress line
+- remaining amount
+- main action button
+
+### Progress Line Design
+
+The tracker should use a long horizontal progress line.
+
+The line should show the current progress percentage.
+
+Structure:
+
+```text
+[ filled green progress ][ remaining dark track ]
+```
+
+Requirements:
+
+- full-width or near full-width
+- thin but visible
+- rounded pill shape
+- green filled section
+- dark green/black track
+- percentage shown clearly
+- smooth transition when progress changes
+
+Example:
+
+```text
+₱12,000 / ₱50,000
+24%
+
+██████░░░░░░░░░░░░░░░░
+```
+
+### Important Architecture Rule
+
+The SPT should not become a separate finance system.
+
+Do not store progress like this:
+
+```text
+savingsProgress: 12000
+```
+
+Instead:
+
+- `savingsGoal` = stored in user preference
+- `savingsProgress` = calculated from finance entries
+
+This keeps the system consistent.
+
+Correct model:
+
+- Target = User Preference
+- Progress = Finance Entries
+
+### Integration With Existing App
+
+Because progress entries are normal finance entries, they should automatically affect:
+
+- Center Panel entry list
+- income totals
+- dashboard stats
+- bar chart category totals
+- line chart income trend
+- multi-ring category distribution
+- calendar heatmap
+- daily insight modal
+
+This is useful because savings is treated as part of the financial data, not isolated tracker-only data.
+
+### Edge Cases
+
+#### No Goal
+
+Show setup state and the `New Goal` button.
+
+#### Goal Exists But No Savings Entries
+
+Show active goal with:
+
+- `₱0 / target`
+- `0%`
+- full remaining amount
+
+#### Goal Completed
+
+Show completed state and `New Goal`.
+
+#### Progress Exceeds Goal
+
+Display actual progress, but cap the visual bar at `100%`.
+
+Example:
+
+```text
+₱55,000 / ₱50,000
+110%
+
+Progress line visually = 100%
+Remaining = ₱0
+```
+
+#### Invalid Goal
+
+If goal is negative, `NaN`, or invalid:
+
+- treat as no goal
+- show `New Goal`
+
+#### Amount Input Invalid
+
+Do not allow:
+
+- empty amount
+- negative amount
+- zero amount
+- non-number amount
+
+## Analytics System (Short Version)
+
+- Bar chart: category breakdown
+- Line chart: spending trend
+- Circular chart: category distribution
+- All analytics are controlled by one global filter
+
+See full details: [docs/CHART_RULES.md](./docs/CHART_RULES.md)
+
+## Data Flow (Short Version)
+
+User selects filter -> request sent to backend stats endpoint -> backend returns filtered stats -> UI updates all analytics views.
+
+See: [docs/DATA_RULES.md](./docs/DATA_RULES.md)
+
+## UI System
+
+The UI is being reformed toward a compact, dense dashboard experience focused on reducing wasted space and improving visible information per viewport.
+
+- [docs/UI_RULES.md](./docs/UI_RULES.md)
+- [docs/UI_REFORM_PLAN.md](./docs/UI_REFORM_PLAN.md)
+- [docs/UI_DENSITY_STANDARDS.md](./docs/UI_DENSITY_STANDARDS.md)
+- [docs/UI_CHANGE_SAFETY.md](./docs/UI_CHANGE_SAFETY.md)
+
+## AI Development Context
+
+ExTra uses structured AI development context so implementation decisions remain consistent across sessions. Long-term AI guidance is maintained in `/docs`.
+
+- [docs/AI_CONTEXT.md](./docs/AI_CONTEXT.md)
+
+## Project Status Link
+
+See current build status: [docs/PROJECT_STATUS.md](./docs/PROJECT_STATUS.md)
+
+## Git Workflow
+
+Branch naming follows:
 
 ```text
 type/short-description
@@ -398,489 +663,3 @@ Current branch prefixes:
 - `chore/` for maintenance and project upkeep
 - `docs/` for documentation-only work
 - `test/` for test-related work
-
-
-# 📊 ExTra Analytics System
-
-## 🧠 Overview
-
-The analytics system in **ExTra (Expense Tracker)** provides users with a clear understanding of their financial behavior through three coordinated visualizations.
-
-These charts are **fully synchronized** and **driven by a single global filter**, ensuring consistency and accuracy across the dashboard.
-
----
-
-## 🎯 Core Principle
-
-> All analytics data is controlled by a **single source of truth** — the global filter.
-
-```text
-Filter → Backend Stats API → Processed Data → All Charts
-```
-
-No chart performs independent calculations. All values are derived from the same filtered dataset.
-
----
-
-## 🔑 Global Filter (Control Center)
-
-**Location:**
-
-```
-Right Panel → summarySection → filterWrapper
-```
-
-### Available Options:
-
-* Today
-* Week
-* Month
-* All
-
-### Behavior:
-
-* Changing the filter updates **all charts simultaneously**
-* The filter determines the dataset returned by the backend
-* Ensures all analytics remain consistent and synchronized
-
----
-
-## 📊 1. Bar Chart — Category Breakdown
-
-### Purpose
-
-Displays the **top expense categories** based on total spending.
-
-### Data Representation
-
-```
-Category → Total Amount
-```
-
-### Rules
-
-* Sorted from highest to lowest
-* Displays top 3–5 categories only
-* Remaining categories may be grouped as “Others”
-
-### Filter Dependency
-
-* Reflects only data within the selected range
-  (e.g., weekly expenses when filter = Week)
-
----
-
-## 📈 2. Line Chart — Spending Trend
-
-### Purpose
-
-Shows how spending changes over time.
-
-### Data Representation
-
-```
-Time → Total Spending
-```
-
-### Behavior
-
-* Dynamically adjusts based on selected filter:
-
-  * Today → short interval data
-  * Week → last 7 days
-  * Month → last 30 days
-  * All → full history
-
-### Insight Value
-
-* Identifies spending patterns
-* Detects spikes or unusual activity
-
----
-
-## 🟢 3. Multi-Circular Progress — Category Distribution
-
-### Purpose
-
-Visualizes how much each category contributes to total spending.
-
-### Data Representation
-
-```
-Category → Percentage of Total
-```
-
-### Rules
-
-* Displays top 3–5 categories
-* Remaining categories grouped as “Others”
-* Each category represented as a circular progress indicator
-
-### Filter Dependency
-
-* Percentages are calculated only from the filtered dataset
-
----
-
-## ⚙️ Backend Responsibility
-
-All data aggregation and filtering must be handled by the backend.
-
-### Example Endpoint
-
-```
-GET /api/stats?range=MONTH
-```
-
-### Response Structure
-
-```json
-{
-  "totals": {},
-  "topExpenseCategories": [],
-  "topIncomeCategories": [],
-  "trend": []
-}
-```
-
-### Key Rule
-
-> The frontend must not perform aggregation or filtering logic.
-
----
-
-## 🔄 Data Flow
-
-```
-User selects filter
-        ↓
-Frontend updates range state
-        ↓
-Request sent to /api/stats
-        ↓
-Backend returns filtered aggregates
-        ↓
-Charts update simultaneously
-```
-
----
-
-## ⚠️ Implementation Rules
-
-* No hardcoded data
-* No duplicated calculations in frontend
-* No independent chart filtering
-* Always rely on backend-provided data
-
----
-
-## 🧠 Design Insight
-
-This system provides three analytical perspectives:
-
-* **Bar Chart** → Where money goes
-* **Line Chart** → When money is spent
-* **Circular Progress** → How much each category contributes
-
-Together, they create a complete and consistent financial overview.
-
----
-
-## 🚀 Result
-
-* Unified analytics system
-* Consistent data across all visuals
-* Scalable and maintainable architecture
-* Clear separation of frontend and backend responsibilities
-
----
-
-# 📅 ExTra Calendar Heatmap System
-
-## 🧠 Overview
-
-The **Calendar Heatmap** in ExTra provides a **daily visual representation of financial activity**, allowing users to quickly understand spending and income patterns over time.
-
-Each day is represented as a **grid cell**, with color intensity reflecting the magnitude of financial activity.
-
----
-
-## 🎯 Core Purpose
-
-* Visualize **daily income and expense intensity**
-* Identify **high spending or high saving days**
-* Provide **quick insights at a glance**
-* Enable **deep inspection via hover interaction**
-
----
-
-## 🟩🟥 Heatmap Color Logic
-
-Each calendar cell is color-coded based on daily totals:
-
-### 🟢 Income (Positive Flow)
-
-* Higher income → **darker green**
-* Lower income → **lighter green**
-
-### 🔴 Expense (Negative Flow)
-
-* Higher expense → **darker red**
-* Lower expense → **lighter red**
-
----
-
-## ⚖️ Color Decision Rule
-
-```text
-If income > expense → GREEN scale
-If expense > income → RED scale
-If equal or no data → neutral (gray)
-```
-
----
-
-## 🎚️ Intensity Scaling (IMPORTANT)
-
-Color intensity is **relative**, not absolute:
-
-```text
-shade = (day total) / (max total in selected range)
-```
-
-👉 Ensures:
-
-* consistent scaling
-* meaningful comparison within current filter
-
----
-
-## 📦 Data Source
-
-Derived from backend stats:
-
-```json
-dailyTotals: [
-  {
-    "date": "2026-04-01",
-    "income": 1000,
-    "expense": 500
-  }
-]
-```
-
----
-
-## 🔑 Filter Dependency (CRITICAL)
-
-The heatmap is fully controlled by the global filter:
-
-```text
-Right Panel → summarySection → filterWrapper
-```
-
-### Behavior:
-
-* Changing filter updates:
-
-  * visible date range
-  * color intensity scaling
-  * daily totals
-
----
-
-## 🖱️ Hover Interaction (Deep Insight)
-
-Hovering a calendar cell reveals a **detailed daily breakdown panel**.
-
----
-
-## 📊 Hover Content (Daily Summary)
-
-### 1. 🎯 Multi-Ring Donut Chart
-
-(Correct term: **Radial Multi-Ring Chart / Multi-Level Donut Chart**)
-
-#### Purpose:
-
-Visualize **category distribution for that day**
-
-#### Structure:
-
-* Each ring = one category
-* Size = percentage of total
-* Color = category color
-
----
-
-### 2. 💰 Income vs Expense Summary
-
-```text
-Income:  ₱1,000
-Expense: ₱500
-Net:     +₱500
-```
-
----
-
-### 3. 🏆 Top 5 Categories
-
-```text
-1. Food        ₱500
-2. Transport   ₱200
-3. Bills       ₱150
-...
-```
-
----
-
-## 🎨 UI Behavior
-
-* Smooth hover interaction
-* Tooltip or floating panel
-* Highlights selected day
-* Non-intrusive, fast display
-
----
-
-## ⚙️ Backend Requirement
-
-### Endpoint:
-
-```
-GET /api/stats/daily?range=MONTH
-```
-
----
-
-### Response:
-
-```json
-{
-  "dailyTotals": [...],
-  "maxIncome": 5000,
-  "maxExpense": 4000
-}
-```
-
----
-
-## 🔄 Data Flow
-
-```
-Filter Change
-     ↓
-Fetch Daily Stats
-     ↓
-Compute Color Scale
-     ↓
-Render Calendar Grid
-     ↓
-Hover → Show Detailed Breakdown
-```
-
----
-
-## ⚠️ Implementation Rules
-
-* No hardcoded values
-* No frontend aggregation logic
-* Always use backend-provided totals
-* Color scaling must be dynamic per filter
-
----
-
-## 🧠 Design Insight
-
-This system combines:
-
-* **Heatmap** → intensity over time
-* **Donut (multi-ring)** → category breakdown
-* **Tooltip analytics** → detailed inspection
-
-👉 Result:
-A **layered analytics experience**:
-
-* glance → pattern
-* hover → insight
-
----
-
-## 🚀 Outcome
-
-* Detect spending habits visually
-* Identify financial spikes instantly
-* Explore daily breakdown interactively
-* Maintain consistent data with global filter
-
----
-
-## Calendar Heatmap API Contract (Updated)
-
-### Heatmap endpoint
-
-```text
-GET /api/stats/dashboard?range=month&month=2026-04
-```
-
-```json
-{
-  "dailyTotals": [
-    {
-      "date": "2026-04-01",
-      "income": 1000,
-      "expense": 500,
-      "dominantType": "income",
-      "intensityRatio": 0.8,
-      "intensityPercent": 80,
-      "intensityLevel": 4
-    }
-  ],
-  "heatmapMeta": {
-    "maxIncome": 5000,
-    "maxExpense": 4000
-  }
-}
-```
-
-### Per-day deep insight endpoint
-
-```text
-GET /api/stats/dashboard/heatmap/day?date=2026-04-01
-```
-
-```json
-{
-  "date": "2026-04-01",
-  "income": 1000,
-  "expense": 500,
-  "netBalance": 500,
-  "savings": 300,
-  "topCategories": [
-    { "category": "Food", "amount": 300, "type": "expense" },
-    { "category": "Transport", "amount": 200, "type": "expense" },
-    { "category": "Savings", "amount": 300, "type": "saving" },
-    { "category": "Salary", "amount": 1000, "type": "income" }
-  ],
-  "topEntries": {
-    "income": [
-      { "title": "Salary", "amount": 1000 },
-      { "title": "Bonus", "amount": 200 }
-    ],
-    "expense": [
-      { "title": "Groceries", "amount": 300 },
-      { "title": "Transport", "amount": 200 },
-      { "title": "Snacks", "amount": 50 }
-    ],
-    "savings": [
-      { "title": "Piggy Bank", "amount": 300 }
-    ]
-  }
-}
-```
-
-### Definitions
-
-- `netBalance`: `income - expense`
-- `savings`: sum of entries where `category = "Savings"` or `type = "saving"` (future-safe extension)
-- `savings` is intentionally separated from `netBalance`

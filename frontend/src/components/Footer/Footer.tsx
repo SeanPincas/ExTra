@@ -1,11 +1,11 @@
 import styles from "./Footer.module.css"
+import logo from "../../assets/logo.png"
 
 function Footer() {
     return (
         <footer className={styles.footer}>
-            <span className={styles.footerSpacer} aria-hidden="true" />
-            <span className={styles.footerText}>© ExTra 2026</span>
-            <span className={styles.footerSpacer} aria-hidden="true" />
+            <img src={logo} alt="" className={styles.footerLogo} aria-hidden="true" />
+            <span className={styles.footerText}>ExTra 2026</span>
         </footer>
     )
 }

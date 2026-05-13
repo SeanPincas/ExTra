@@ -6,9 +6,9 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    gap: clamp(8px, 2vw, 18px);
-    min-height: 60px;
-    padding-inline: clamp(10px, 2vw, 20px);
+    gap: clamp(8px, 1.5vw, 14px);
+    min-height: 54px;
+    padding-inline: clamp(8px, 1.4vw, 12px);
 }
 
 /* =====================================================
@@ -16,14 +16,36 @@
 ===================================================== */
 
 .leftSection {
+    position: relative;
     display: flex;
     align-items: center;
     justify-self: start;
 }
 
+.headerBrandTitle {
+    position: absolute;
+    left: 44px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+    font-weight: 700;
+    font-family: "Times New Roman", "Georgia", serif;
+    letter-spacing: 0.1em;
+    font-stretch: expanded;
+    background: linear-gradient(135deg, #c08a18 0%, #f3d17a 45%, #b17707 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow:
+        0 0 1px rgba(255, 229, 155, 0.38),
+        0 1px 8px rgba(176, 121, 12, 0.22);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
 .panelToggleButton {
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -47,9 +69,15 @@
 }
 
 .panelToggleVisible:hover {
-    color: transparent;
-    border-color: transparent;
-    background: transparent;
+    color: inherit;
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.panelToggleActive {
+    color: var(--accent-gold) !important;
+    border-color: rgba(218, 165, 32, 0.2) !important;
+    background: rgba(218, 165, 32, 0.08) !important;
 }
 
 .centerSection {
@@ -62,7 +90,7 @@
 .rightSection {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     justify-self: end;
     min-width: 0;
 }
@@ -76,7 +104,7 @@
     justify-content: center;
     align-items: center;
     /* Increase or decrease the horizontal padding values here to change capsule length. */
-    padding: 5px clamp(90px, 5vw, 100px);
+    padding: 4px clamp(76px, 4.2vw, 86px);
     border-radius: 999px;
     background: linear-gradient(180deg, #2b261e 0%, #100d0a 100%);
     border: 1px solid rgba(128, 99, 19, 0.14);
@@ -90,7 +118,7 @@
 ===================================================== */
 
 .logoImage {
-    height: clamp(28px, 4vw, 42px);
+    height: clamp(28px, 3vw, 34px);
     width: auto;
     object-fit: contain;
 }
@@ -100,10 +128,10 @@
 ===================================================== */
 
 .headerActionButton {
-    min-height: 34px;
-    padding-inline: 12px;
-    border-radius: 12px;
-    font-size: 0.82rem;
+    min-height: 32px;
+    padding-inline: 10px;
+    border-radius: 10px;
+    font-size: 0.76rem;
     line-height: 1.1;
 }
 
@@ -129,14 +157,10 @@
 }
 
 .settingsLabel {
-    font-size: 0.82rem;
+    font-size: 0.76rem;
 }
 
-@media (max-width: 1080px) {
-
-    .headerContainer {
-        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    }
+@media (max-width: 1350px) {
 
     .panelToggleVisible {
         color: var(--text-secondary);
@@ -145,19 +169,26 @@
     }
 
     .panelToggleVisible:hover {
-        color: var(--accent-gold);
-        border-color: rgba(218, 165, 32, 0.16);
+        color: var(--text-primary);
+        border-color: rgba(255, 255, 255, 0.14);
         background: rgba(255, 255, 255, 0.03);
+    }
+}
+
+@media (max-width: 1080px) {
+
+    .headerContainer {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     }
 
     .headerActionButton {
         min-height: 32px;
-        padding-inline: 10px;
-        font-size: 0.78rem;
+        padding-inline: 9px;
+        font-size: 0.74rem;
     }
 
     .settingsLabel {
-        font-size: 0.78rem;
+        font-size: 0.74rem;
     }
 
 }
@@ -165,27 +196,32 @@
 @media (max-width: 640px) {
 
     .headerContainer {
-        gap: 8px;
+        gap: 7px;
         padding-inline: 8px;
     }
 
     .rightSection {
-        gap: 8px;
+        gap: 6px;
     }
 
     .logoWrapper {
         /* Mobile capsule length can be tuned here. */
-        padding: 7px 22px;
+        padding: 4px 20px;
     }
 
     .headerActionButton {
         min-height: 30px;
-        padding-inline: 9px;
-        font-size: 0.75rem;
+        padding-inline: 8px;
+        font-size: 0.72rem;
     }
 
     .settingsLabel {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
+    }
+
+    .headerBrandTitle {
+        left: 42px;
+        font-size: clamp(1rem, 2vw, 1.25rem);
     }
 }
 
@@ -197,7 +233,7 @@
 
     .logoWrapper {
         /* Small-screen capsule length can be tuned here. */
-        padding-inline: 50px;
+        padding-inline: 40px;
     }
 
     .settingsLabel {
@@ -210,9 +246,14 @@
 
     .headerActionButton {
         min-height: 30px;
-        min-width: 34px;
-        padding-inline: 8px;
-        border-radius: 10px;
+        min-width: 32px;
+        padding-inline: 7px;
+        border-radius: 9px;
+    }
+
+    .headerBrandTitle {
+        left: 38px;
+        font-size: 0.98rem;
     }
 
 }

@@ -1,0 +1,298 @@
+.block {
+    --line-shell-gap: 3px;
+    --line-header-gap: 8px;
+    --line-chip-gap: 4px;
+    --line-chip-height: 16px;
+    --line-chip-pad-x: 6px;
+    --line-chip-font: 0.52rem;
+    --line-chart-pad-top: 4px;
+    --line-chart-pad-side: 5px;
+    --line-chart-pad-bottom: 3px;
+    --line-viewport-height: 78px;
+    --line-month-font: 0.5rem;
+    --line-tooltip-min-width: 92px;
+    --line-tooltip-max-width: 142px;
+    --line-tooltip-pad-y: 5px;
+    --line-tooltip-pad-x: 7px;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: var(--line-shell-gap);
+    height: 100%;
+    min-height: 0;
+    padding: 3px 4px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.015);
+    overflow: hidden;
+}
+
+.headerRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--line-header-gap);
+}
+
+.headerCopy {
+    display: grid;
+    justify-items: start;
+    gap: 0;
+    min-width: 0;
+}
+
+.title {
+    margin: 0;
+    font-size: 0.64rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.subtitle {
+    font-size: 0.56rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.42);
+}
+
+.summaryRow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--line-chip-gap);
+    flex-wrap: wrap;
+    margin-left: auto;
+}
+
+.summaryChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: var(--line-chip-height);
+    padding: 0 var(--line-chip-pad-x);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.025);
+    font-size: var(--line-chip-font);
+    line-height: 1;
+    color: var(--text-secondary);
+}
+
+.summaryChip strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.summaryChipIncome strong {
+    color: var(--text-income);
+}
+
+.summaryChipExpense strong {
+    color: var(--text-expense);
+}
+
+.chartShell {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: 2px;
+    height: 100%;
+    min-height: 0;
+    padding: var(--line-chart-pad-top) var(--line-chart-pad-side) var(--line-chart-pad-bottom);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    background:
+        linear-gradient(180deg, rgba(21, 22, 25, 0.72), rgba(14, 15, 17, 0.78)),
+        rgba(255, 255, 255, 0.01);
+    overflow: visible;
+}
+
+.chartViewport {
+    position: relative;
+    z-index: 0;
+    overflow: visible;
+    width: 100%;
+    height: 100%;
+    max-height: var(--line-viewport-height);
+    min-height: 0;
+}
+
+.chartSvg {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.gridLine {
+    stroke: rgba(255, 255, 255, 0.06);
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+.axisLine {
+    stroke: rgba(0, 0, 0, 0.78);
+    stroke-width: 1.15;
+    shape-rendering: crispEdges;
+}
+
+.monthDividerLine {
+    stroke: color-mix(in srgb, var(--accent-gold) 28%, rgba(255, 255, 255, 0.12));
+    stroke-width: 1;
+    stroke-dasharray: 2 3;
+    shape-rendering: crispEdges;
+}
+
+.areaIncome {
+    fill: color-mix(in srgb, var(--text-income) 22%, transparent);
+}
+
+.areaExpense {
+    fill: color-mix(in srgb, var(--text-expense) 22%, transparent);
+}
+
+.areaIncomeDual {
+    fill: color-mix(in srgb, var(--text-income) 12%, transparent);
+}
+
+.areaExpenseDual {
+    fill: color-mix(in srgb, var(--text-expense) 12%, transparent);
+}
+
+.lineIncome {
+    fill: none;
+    stroke: var(--text-income);
+    stroke-width: 2.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--text-income) 32%, transparent));
+}
+
+.lineExpense {
+    fill: none;
+    stroke: var(--text-expense);
+    stroke-width: 2.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--text-expense) 32%, transparent));
+}
+
+.pointIncome {
+    fill: var(--text-income);
+    stroke: rgba(12, 13, 15, 0.92);
+    stroke-width: 1.35;
+}
+
+.pointExpense {
+    fill: var(--text-expense);
+    stroke: rgba(12, 13, 15, 0.92);
+    stroke-width: 1.35;
+}
+
+.pointHoverTarget {
+    fill: transparent;
+    cursor: pointer;
+}
+
+.pointTooltip {
+    position: absolute;
+    z-index: 6;
+    min-width: var(--line-tooltip-min-width);
+    max-width: var(--line-tooltip-max-width);
+    display: grid;
+    gap: 2px;
+    padding: var(--line-tooltip-pad-y) var(--line-tooltip-pad-x);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    background:
+        linear-gradient(180deg, rgba(25, 26, 29, 0.96), rgba(15, 16, 18, 0.94)),
+        rgba(255, 255, 255, 0.02);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+    transform: translate(-50%, calc(-100% - 8px));
+    pointer-events: none;
+}
+
+.tooltipDate {
+    font-size: 0.53rem;
+    line-height: 1.1;
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.tooltipValue {
+    font-size: 0.56rem;
+    line-height: 1.15;
+    color: var(--text-primary);
+}
+
+.tooltipValueIncome {
+    color: var(--text-income);
+}
+
+.tooltipValueExpense {
+    color: var(--text-expense);
+}
+
+.xAxisLabels {
+    display: grid;
+    gap: 1px;
+}
+
+.monthLabelRow {
+    display: grid;
+    grid-template-columns: repeat(var(--line-label-columns), minmax(0, 1fr));
+    align-items: center;
+    gap: 2px;
+}
+
+.monthLabel {
+    min-width: 0;
+    font-size: var(--line-month-font);
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.34);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.stateText {
+    margin: 0;
+    font-size: 0.56rem;
+    line-height: 1.15;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 1180px), (max-height: 850px) {
+    .block {
+        --line-shell-gap: 2px;
+        --line-chip-gap: 3px;
+        --line-chip-height: 15px;
+        --line-chip-pad-x: 5px;
+        --line-chip-font: 0.48rem;
+        --line-chart-pad-top: 3px;
+        --line-chart-pad-side: 4px;
+        --line-chart-pad-bottom: 3px;
+        --line-viewport-height: 70px;
+        --line-month-font: 0.46rem;
+        --line-tooltip-min-width: 86px;
+        --line-tooltip-pad-y: 4px;
+        --line-tooltip-pad-x: 6px;
+        padding: 2px 3px;
+    }
+
+    .title {
+        font-size: 0.6rem;
+    }
+
+    .stateText {
+        font-size: 0.52rem;
+    }
+}
+
+@media (max-width: 980px) {
+    .block {
+        --line-chip-height: 14px;
+        --line-chip-pad-x: 4px;
+        --line-chip-font: 0.46rem;
+        --line-viewport-height: 66px;
+        --line-month-font: 0.44rem;
+        --line-tooltip-max-width: 124px;
+        --line-tooltip-pad-x: 5px;
+    }
+}

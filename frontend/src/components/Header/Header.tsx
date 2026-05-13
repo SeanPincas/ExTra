@@ -11,10 +11,11 @@ import AddEntryModal from "../Finance/AddEntryModal/AddEntryModal";
 interface HeaderProps {
     onToggleLeftPanel?: () => void
     showLeftPanelToggle?: boolean
+    isLeftPanelOpen?: boolean
     onOpenSettings?: () => void
 }
 
-function Header({ onToggleLeftPanel, showLeftPanelToggle = false, onOpenSettings }: HeaderProps) {
+function Header({ onToggleLeftPanel, showLeftPanelToggle = false, isLeftPanelOpen = false, onOpenSettings }: HeaderProps) {
     const [isAddEntryOpen, setIsAddEntryOpen] = useState(false)
 
     const openAddEntryModal = () => {
@@ -33,12 +34,13 @@ function Header({ onToggleLeftPanel, showLeftPanelToggle = false, onOpenSettings
             <div className={styles.leftSection}>
                 <button
                     type="button"
-                    className={`${styles.panelToggleButton} ${showLeftPanelToggle ? styles.panelToggleVisible : ""}`}
+                    className={`${styles.panelToggleButton} ${showLeftPanelToggle ? styles.panelToggleVisible : ""} ${isLeftPanelOpen ? styles.panelToggleActive : ""}`}
                     aria-label="Open navigation panel"
                     onClick={onToggleLeftPanel}
                 >
-                    <Icons.menu size={18} />
+                    <Icons.menu size={16} />
                 </button>
+                <span className={styles.headerBrandTitle} aria-hidden="true">ExTra</span>
             </div>
 
             {/* CENTER: LOGO */}
@@ -63,7 +65,7 @@ function Header({ onToggleLeftPanel, showLeftPanelToggle = false, onOpenSettings
                     onClick={openAddEntryModal}
                 >
                     <span className={styles.buttonIcon} aria-hidden="true">
-                        <Icons.add width={15} height={15} />
+                        <Icons.add width={14} height={14} />
                     </span>
                     <span className={styles.buttonLabelFull}>Add Entry</span>
                 </button>
@@ -74,7 +76,7 @@ function Header({ onToggleLeftPanel, showLeftPanelToggle = false, onOpenSettings
                     aria-label="Open account settings"
                     onClick={onOpenSettings}
                 >
-                    <Icons.settings width={15} height={15} />
+                    <Icons.settings width={14} height={14} />
                     <span className={styles.settingsLabel}>Settings</span>
                 </button>
 

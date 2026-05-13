@@ -41,6 +41,7 @@ export interface DashboardStatsData {
         maxExpense: number
     }
     topExpenseCategories?: [string, number][]
+    topIncomeCategories?: [string, number][]
     categoryTotals?: Record<string, number>
     savingsTracker?: SavingsTracker
 }

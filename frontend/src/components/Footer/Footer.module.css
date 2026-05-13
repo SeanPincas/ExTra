@@ -1,19 +1,23 @@
 .footer {
-    height: 40px;
-    display: grid;
-    grid-template-columns: 38px 1fr 38px;
+    min-height: 26px;
+    display: flex;
     align-items: center;
-    gap: 10px;
-    padding-inline: 10px;
-    font-size: 12px;
+    justify-content: center;
+    gap: 7px;
+    padding: 4px 6px;
+    font-size: 11px;
+    line-height: 1;
     color: var(--text-secondary);
 }
 
-.footerSpacer {
-    width: 38px;
-    height: 38px;
+.footerLogo {
+    width: 15px;
+    height: 15px;
+    object-fit: contain;
+    opacity: 0.9;
 }
 
 .footerText {
-    justify-self: center;
+    display: inline-flex;
+    align-items: center;
 }

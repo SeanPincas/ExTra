@@ -3,6 +3,71 @@
 import User from '../models/userModel.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 
+function normalizeSavingsGoal(value) {
+  if (value === null) {
+    return null;
+  }
+
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value) || value < 0) {
+      throw new Error('Savings goal must be a non-negative number.');
+    }
+
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    const trimmedValue = value.trim();
+
+    if (!trimmedValue) {
+      throw new Error('Savings goal must be a non-negative number.');
+    }
+
+    const parsedValue = Number(trimmedValue);
+
+    if (!Number.isFinite(parsedValue) || parsedValue < 0) {
+      throw new Error('Savings goal must be a non-negative number.');
+    }
+
+    return parsedValue;
+  }
+
+  throw new Error('Savings goal must be a non-negative number.');
+}
+
+function normalizeSavingsGoalStartedAt(value) {
+  if (value === null) {
+    return null;
+  }
+
+  if (typeof value !== 'string' && !(value instanceof Date)) {
+    throw new Error('Savings goal start date must be a valid date.');
+  }
+
+  const parsedDate = new Date(value);
+  const parsedTime = parsedDate.getTime();
+
+  if (!Number.isFinite(parsedTime)) {
+    throw new Error('Savings goal start date must be a valid date.');
+  }
+
+  return parsedDate;
+}
+
+function serializeUser(userDocument) {
+  const user = userDocument.toJSON ? userDocument.toJSON() : userDocument.toObject();
+  const preferences = user.preferences ?? {};
+
+  return {
+    ...user,
+    preferences: {
+      ...preferences,
+      savingsGoal: preferences.savingsGoal ?? null,
+      savingsGoalStartedAt: preferences.savingsGoalStartedAt ?? null
+    }
+  };
+}
+
 // --------------------------------------------------
 // GET CURRENT USER PROFILE
 // GET /api/users/me
@@ -11,7 +76,7 @@ export const getProfile = asyncHandler(async (req, res) => {
   // req.user is set by protect middleware
   res.status(200).json({
     success: true,
-    user: req.user
+    user: serializeUser(req.user)
   });
 });
 
@@ -65,7 +130,9 @@ export const updateProfile = asyncHandler(async (req, res) => {
     user.phoneNumber = normalizedPhoneNumber;
   }
 
-  if (preferences) {
+  if (preferences !== undefined) {
+    user.preferences = user.preferences ?? {};
+
     if (preferences.payDay !== undefined) {
       user.preferences.payDay = Number(preferences.payDay);
     }
@@ -79,7 +146,21 @@ export const updateProfile = asyncHandler(async (req, res) => {
     }
 
     if (preferences.savingsGoal !== undefined) {
-      user.preferences.savingsGoal = Number(preferences.savingsGoal);
+      try {
+        user.preferences.savingsGoal = normalizeSavingsGoal(preferences.savingsGoal);
+      } catch (error) {
+        res.status(400);
+        throw error;
+      }
+    }
+
+    if (preferences.savingsGoalStartedAt !== undefined) {
+      try {
+        user.preferences.savingsGoalStartedAt = normalizeSavingsGoalStartedAt(preferences.savingsGoalStartedAt);
+      } catch (error) {
+        res.status(400);
+        throw error;
+      }
     }
 
     if (preferences.reminderLeadTime !== undefined) {
@@ -102,7 +183,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    user: updatedUser
+    user: serializeUser(updatedUser)
   });
 });
 

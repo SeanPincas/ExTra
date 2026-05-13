@@ -2,13 +2,16 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 38px;
-    padding: 8px 18px;
-    border-radius: 14px;
+    min-height: 32px;
+    gap: 5px;
+    padding: 0 10px;
+    border-radius: 9px;
     border: 1px solid transparent;
     cursor: pointer;
     font: inherit;
     font-weight: 500;
+    font-size: 0.75rem;
+    line-height: 1;
     color: var(--text-primary);
     white-space: nowrap;
     transition:
@@ -44,16 +47,17 @@
 @media (max-width: 640px) {
 
     .btnBase {
-        min-height: 34px;
-        padding-inline: 14px;
-        font-size: 0.875rem;
+        min-height: 30px;
+        padding-inline: 9px;
+        font-size: 0.72rem;
     }
 }
 
 @media (max-width: 420px) {
 
     .btnBase {
-        padding-inline: 12px;
-        font-size: 0.8rem;
+        min-height: 30px;
+        padding-inline: 8px;
+        font-size: 0.7rem;
     }
 }
