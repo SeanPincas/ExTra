@@ -218,11 +218,31 @@
     }
 }
 
+@media (max-width: 900px) and (min-width: 641px) {
+    .rightPanelRoot {
+        --right-heatmap-height: 190px;
+        --right-spt-height: 120px;
+        --right-panel-header-pad-x: 7px;
+        --right-panel-header-pad-top: 6px;
+        --right-panel-header-pad-bottom: 5px;
+    }
+}
+
 @media (max-width: 640px) {
     .rightPanelRoot {
-        --right-heatmap-height: 160px;
+        --right-heatmap-height: 186px;
         --right-spt-height: 118px;
         --right-panel-header-pad-x: 7px;
+        --right-panel-header-pad-top: 6px;
+        --right-panel-header-pad-bottom: 5px;
+    }
+}
+
+@media (max-width: 425px) {
+    .rightPanelRoot {
+        --right-heatmap-height: 198px;
+        --right-spt-height: 118px;
+        --right-panel-header-pad-x: 6px;
         --right-panel-header-pad-top: 6px;
         --right-panel-header-pad-bottom: 5px;
     }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Header from "../../components/Header/Header"
 import Footer from "../../components/Footer/Footer"
 import LeftPanel from "../../components/LeftPanel/LeftPanel"
@@ -18,6 +18,19 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
     const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(false)
     const [isRightPanelOpen, setIsRightPanelOpen] = useState(false)
     const [isRightPanelOverlayMode, setIsRightPanelOverlayMode] = useState(() => window.innerWidth <= 900)
+    const swipeStateRef = useRef<{
+        panel: "left" | "right" | null
+        startX: number
+        startY: number
+        currentX: number
+        currentY: number
+    }>({
+        panel: null,
+        startX: 0,
+        startY: 0,
+        currentX: 0,
+        currentY: 0,
+    })
 
     useEffect(() => {
         const handleResize = () => {
@@ -64,6 +77,61 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
         }, 280)
     }
 
+    const beginPanelSwipe = (panel: "left" | "right", event: React.TouchEvent<HTMLDivElement>) => {
+        if (!isRightPanelOverlayMode) {
+            return
+        }
+
+        const touch = event.touches[0]
+        if (!touch) {
+            return
+        }
+
+        swipeStateRef.current = {
+            panel,
+            startX: touch.clientX,
+            startY: touch.clientY,
+            currentX: touch.clientX,
+            currentY: touch.clientY,
+        }
+    }
+
+    const trackPanelSwipe = (event: React.TouchEvent<HTMLDivElement>) => {
+        const touch = event.touches[0]
+        if (!touch || !swipeStateRef.current.panel) {
+            return
+        }
+
+        swipeStateRef.current.currentX = touch.clientX
+        swipeStateRef.current.currentY = touch.clientY
+    }
+
+    const endPanelSwipe = () => {
+        const { panel, startX, startY, currentX, currentY } = swipeStateRef.current
+        swipeStateRef.current.panel = null
+
+        if (!isRightPanelOverlayMode || !panel) {
+            return
+        }
+
+        const deltaX = currentX - startX
+        const deltaY = currentY - startY
+        const horizontalDistance = Math.abs(deltaX)
+        const verticalDistance = Math.abs(deltaY)
+
+        if (horizontalDistance < 56 || horizontalDistance <= verticalDistance * 1.15) {
+            return
+        }
+
+        if (panel === "left" && deltaX < 0) {
+            setIsLeftPanelOpen(false)
+        }
+
+        if (panel === "right" && deltaX > 0) {
+            setIsRightPanelOpen(false)
+        }
+    }
+
     return (
         <MainLayout
             header={
@@ -83,7 +151,12 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
                         onClick={handleClosePanels}
                     />
 
-                    <div className={`${styles.panelShell} ${styles.leftShell} ${isLeftPanelOpen ? styles.panelOpen : ""}`}>
+                    <div
+                        className={`${styles.panelShell} ${styles.leftShell} ${isLeftPanelOpen ? styles.panelOpen : ""}`}
+                        onTouchStart={(event) => beginPanelSwipe("left", event)}
+                        onTouchMove={trackPanelSwipe}
+                        onTouchEnd={endPanelSwipe}
+                    >
                         <LeftPanel />
                     </div>
 
@@ -95,7 +168,12 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
                         />
                     </div>
 
-                    <div className={`${styles.panelShell} ${styles.rightShell} ${isRightPanelOpen ? styles.panelOpen : ""}`}>
+                    <div
+                        className={`${styles.panelShell} ${styles.rightShell} ${isRightPanelOpen ? styles.panelOpen : ""}`}
+                        onTouchStart={(event) => beginPanelSwipe("right", event)}
+                        onTouchMove={trackPanelSwipe}
+                        onTouchEnd={endPanelSwipe}
+                    >
                         <RightPanel
                             showPanelHandle={isRightPanelOverlayMode && isRightPanelOpen}
                             onTogglePanel={handleToggleRightPanel}
@@ -110,7 +188,7 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
                             title="Open savings progress tracker"
                             onClick={handleOpenSavingsTracker}
                         >
-                            <Icons.chart width={14} height={14} />
+                            <Icons.savings width={14} height={14} />
                         </button>
                     ) : null}
                 </div>

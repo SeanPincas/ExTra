@@ -24,6 +24,7 @@ function FinanceTypeSwitch({ value, onChange, options = FINANCE_TYPE_SWITCH_OPTI
                         type="button"
                         role="tab"
                         aria-selected={isActive}
+                        aria-label={option.ariaLabel ?? (typeof option.label === "string" ? option.label : option.value)}
                         className={`${styles.switchOption} ${isActive ? styles.switchOptionActive : ""} ${
                             option.tone === "expense"
                                 ? styles.expenseTone

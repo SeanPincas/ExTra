@@ -191,7 +191,7 @@ function LineChartBlock({ data, activeType, activeRange }: LineChartBlockProps) 
 
     const viewBoxWidth = 320
     const viewBoxHeight = 88
-    const chartPadding = { top: 8, right: 6, bottom: 4, left: 6 }
+    const chartPadding = { top: 8, right: 2, bottom: 4, left: 2 }
     const chartWidth = viewBoxWidth - chartPadding.left - chartPadding.right
     const chartHeight = viewBoxHeight - chartPadding.top - chartPadding.bottom
     const baselineY = chartPadding.top + chartHeight

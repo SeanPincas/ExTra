@@ -94,6 +94,7 @@
         bottom: 0;
         width: min(82vw, 320px);
         z-index: 18;
+        touch-action: pan-y;
         transition: transform 240ms ease, opacity 200ms ease;
     }
 
@@ -169,5 +170,15 @@
         width: 34px;
         height: 34px;
         border-radius: 11px;
+    }
+}
+
+@media (max-width: 425px) {
+    .panelShell {
+        width: min(84vw, 296px);
+    }
+
+    .rightShell {
+        width: min(86vw, 304px);
     }
 }

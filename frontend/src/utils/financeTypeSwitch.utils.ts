@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import {
     FINANCE_ENTRY_TYPE_LABELS,
     FINANCE_ENTRY_TYPES,
@@ -7,7 +8,8 @@ export type FinanceTypeSwitchTone = "neutral" | "expense" | "income"
 
 export interface FinanceTypeSwitchOption {
     value: string
-    label: string
+    label: ReactNode
+    ariaLabel?: string
     tone: FinanceTypeSwitchTone
 }
 

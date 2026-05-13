@@ -387,8 +387,8 @@
 
 @media (max-width: 640px) {
     .filterBar {
-        gap: 6px;
-        padding: 9px 10px;
+        gap: 5px;
+        padding: 8px 9px;
     }
 
     .topRow {
@@ -402,7 +402,7 @@
     .bottomRow {
         display: grid;
         grid-template-columns: minmax(0, 1fr);
-        gap: 8px;
+        gap: 7px;
         align-items: stretch;
     }
 
@@ -417,15 +417,15 @@
         display: inline-flex;
         align-items: center;
         justify-content: flex-end;
-        gap: 7px;
+        gap: 6px;
         order: 1;
         margin-left: auto;
     }
 
     .modeActionButton,
     .utilityButton {
-        min-width: 31px;
-        min-height: 31px;
+        min-width: 29px;
+        min-height: 29px;
         padding: 0;
         justify-content: center;
     }
@@ -443,7 +443,7 @@
     .bottomLeft {
         display: grid;
         grid-template-columns: auto minmax(0, 1fr) auto;
-        gap: 8px;
+        gap: 6px;
         align-items: stretch;
     }
 
@@ -453,11 +453,11 @@
     }
 
     .rangeShell {
-        --range-shell-width: 130px;
+        --range-shell-width: 122px;
     }
 
     .categoryShell {
-        --category-shell-width: 130px;
+        --category-shell-width: 122px;
     }
 
     .categoryShell :global(.content) {
@@ -470,10 +470,35 @@
 
     .typeSwitch {
         justify-self: end;
+        min-width: 0;
     }
 
     .amountSortSwitch {
         justify-self: end;
+        min-height: 26px;
+        padding: 2px;
+        border-radius: 9px;
+        gap: 4px;
+        margin-left: 2px;
+    }
+
+    .typeSwitch :global(.switchRoot) {
+        min-height: 26px;
+        padding: 1px;
+        border-radius: 9px;
+    }
+
+    .typeSwitch :global(.switchOption) {
+        min-height: 22px;
+        padding: 0 8px;
+        font-size: 0.68rem;
+        border-radius: 7px;
+    }
+
+    .amountSortButton {
+        width: 26px;
+        height: 22px;
+        border-radius: 7px;
     }
 
     .utilityActions {
@@ -501,6 +526,7 @@
 
     .bottomLeft {
         grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 5px;
     }
 
     .typeSwitch {
@@ -515,7 +541,12 @@
 
     .rangeShell,
     .categoryShell {
-        --range-shell-width: 120px;
-        --category-shell-width: 120px;
+        --range-shell-width: 112px;
+        --category-shell-width: 112px;
+    }
+
+    .typeSwitch :global(.switchOption) {
+        padding: 0 7px;
+        font-size: 0.64rem;
     }
 }
