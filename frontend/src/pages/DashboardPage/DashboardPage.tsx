@@ -14,6 +14,7 @@ interface DashboardPageProps {
 }
 
 function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
+    void onLogout
     const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(false)
     const [isRightPanelOpen, setIsRightPanelOpen] = useState(false)
     const [isRightPanelOverlayMode, setIsRightPanelOverlayMode] = useState(() => window.innerWidth <= 900)
@@ -67,7 +68,6 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
         <MainLayout
             header={
                 <Header
-                    onLogout={onLogout}
                     onOpenSettings={onOpenSettings}
                     onToggleLeftPanel={handleToggleLeftPanel}
                     showLeftPanelToggle

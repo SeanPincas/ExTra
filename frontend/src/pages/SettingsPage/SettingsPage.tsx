@@ -450,7 +450,7 @@ function SettingsPage({
                                                 >
                                                     {QUOTE_CHANGE_HOURS_OPTIONS.map((hours) => (
                                                         <option key={hours} value={hours}>
-                                                            Every {hours} hour{hours === 1 ? "" : "s"}
+                                                            Every {hours} hours
                                                         </option>
                                                     ))}
                                                 </select>
