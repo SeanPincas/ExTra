@@ -188,6 +188,14 @@
     color: var(--text-secondary);
 }
 
+.emptyStateShell {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    min-height: 0;
+    text-align: center;
+}
+
 @media (max-width: 1180px), (max-height: 850px) {
     .block {
         --ring-shell-gap: 2px;
