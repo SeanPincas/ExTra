@@ -3,6 +3,7 @@ import { getDashboardStats } from "../../../api/statsAPI"
 import type { RangeFilter } from "../../../types/financeFilters"
 import type { DashboardTotals } from "../../../types/stats"
 import { useRotatingQuote } from "../../../hooks/useRotatingQuote"
+import { formatCurrency } from "../../../utils/formatCurrency"
 import styles from "./SummaryArea.module.css"
 import Filter from "../../reusableComp/Filter/Filter"
 
@@ -14,14 +15,6 @@ const defaultTotals: DashboardTotals = {
     balance: 0,
 }
 const defaultQuote = "Budgeting is telling your money where to go."
-
-function formatCurrency(amount: number) {
-    return new Intl.NumberFormat("en-PH", {
-        style: "currency",
-        currency: "PHP",
-        maximumFractionDigits: 0,
-    }).format(amount)
-}
 
 function readStoredSummaryRangeFilter() {
     if (typeof window === "undefined") {

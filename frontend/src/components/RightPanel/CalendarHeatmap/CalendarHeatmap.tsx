@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import styles from "./CalendarHeatmap.module.css"
 import { Icons } from "../../../utils/iconLibrary"
 import type { HeatmapDayInsightData, StatsDailyTotal } from "../../../types/stats"
 import { getDashboardStats, getHeatmapDayInsight } from "../../../api/statsAPI"
+import { getReminders } from "../../../api/reminderAPI"
 import { useFinance } from "../../../context/FinanceContext"
 import { useAuth } from "../../../context/AuthContext"
 import DailyInsightCloud from "./DailyInsightCloud/DailyInsightCloud"
+import InsightDonutChart from "./InsightDonutChart"
+import type { ReminderEntry } from "../../../types/reminder"
 
 interface HeatmapDayCell {
     dateKey: string
@@ -46,6 +50,15 @@ function toDateKey(date: Date) {
     const m = String(date.getMonth() + 1).padStart(2, "0")
     const d = String(date.getDate()).padStart(2, "0")
     return `${y}-${m}-${d}`
+}
+
+function normalizeReminderDateKey(value: string | null | undefined) {
+    if (!value) return null
+    const parsed = new Date(value)
+    if (Number.isNaN(parsed.getTime())) {
+        return null
+    }
+    return toDateKey(parsed)
 }
 
 function getHeatCellColorByType(dominantType: "income" | "expense" | "neutral", intensityLevel: number) {
@@ -103,7 +116,12 @@ function CalendarHeatmap() {
     } | null>(null)
     const [emptyTooltipPosition, setEmptyTooltipPosition] = useState<{ top: number, left: number } | null>(null)
     const [isDayModalOpen, setIsDayModalOpen] = useState(false)
+    const [showAllTopEntries, setShowAllTopEntries] = useState(false)
     const [showAllCategories, setShowAllCategories] = useState(false)
+    const [isReminderPanelOpen, setIsReminderPanelOpen] = useState(true)
+    const [reminders, setReminders] = useState<ReminderEntry[]>([])
+    const [isReminderLoading, setIsReminderLoading] = useState(false)
+    const [reminderError, setReminderError] = useState("")
     const dayInsightCacheRef = useRef<Map<string, HeatmapDayInsightData>>(new Map())
     const todayDateKey = useMemo(() => toDateKey(new Date()), [])
 
@@ -133,6 +151,35 @@ function CalendarHeatmap() {
         fetchHeatmap()
         return () => { isActive = false }
     }, [activeMonth, token, entriesRevision])
+
+    useEffect(() => {
+        if (!token) {
+            setReminders([])
+            setIsReminderLoading(false)
+            setReminderError("")
+            return
+        }
+
+        let isActive = true
+        const loadReminders = async () => {
+            setIsReminderLoading(true)
+            setReminderError("")
+            try {
+                const data = await getReminders()
+                if (!isActive) return
+                setReminders(data)
+            } catch (error: any) {
+                if (!isActive) return
+                setReminders([])
+                setReminderError(error?.response?.data?.message || error?.message || "Unable to load reminders.")
+            } finally {
+                if (isActive) setIsReminderLoading(false)
+            }
+        }
+
+        loadReminders()
+        return () => { isActive = false }
+    }, [token])
 
     useEffect(() => {
         let isActive = true
@@ -211,6 +258,21 @@ function CalendarHeatmap() {
     }, [activeModalDate])
 
     const monthGridDays = useMemo(() => buildHeatmapGrid(activeMonth, heatmapTotals), [activeMonth, heatmapTotals])
+    const modalIncomeEntries = modalDayInsight?.topEntries.income || []
+    const modalExpenseEntries = modalDayInsight?.topEntries.expense || []
+    const modalIncomeCategories = modalDayInsight?.topCategories.filter((item) => item.type === "income") || []
+    const modalExpenseCategories = modalDayInsight?.topCategories.filter((item) => item.type === "expense") || []
+    const shouldShowEntryListButton = modalIncomeEntries.length > 5 || modalExpenseEntries.length > 5
+    const shouldShowCategoryListButton = modalIncomeCategories.length > 5 || modalExpenseCategories.length > 5
+    const modalDateReminders = activeModalDate
+        ? reminders.filter((reminder) => normalizeReminderDateKey(reminder.dueDate) === activeModalDate)
+        : []
+
+    useEffect(() => {
+        if (isDayModalOpen && activeModalDate) {
+            setIsReminderPanelOpen(true)
+        }
+    }, [activeModalDate, isDayModalOpen])
 
     const resolvePanelBounds = (target: HTMLElement) => {
         const panel = target.closest("aside")
@@ -281,15 +343,148 @@ function CalendarHeatmap() {
         setEmptyTooltipPosition(null)
         setActiveModalDate(day.dateKey)
         setSelectedDate(day.dateKey)
+        setShowAllTopEntries(false)
         setShowAllCategories(false)
         setIsDayModalOpen(true)
     }
+
+    const modalOverlay = isDayModalOpen && activeModalDate ? (
+        <div className={styles.dayModalBackdrop} onClick={() => { setIsDayModalOpen(false); setActiveModalDate(null) }}>
+            <div className={styles.dayModalShell} onClick={(event) => event.stopPropagation()}>
+                <button
+                    type="button"
+                    className={`${styles.dayModalReminderNotch} ${isReminderPanelOpen ? styles.dayModalReminderNotchActive : ""}`}
+                    aria-label={isReminderPanelOpen ? "Hide reminders for this day" : "Show reminders for this day"}
+                    onClick={() => setIsReminderPanelOpen((value) => !value)}
+                >
+                    <Icons.notification width={16} height={16} />
+                </button>
+
+                <aside className={`${styles.dayReminderPanel} ${isReminderPanelOpen ? styles.dayReminderPanelOpen : styles.dayReminderPanelClosed}`}>
+                    <div className={styles.dayReminderPanelHeader}>
+                        <span>Daily Reminders</span>
+                    </div>
+                    <div className={styles.dayReminderPanelBody}>
+                        {isReminderLoading ? <p className={styles.dayReminderEmpty}>Loading reminders...</p> : null}
+                        {!isReminderLoading && reminderError ? <p className={styles.dayReminderEmpty}>{reminderError}</p> : null}
+                        {!isReminderLoading && !reminderError && modalDateReminders.length === 0 ? (
+                            <p className={styles.dayReminderEmpty}>No reminders for this day</p>
+                        ) : null}
+                        {!isReminderLoading && !reminderError ? modalDateReminders.map((reminder) => (
+                            <div key={reminder._id} className={styles.dayReminderRow}>
+                                <span className={styles.dayReminderTitle}>{reminder.title}</span>
+                                <span className={styles.dayReminderMeta}>{reminder.type === "income" ? "Income" : "Expense"}</span>
+                            </div>
+                        )) : null}
+                    </div>
+                </aside>
+
+                <div className={styles.dayModalCard}>
+                    <div className={styles.dayModalHeader}>
+                        <h4>Daily Insight</h4>
+                        <button type="button" onClick={() => { setIsDayModalOpen(false); setActiveModalDate(null) }}>Close</button>
+                    </div>
+                    <p className={styles.dayModalDate}>{activeModalDate}</p>
+
+                    {isModalInsightLoading ? <p className={styles.heatmapInsightCloudMuted}>Loading...</p> : null}
+                    {!isModalInsightLoading && modalInsightError ? <p className={styles.heatmapInsightCloudMuted}>{modalInsightError}</p> : null}
+                    {!isModalInsightLoading && modalDayInsight ? (
+                        <>
+                            <div className={styles.dayModalSummaryLayout}>
+                                <div className={styles.dayModalSummaryMetrics}>
+                                    <div className={styles.dayModalTotalCard}>
+                                        <span className={styles.dayModalTotalLabel}>Income</span>
+                                        <strong className={styles.dayModalIncomeValue}>{formatCurrency(modalDayInsight.income)}</strong>
+                                    </div>
+                                    <div className={styles.dayModalTotalCard}>
+                                        <span className={styles.dayModalTotalLabel}>Expenses</span>
+                                        <strong className={styles.dayModalExpenseValue}>{formatCurrency(modalDayInsight.expense)}</strong>
+                                    </div>
+                                    <div className={styles.dayModalTotalCard}>
+                                        <span className={styles.dayModalTotalLabel}>Net Balance</span>
+                                        <strong className={styles.dayModalNetValue}>{formatCurrency(modalDayInsight.netBalance)}</strong>
+                                    </div>
+                                </div>
+                                <div className={styles.dayModalSummaryChart}>
+                                    <InsightDonutChart
+                                        income={modalDayInsight.income}
+                                        expense={modalDayInsight.expense}
+                                        className={styles.dayModalDonutChart}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={styles.dayModalUnifiedSection}>
+                                <div className={`${styles.dayModalUnifiedColumn} ${styles.dayModalIncomeColumn}`}>
+                                    <h5>Top Income</h5>
+                                    {modalIncomeEntries.slice(0, showAllTopEntries ? 999 : 5).map((item) => (
+                                        <div key={`income-${item.title}`} className={styles.dayModalRow}><span>{item.title}</span><span>{formatCurrency(item.amount)}</span></div>
+                                    ))}
+                                </div>
+                                <div className={styles.dayModalVerticalDivider} aria-hidden="true" />
+                                <div className={`${styles.dayModalUnifiedColumn} ${styles.dayModalExpenseColumn}`}>
+                                    <h5>Top Expense</h5>
+                                    {modalExpenseEntries.slice(0, showAllTopEntries ? 999 : 5).map((item) => (
+                                        <div key={`expense-${item.title}`} className={styles.dayModalRow}><span>{item.title}</span><span>{formatCurrency(item.amount)}</span></div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {shouldShowEntryListButton ? (
+                                <button type="button" className={styles.dayModalAttachedButton} onClick={() => setShowAllTopEntries((value) => !value)}>
+                                    {showAllTopEntries ? "Hide Full List" : "See Full List"}
+                                </button>
+                            ) : null}
+
+                            <div className={styles.dayModalUnifiedSection}>
+                                <div className={`${styles.dayModalUnifiedColumn} ${styles.dayModalIncomeColumn}`}>
+                                    <h5>Top Income Categories</h5>
+                                    {(showAllCategories
+                                        ? modalIncomeCategories
+                                        : modalIncomeCategories.slice(0, 5)
+                                    ).map((item) => (
+                                        <div key={`income-cat-${item.category}`} className={styles.dayModalRow}><span>{item.category}</span><span>{formatCurrency(item.amount)}</span></div>
+                                    ))}
+                                    {modalIncomeCategories.length === 0 ? (
+                                        <p className={styles.dayModalEmptyState}>No income categories</p>
+                                    ) : null}
+                                </div>
+                                <div className={styles.dayModalVerticalDivider} aria-hidden="true" />
+                                <div className={`${styles.dayModalUnifiedColumn} ${styles.dayModalExpenseColumn}`}>
+                                    <h5>Top Expense Categories</h5>
+                                    {(showAllCategories
+                                        ? modalExpenseCategories
+                                        : modalExpenseCategories.slice(0, 5)
+                                    ).map((item) => (
+                                        <div key={`expense-cat-${item.category}`} className={styles.dayModalRow}><span>{item.category}</span><span>{formatCurrency(item.amount)}</span></div>
+                                    ))}
+                                    {modalExpenseCategories.length === 0 ? (
+                                        <p className={styles.dayModalEmptyState}>No expense categories</p>
+                                    ) : null}
+                                </div>
+                            </div>
+
+                            {shouldShowCategoryListButton ? (
+                                <button type="button" className={styles.dayModalAttachedButton} onClick={() => setShowAllCategories((value) => !value)}>
+                                    {showAllCategories ? "Hide Full List" : "See Full List"}
+                                </button>
+                            ) : null}
+
+                            <div className={styles.dayModalFooter}>
+                                <p className={styles.dayModalSavings}>Total Savings: {formatCurrency(modalDayInsight.savings)}</p>
+                            </div>
+                        </>
+                    ) : null}
+                </div>
+            </div>
+        </div>
+    ) : null
 
     return (
         <>
             <section className={styles.heatmapSectionCard}>
                 <div className={styles.contentBlockHeader}>
-                    <Icons.calendar width={14} height={14} />
+                    <Icons.calendar width={16} height={16} />
                     <h3 className={styles.contentBlockTitle}>Calendar Heatmap</h3>
                 </div>
                 <div className={styles.heatmapMonthControls}>
@@ -387,67 +582,7 @@ function CalendarHeatmap() {
                 </div>
             ) : null}
 
-            {isDayModalOpen && activeModalDate ? (
-                <div className={styles.dayModalBackdrop} onClick={() => { setIsDayModalOpen(false); setActiveModalDate(null) }}>
-                    <div className={styles.dayModalCard} onClick={(event) => event.stopPropagation()}>
-                        <div className={styles.dayModalHeader}>
-                            <h4>Daily Insight</h4>
-                            <button type="button" onClick={() => { setIsDayModalOpen(false); setActiveModalDate(null) }}>Close</button>
-                        </div>
-                        <p className={styles.dayModalDate}>{activeModalDate}</p>
-
-                        {isModalInsightLoading ? <p className={styles.heatmapInsightCloudMuted}>Loading...</p> : null}
-                        {!isModalInsightLoading && modalInsightError ? <p className={styles.heatmapInsightCloudMuted}>{modalInsightError}</p> : null}
-                        {!isModalInsightLoading && modalDayInsight ? (
-                            <>
-                                <div className={styles.dayModalTotalsGrid}>
-                                    <div className={styles.dayModalTotalCard}>
-                                        <span className={styles.dayModalTotalLabel}>Income</span>
-                                        <strong className={styles.dayModalIncomeValue}>{formatCurrency(modalDayInsight.income)}</strong>
-                                    </div>
-                                    <div className={styles.dayModalTotalCard}>
-                                        <span className={styles.dayModalTotalLabel}>Expense</span>
-                                        <strong className={styles.dayModalExpenseValue}>{formatCurrency(modalDayInsight.expense)}</strong>
-                                    </div>
-                                    <div className={styles.dayModalTotalCard}>
-                                        <span className={styles.dayModalTotalLabel}>Net</span>
-                                        <strong className={styles.dayModalNetValue}>{formatCurrency(modalDayInsight.netBalance)}</strong>
-                                    </div>
-                                </div>
-
-                                <div className={styles.dayModalColumns}>
-                                    <div className={`${styles.dayModalColumn} ${styles.dayModalIncomeColumn}`}>
-                                        <h5>Top Income</h5>
-                                        {(modalDayInsight.topEntries.income || []).slice(0, 5).map((item) => (
-                                            <div key={`income-${item.title}`} className={styles.dayModalRow}><span>{item.title}</span><span>{formatCurrency(item.amount)}</span></div>
-                                        ))}
-                                    </div>
-                                    <div className={`${styles.dayModalColumn} ${styles.dayModalExpenseColumn}`}>
-                                        <h5>Top Expense</h5>
-                                        {(modalDayInsight.topEntries.expense || []).slice(0, 5).map((item) => (
-                                            <div key={`expense-${item.title}`} className={styles.dayModalRow}><span>{item.title}</span><span>{formatCurrency(item.amount)}</span></div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <button type="button" className={styles.seeMoreButton} onClick={() => setShowAllCategories((value) => !value)}>
-                                    {showAllCategories ? "Hide" : "See More"}
-                                </button>
-
-                                {showAllCategories ? (
-                                    <div className={styles.dayModalAllCategories}>
-                                        {[...modalDayInsight.topCategories].sort((a, b) => b.amount - a.amount).map((item) => (
-                                            <div key={`all-${item.type}-${item.category}`} className={styles.dayModalRow}><span>{item.category}</span><span>{formatCurrency(item.amount)}</span></div>
-                                        ))}
-                                    </div>
-                                ) : null}
-
-                                <p className={styles.dayModalSavings}>Total Savings: {formatCurrency(modalDayInsight.savings)}</p>
-                            </>
-                        ) : null}
-                    </div>
-                </div>
-            ) : null}
+            {modalOverlay ? createPortal(modalOverlay, document.body) : null}
         </>
     )
 }

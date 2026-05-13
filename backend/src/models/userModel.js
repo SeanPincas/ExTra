@@ -65,7 +65,21 @@ const userSchema = new mongoose.Schema(
             },
             savingsGoal: {
                 type: Number,
-                default: 0
+                default: null,
+                validate: {
+                    validator(value) {
+                        if (value === null || value === undefined) {
+                            return true
+                        }
+
+                        return Number.isFinite(value) && value >= 0
+                    },
+                    message: "Savings goal must be a non-negative number"
+                }
+            },
+            savingsGoalStartedAt: {
+                type: Date,
+                default: null
             },
             reminderLeadTime: {
                 type: Number,

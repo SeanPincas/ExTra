@@ -1,4 +1,14 @@
 .rightPanelRoot {
+    --right-panel-pad-bottom: 0px;
+    --right-heatmap-height: 188px;
+    --right-spt-height: 132px;
+    --right-heatmap-row: var(--right-heatmap-height);
+    --right-statistics-row: minmax(0, 1fr);
+    --right-spt-row: var(--right-spt-height);
+    --right-zone-child-height: 100%;
+    --right-panel-header-pad-x: 10px;
+    --right-panel-header-pad-top: 8px;
+    --right-panel-header-pad-bottom: 7px;
     position: relative;
     min-height: 0;
     height: 100%;
@@ -43,7 +53,10 @@
 
 .rightPanelHeader {
     position: relative;
-    padding: 8px 10px 7px;
+    padding:
+        var(--right-panel-header-pad-top)
+        var(--right-panel-header-pad-x)
+        var(--right-panel-header-pad-bottom);
 }
 
 .rightPanelTitleRow {
@@ -60,7 +73,7 @@
 }
 
 .rightPanelTitle {
-    font-size: 1.16rem;
+    font-size: 1.1rem;
     line-height: 1;
     color: var(--text-primary);
 }
@@ -109,9 +122,11 @@
     min-height: 0;
     max-height: 100%;
     display: grid;
+    grid-template-rows:
+        var(--right-heatmap-row)
+        var(--right-statistics-row)
+        var(--right-spt-row);
     align-content: start;
-    gap: 0;
-    padding: 0;
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -140,17 +155,76 @@
     border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-@media (max-width: 980px) {
-    .rightPanelHeader {
-        padding: 8px 9px 7px;
+.heatmapSlot,
+.statisticsSlot,
+.savingsTrackerSlot {
+    min-height: 0;
+}
+
+.heatmapSlot {
+    min-height: var(--right-heatmap-height);
+}
+
+.statisticsSlot {
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.savingsTrackerSlot {
+    min-height: var(--right-spt-height);
+    display: flex;
+    align-items: stretch;
+}
+
+.heatmapSlot > *,
+.statisticsSlot > *,
+.savingsTrackerSlot > * {
+    width: 100%;
+    height: var(--right-zone-child-height);
+    min-height: 0;
+}
+
+@media (max-width: 1180px), (max-height: 850px) {
+    .rightPanelRoot {
+        --right-heatmap-height: 176px;
+        --right-spt-height: 126px;
+        --right-panel-header-pad-x: 9px;
+        --right-panel-header-pad-top: 7px;
+        --right-panel-header-pad-bottom: 6px;
     }
 
     .rightPanelTitle {
-        font-size: 1.08rem;
+        font-size: 1.06rem;
     }
 
-    .rightPanelBody {
-        padding: 0;
+    .floatingHintCloud {
+        width: min(236px, calc(100vw - 34px));
+        max-width: 236px;
+    }
+}
+
+@media (max-width: 980px) {
+    .rightPanelRoot {
+        --right-heatmap-height: 168px;
+        --right-spt-height: 122px;
+        --right-panel-header-pad-x: 8px;
+        --right-panel-header-pad-top: 7px;
+        --right-panel-header-pad-bottom: 6px;
+    }
+
+    .rightPanelTitle {
+        font-size: 1.02rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .rightPanelRoot {
+        --right-heatmap-height: 160px;
+        --right-spt-height: 118px;
+        --right-panel-header-pad-x: 7px;
+        --right-panel-header-pad-top: 6px;
+        --right-panel-header-pad-bottom: 5px;
     }
 }
 
@@ -160,8 +234,7 @@
     }
 }
 
-.statisticsSectionCard,
-.savingsSectionCard {
+.statisticsSectionCard {
     display: grid;
     gap: 4px;
     padding: 8px 7px;
@@ -288,31 +361,6 @@
 
 .distributionProgressMeta span {
     font-size: 0.68rem;
-    color: var(--text-secondary);
-}
-
-.savingsValuesRow {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-}
-
-.savingsProgressTrack {
-    height: 9px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.09);
-    overflow: hidden;
-}
-
-.savingsProgressFill {
-    display: block;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(119, 186, 145, 0.95), rgba(85, 151, 112, 0.95));
-}
-
-.savingsProgressLabel {
-    font-size: 0.72rem;
     color: var(--text-secondary);
 }
 
