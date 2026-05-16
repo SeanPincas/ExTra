@@ -12,6 +12,19 @@ export const FINANCE_ENTRY_TYPE_LABELS: Record<FinanceEntryType, string> = {
     [FINANCE_ENTRY_TYPES.expense]: "Expense",
 }
 
+export const FINANCE_ENTRY_TYPE_VISUALS = {
+    [FINANCE_ENTRY_TYPES.income]: {
+        label: FINANCE_ENTRY_TYPE_LABELS[FINANCE_ENTRY_TYPES.income],
+        iconKey: "income",
+        accentColor: "var(--text-income)",
+    },
+    [FINANCE_ENTRY_TYPES.expense]: {
+        label: FINANCE_ENTRY_TYPE_LABELS[FINANCE_ENTRY_TYPES.expense],
+        iconKey: "expense",
+        accentColor: "var(--text-expense)",
+    },
+} as const
+
 export const FINANCE_ENTRY_TYPE_OPTIONS = [
     {
         value: FINANCE_ENTRY_TYPES.income,
@@ -147,6 +160,10 @@ export function getFinanceEntryTypeOptions() {
 
 export function getFinanceEntryTypeLabel(type: FinanceEntryType) {
     return FINANCE_ENTRY_TYPE_LABELS[type]
+}
+
+export function getFinanceEntryTypeVisual(type: FinanceEntryType) {
+    return FINANCE_ENTRY_TYPE_VISUALS[type]
 }
 
 export function isFinanceEntryType(value: string): value is FinanceEntryType {

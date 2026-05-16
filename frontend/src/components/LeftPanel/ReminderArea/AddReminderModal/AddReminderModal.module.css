@@ -249,7 +249,11 @@
     }
 
     .tripleGrid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tripleGrid > .fieldGroup:nth-child(3) {
+        grid-column: 1 / -1;
     }
 
     .secondaryAction,
@@ -291,6 +295,15 @@
         top: 14px;
         right: 14px;
         gap: 6px;
+    }
+
+    .tripleGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .tripleGrid > .fieldGroup:nth-child(3) {
+        grid-column: 1 / -1;
     }
 }
 
