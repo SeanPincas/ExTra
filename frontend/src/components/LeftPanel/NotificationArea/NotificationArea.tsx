@@ -4,6 +4,8 @@ import { Icons } from "../../../utils/iconLibrary"
 import { getNotifications } from "../../../api/notificationAPI"
 import type { NotificationEntry } from "../../../types/notification"
 import { useAuth } from "../../../context/AuthContext"
+import { useFinance } from "../../../context/FinanceContext"
+import { subscribeToRemindersUpdated } from "../../../utils/reminderEvents"
 
 function formatMoney(amount: number, currency: string) {
     try {
@@ -54,10 +56,18 @@ function formatNotification(entry: NotificationEntry, currency: string) {
 
 function NotificationArea() {
     const { user } = useAuth()
+    const { entriesRevision } = useFinance()
     const currency = user?.preferences?.currency || "PHP"
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
     const [notifications, setNotifications] = useState<NotificationEntry[]>([])
+    const [remindersRevision, setRemindersRevision] = useState(0)
+
+    useEffect(() => {
+        return subscribeToRemindersUpdated(() => {
+            setRemindersRevision((currentRevision) => currentRevision + 1)
+        })
+    }, [])
 
     useEffect(() => {
         let isActive = true
@@ -104,7 +114,7 @@ function NotificationArea() {
         return () => {
             isActive = false
         }
-    }, [user])
+    }, [user, entriesRevision, remindersRevision])
 
     const renderedNotes = useMemo(() => (
         notifications.map((note, index) => ({

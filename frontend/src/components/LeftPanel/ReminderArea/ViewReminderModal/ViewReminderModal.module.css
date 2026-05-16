@@ -163,8 +163,7 @@
 }
 
 @media (max-width: 720px) {
-    .primaryGrid,
-    .tripleGrid {
+    .primaryGrid {
         grid-template-columns: 1fr;
     }
 
@@ -177,6 +176,33 @@
     .footer {
         flex-direction: column-reverse;
         align-items: stretch;
+    }
+
+    .tripleGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tripleGrid > .fieldGroup:nth-child(3) {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 480px) {
+    .tripleGrid {
+        gap: 10px;
+    }
+
+    .footer {
+        flex-direction: row;
+        align-items: center;
+        justify-content: stretch;
+        gap: 8px;
+    }
+
+    .secondaryAction,
+    .primaryAction {
+        width: 100%;
+        min-width: 0;
     }
 }
 

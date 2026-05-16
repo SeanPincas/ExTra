@@ -11,7 +11,6 @@
     --bar-baseline-offset: calc(var(--bar-meta-min-height) + 1px);
     --bar-name-size: 0.64rem;
     --bar-value-size: 0.62rem;
-    --bar-emoji-size: 0.72rem;
     display: grid;
     grid-template-rows: auto 1fr;
     gap: var(--bar-shell-gap);
@@ -204,16 +203,6 @@
     background: linear-gradient(180deg, color-mix(in srgb, var(--text-income) 88%, white 12%), color-mix(in srgb, var(--text-income) 64%, black 36%));
 }
 
-.barEmoji {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    font-size: var(--bar-emoji-size);
-    pointer-events: none;
-}
-
 .barMeta {
     width: 100%;
     display: grid;
@@ -254,10 +243,6 @@
     font-size: 0.46rem;
 }
 
-.barRowExpanded .barEmoji {
-    font-size: 0.56rem;
-}
-
 .barRowExpanded .barTrack {
     width: 62%;
     height: 52px;
@@ -270,16 +255,6 @@
 .barRowExpanded .barMeta {
     min-height: 14px;
     padding-top: 2px;
-}
-
-.barMetaIcon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 15px;
-    font-size: 0.52rem;
-    line-height: 1;
 }
 
 .barValue {
@@ -318,7 +293,6 @@
         --bar-baseline-offset: calc(var(--bar-meta-min-height) + 3px);
         --bar-name-size: 0.58rem;
         --bar-value-size: 0.58rem;
-        --bar-emoji-size: 0.66rem;
         padding: 2px 3px;
     }
 

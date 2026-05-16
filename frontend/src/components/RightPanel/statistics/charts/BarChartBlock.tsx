@@ -127,9 +127,6 @@ function BarChartBlock({ data, activeType, activeRange }: BarChartBlockProps) {
                                     >
                                         <div className={styles.barCanvas}>
                                             <div className={styles.barTrack}>
-                                                {!isExpanded ? (
-                                                    <span className={styles.barEmoji}>{item.emoji}</span>
-                                                ) : null}
                                                 <div
                                                     className={`${styles.barFill} ${item.type === FINANCE_ENTRY_TYPES.expense ? styles.barFillExpense : styles.barFillIncome}`}
                                                     style={{ height: `${item.heightPercent}%` }}
@@ -137,27 +134,19 @@ function BarChartBlock({ data, activeType, activeRange }: BarChartBlockProps) {
                                             </div>
                                         </div>
                                         <div className={styles.barMeta}>
-                                            {isExpanded ? (
-                                                <span className={styles.barMetaIcon} aria-hidden="true">
-                                                    {item.emoji}
+                                            <span
+                                                ref={(node) => {
+                                                    labelRefs.current[item.id] = node
+                                                }}
+                                                className={styles.barName}
+                                            >
+                                                <span
+                                                    className={`${styles.barNameText} ${overflowingCategories[item.id] ? styles.barNameTextOverflowing : ""}`}
+                                                >
+                                                    {item.category}
                                                 </span>
-                                            ) : (
-                                                <>
-                                                    <span
-                                                        ref={(node) => {
-                                                            labelRefs.current[item.id] = node
-                                                        }}
-                                                        className={styles.barName}
-                                                    >
-                                                        <span
-                                                            className={`${styles.barNameText} ${overflowingCategories[item.id] ? styles.barNameTextOverflowing : ""}`}
-                                                        >
-                                                            {item.category}
-                                                        </span>
-                                                    </span>
-                                                    <span className={styles.barValue}>{formatter.format(item.value)}</span>
-                                                </>
-                                            )}
+                                            </span>
+                                            <span className={styles.barValue}>{formatter.format(item.value)}</span>
                                         </div>
                                     </article>
                                 ))}

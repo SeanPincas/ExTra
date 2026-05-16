@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import styles from "./ReminderArea.module.css"
 import { Icons } from "../../../utils/iconLibrary"
 import { deleteReminder, getReminders, updateReminder } from "../../../api/reminderAPI"
@@ -8,6 +9,7 @@ import AddReminderModal from "./AddReminderModal/AddReminderModal"
 import EditReminderModal from "./EditReminderModal/EditReminderModal"
 import ViewReminderModal from "./ViewReminderModal/ViewReminderModal"
 import ConfirmModal from "../../reusableComp/ConfirmModal/ConfirmModal"
+import { notifyRemindersUpdated } from "../../../utils/reminderEvents"
 
 function formatMoney(amount: number, currency: string) {
     try {
@@ -188,6 +190,7 @@ function ReminderArea() {
 
         try {
             await updateReminder(reminder._id, { active: reminder.active === false })
+            notifyRemindersUpdated()
             await loadReminders()
         } catch (error: any) {
             setErrorMessage(
@@ -244,6 +247,7 @@ function ReminderArea() {
                 }
                 setReminders((current) => current.filter((reminder) => reminder._id !== activeReminderId))
                 await deleteReminder(activeReminderId)
+                notifyRemindersUpdated()
                 setActiveReminderId(null)
             } else {
                 if (selectedIds.length === 0) {
@@ -252,6 +256,7 @@ function ReminderArea() {
                 const idsToDelete = [...selectedIds]
                 setReminders((current) => current.filter((reminder) => !idsToDelete.includes(reminder._id)))
                 await Promise.all(selectedIds.map((id) => deleteReminder(id)))
+                notifyRemindersUpdated()
                 setSelectedIds([])
             }
 
@@ -295,55 +300,69 @@ function ReminderArea() {
                 </div>
             </div>
 
-            {isAddModalOpen && (
-                <AddReminderModal
-                    onClose={() => setIsAddModalOpen(false)}
-                    onCreated={(createdReminder) => {
-                        setReminders((current) => [createdReminder, ...current])
-                        void loadReminders({ silent: true })
-                    }}
-                />
-            )}
+            {typeof document !== "undefined" && isAddModalOpen
+                ? createPortal(
+                    <AddReminderModal
+                        onClose={() => setIsAddModalOpen(false)}
+                        onCreated={(createdReminder) => {
+                            setReminders((current) => [createdReminder, ...current])
+                            notifyRemindersUpdated()
+                            void loadReminders({ silent: true })
+                        }}
+                    />,
+                    document.body
+                )
+                : null}
 
-            {isEditModalOpen && activeReminder && (
-                <EditReminderModal
-                    reminder={activeReminder}
-                    onClose={() => setIsEditModalOpen(false)}
-                    onUpdated={(updatedReminder) => {
-                        setReminders((current) => current.map((reminder) => (
-                            reminder._id === updatedReminder._id ? updatedReminder : reminder
-                        )))
-                        void loadReminders({ silent: true })
-                    }}
-                />
-            )}
+            {typeof document !== "undefined" && isEditModalOpen && activeReminder
+                ? createPortal(
+                    <EditReminderModal
+                        reminder={activeReminder}
+                        onClose={() => setIsEditModalOpen(false)}
+                        onUpdated={(updatedReminder) => {
+                            setReminders((current) => current.map((reminder) => (
+                                reminder._id === updatedReminder._id ? updatedReminder : reminder
+                            )))
+                            notifyRemindersUpdated()
+                            void loadReminders({ silent: true })
+                        }}
+                    />,
+                    document.body
+                )
+                : null}
 
-            {isViewModalOpen && activeReminder && (
-                <ViewReminderModal
-                    reminder={activeReminder}
-                    onClose={() => setIsViewModalOpen(false)}
-                    onEdit={() => {
-                        setIsViewModalOpen(false)
-                        setIsEditModalOpen(true)
-                    }}
-                    onDelete={() => handleDeleteSingle(activeReminder._id)}
-                />
-            )}
+            {typeof document !== "undefined" && isViewModalOpen && activeReminder
+                ? createPortal(
+                    <ViewReminderModal
+                        reminder={activeReminder}
+                        onClose={() => setIsViewModalOpen(false)}
+                        onEdit={() => {
+                            setIsViewModalOpen(false)
+                            setIsEditModalOpen(true)
+                        }}
+                        onDelete={() => handleDeleteSingle(activeReminder._id)}
+                    />,
+                    document.body
+                )
+                : null}
 
-            {isConfirmOpen && (
-                <ConfirmModal
-                    title={confirmMode === "single" ? "Delete reminder?" : "Delete selected reminders?"}
-                    message={confirmMode === "single"
-                        ? "This will permanently delete the reminder."
-                        : `This will permanently delete ${selectedIds.length} reminder(s).`
-                    }
-                    confirmLabel="Delete"
-                    tone="danger"
-                    isBusy={isLoading}
-                    onClose={() => setIsConfirmOpen(false)}
-                    onConfirm={confirmDelete}
-                />
-            )}
+            {typeof document !== "undefined" && isConfirmOpen
+                ? createPortal(
+                    <ConfirmModal
+                        title={confirmMode === "single" ? "Delete reminder?" : "Delete selected reminders?"}
+                        message={confirmMode === "single"
+                            ? "This will permanently delete the reminder."
+                            : `This will permanently delete ${selectedIds.length} reminder(s).`
+                        }
+                        confirmLabel="Delete"
+                        tone="danger"
+                        isBusy={isLoading}
+                        onClose={() => setIsConfirmOpen(false)}
+                        onConfirm={confirmDelete}
+                    />,
+                    document.body
+                )
+                : null}
 
             {errorMessage && (
                 <div className={styles.inlineError} role="alert">
