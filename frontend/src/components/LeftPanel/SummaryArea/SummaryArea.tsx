@@ -56,7 +56,7 @@ function SummaryArea() {
         } catch {
             // ignore storage issues
         }
-    }, [activeRange, entriesRevision])
+    }, [activeRange])
 
     useEffect(() => {
         let isActive = true
@@ -88,7 +88,7 @@ function SummaryArea() {
         return () => {
             isActive = false
         }
-    }, [activeRange])
+    }, [activeRange, entriesRevision])
 
     const summaryCards = useMemo(() => ([
         { label: "Total Income", value: formatCurrency(totals.income), tone: "income" },

@@ -6,6 +6,8 @@ import DashboardPage from "./pages/DashboardPage/DashboardPage";
 import SettingsPage from "./pages/SettingsPage/SettingsPage";
 import AppBackground from "./components/AppBackground/AppBackground";
 import { useAuth } from "./context/AuthContext";
+import logo from "./assets/logo.webp";
+import styles from "./App.module.css";
 
 function App() {
     const [authView, setAuthView] = useState<"register" | "login">("register")
@@ -33,7 +35,7 @@ function App() {
 
     return (
 
-        <div style={{ position: "relative", zIndex: 0 }}>
+        <div className={styles.appShell}>
 
             <AppBackground />
             <AppIntro>
@@ -54,16 +56,27 @@ function App() {
                         {/* While auth is bootstrapping we keep the same page frame,
                            so the screen does not jump between layouts. */}
                         {isAuthLoading ? (
-                            <main
-                                style={{
-                                    minHeight: "100dvh",
-                                    display: "grid",
-                                    placeItems: "center",
-                                    color: "var(--text-secondary)",
-                                    fontSize: "0.9rem",
-                                }}
-                            >
-                                Checking your session...
+                            <main className={styles.authBootShell} aria-live="polite">
+                                <section className={styles.authBootCard} aria-label="Checking your session">
+                                    <span className={styles.authBootLogoWrap} aria-hidden="true">
+                                        <img
+                                            src={logo}
+                                            alt=""
+                                            className={styles.authBootLogo}
+                                        />
+                                    </span>
+
+                                    <div className={styles.authBootPulse} aria-hidden="true">
+                                        <span className={styles.authBootPulseDot} />
+                                    </div>
+
+                                    <div className={styles.authBootCopy}>
+                                        <h2 className={styles.authBootTitle}>Checking your session</h2>
+                                        <p className={styles.authBootText}>
+                                            We&apos;re confirming your saved login so we can bring you back into ExTra safely.
+                                        </p>
+                                    </div>
+                                </section>
                             </main>
                         ) : authView === "login" ? (
                             <LoginPage onRegisterClick={() => setAuthView("register")} />
