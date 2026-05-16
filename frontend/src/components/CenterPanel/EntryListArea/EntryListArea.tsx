@@ -1,6 +1,7 @@
 import { useRef, useState } from "react"
 import type { FinanceDisplayEntry } from "../../../types/finance"
 import { Icons } from "../../../utils/iconLibrary"
+import { getFinanceEntryTypeVisual } from "../../../utils/financeConstants"
 import styles from "./EntryListArea.module.css"
 
 interface EntryListAreaProps {
@@ -130,7 +131,11 @@ function EntryListArea({
         <div className={styles.listArea}>
             {/* Once financeAPI is connected, this component becomes a pure
                renderer for backend-backed entry data plus local refinements. */}
-            {entries.map((entry) => (
+            {entries.map((entry) => {
+                const typeVisual = getFinanceEntryTypeVisual(entry.tone)
+                const EntryTypeIcon = Icons[typeVisual.iconKey]
+
+                return (
                 <article
                     key={entry.id}
                     className={`${styles.entryCard} ${styles[entry.tone]} ${expandedEntryIds.includes(entry.id) ? styles.entryCardExpanded : ""} ${isBatchDeleteMode ? styles.entryCardDeleteMode : ""} ${isEntrySelected(entry.id) ? styles.entryCardSelected : ""}`}
@@ -250,7 +255,7 @@ function EntryListArea({
                                             <span className={styles.entryTitle}>{entry.title}</span>
                                             <span className={styles.entryEmoji} aria-hidden="true">{entry.categoryEmoji}</span>
                                             <span className={styles.entryMetaInline}>
-                                                [{entry.type}] {entry.category}
+                                                {entry.category}
                                             </span>
                                         </p>
 
@@ -258,19 +263,36 @@ function EntryListArea({
                                             <span className={styles.entryTime}>
                                                 {entry.date} | {entry.timeLabel}
                                             </span>
-                                            <strong className={styles.entryAmount}>{entry.amountLabel}</strong>
+                                            <span className={styles.entryAmountGroup}>
+                                                <EntryTypeIcon
+                                                    width={14}
+                                                    height={14}
+                                                    className={styles.entryTypeIcon}
+                                                    style={{ color: typeVisual.accentColor }}
+                                                    aria-hidden="true"
+                                                />
+                                                <strong className={styles.entryAmount}>{entry.amountLabel}</strong>
+                                            </span>
                                         </p>
                                     </div>
 
                                     <div className={styles.entryCompactContent}>
                                         <div className={styles.entryTopLine}>
                                             <span className={styles.entryTitle}>{entry.title}</span>
-                                            <strong className={styles.entryAmount}>{entry.amountLabel}</strong>
+                                            <span className={styles.entryAmountGroup}>
+                                                <EntryTypeIcon
+                                                    width={13}
+                                                    height={13}
+                                                    className={styles.entryTypeIcon}
+                                                    style={{ color: typeVisual.accentColor }}
+                                                    aria-hidden="true"
+                                                />
+                                                <strong className={styles.entryAmount}>{entry.amountLabel}</strong>
+                                            </span>
                                         </div>
 
                                         <div className={styles.entryBottomLine}>
                                             <p className={styles.entryMetaGroup}>
-                                                <span className={styles.entryTypeTag}>[{entry.type}]</span>
                                                 <span className={styles.entryCategoryGroup}>
                                                     <span className={styles.entryEmoji} aria-hidden="true">{entry.categoryEmoji}</span>
                                                     <span className={styles.entryCategoryText}>{entry.category}</span>
@@ -306,7 +328,8 @@ function EntryListArea({
                         </div>
                     )}
                 </article>
-            ))}
+                )
+            })}
         </div>
     )
 }

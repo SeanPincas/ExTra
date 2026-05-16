@@ -340,6 +340,15 @@
     white-space: nowrap;
 }
 
+.entryAmountGroup {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+    min-width: 0;
+    white-space: nowrap;
+}
+
 .entryMetaGroup,
 .entryTime {
     color: var(--text-secondary);
@@ -375,16 +384,16 @@
     white-space: nowrap;
 }
 
-.entryTypeTag {
-    flex-shrink: 0;
-}
-
 .entryCategoryGroup {
     min-width: 0;
     display: inline-flex;
     align-items: center;
     gap: 5px;
     overflow: hidden;
+}
+
+.entryTypeIcon {
+    flex-shrink: 0;
 }
 
 .entryEmoji {
@@ -500,6 +509,10 @@
         font-size: 0.82rem;
     }
 
+    .entryAmountGroup {
+        gap: 4px;
+    }
+
     .entryActions {
         padding-left: 28px;
     }
@@ -592,6 +605,10 @@
 
     .entryAmount {
         font-size: 0.78rem;
+    }
+
+    .entryAmountGroup {
+        gap: 4px;
     }
 
     .entryActions {

@@ -28,12 +28,12 @@
 .notificationList {
     display: block;
     margin: 0;
-    height: 120px;
-    max-height: 120px;
+    height: 104px;
+    max-height: 104px;
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+    scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
 }
 
 .notificationBox {
@@ -52,8 +52,8 @@
 }
 
 .notificationList::-webkit-scrollbar {
-    width: 4px;
-    height: 6px;
+    width: 3px;
+    height: 4px;
 }
 
 .notificationList::-webkit-scrollbar-track {
@@ -61,12 +61,12 @@
 }
 
 .notificationList::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.14);
     border-radius: 999px;
 }
 
 .notificationList::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.22);
 }
 
 .notificationItem {
@@ -77,6 +77,17 @@
     margin-left: 7px;
     line-height: 1.2;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 1440px) and (min-width: 901px) {
+    .notificationList {
+        height: 84px;
+        max-height: 84px;
+    }
+
+    .notificationItem {
+        padding: 6px 9px;
+    }
 }
 
 @media (max-width: 900px) {

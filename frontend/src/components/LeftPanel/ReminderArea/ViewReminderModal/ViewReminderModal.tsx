@@ -22,6 +22,10 @@ function ViewReminderModal({ reminder, onClose, onEdit, onDelete }: ViewReminder
         return () => window.removeEventListener("keydown", handleEscape)
     }, [onClose])
 
+    const formattedType = reminder.type
+        ? `${reminder.type.charAt(0).toUpperCase()}${reminder.type.slice(1)}`
+        : "-"
+
     return (
         <div className={styles.overlay} role="presentation" onClick={onClose}>
             <section
@@ -64,7 +68,7 @@ function ViewReminderModal({ reminder, onClose, onEdit, onDelete }: ViewReminder
                     <div className={styles.tripleGrid}>
                         <div className={styles.fieldGroup}>
                             <span className={styles.fieldLabel}>Type</span>
-                            <div className={styles.fieldValue}>{reminder.type}</div>
+                            <div className={styles.fieldValue}>{formattedType}</div>
                         </div>
                         <div className={styles.fieldGroup}>
                             <span className={styles.fieldLabel}>Category</span>
