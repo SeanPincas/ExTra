@@ -196,6 +196,7 @@ function SettingsPage({
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
     const [isPayDayAnchorPickerOpen, setIsPayDayAnchorPickerOpen] = useState(false)
     const [activeTooltip, setActiveTooltip] = useState<"paydayAnchor" | "reminderLeadTime" | null>(null)
+    const [hasPendingDashboardRefresh, setHasPendingDashboardRefresh] = useState(false)
 
     const [form, setForm] = useState(() => ({
         name: user?.name ?? "",
@@ -226,6 +227,52 @@ function SettingsPage({
             window.clearTimeout(timeoutId)
         }
     }, [warningMessage])
+
+    useEffect(() => {
+        const previousBodyOverflow = document.body.style.overflow
+        const previousHtmlOverflow = document.documentElement.style.overflow
+
+        document.body.style.overflow = "auto"
+        document.documentElement.style.overflow = "auto"
+
+        return () => {
+            document.body.style.overflow = previousBodyOverflow
+            document.documentElement.style.overflow = previousHtmlOverflow
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!activeTooltip) {
+            return
+        }
+
+        const handlePointerDown = (event: PointerEvent) => {
+            const target = event.target
+            if (!(target instanceof Element)) {
+                return
+            }
+
+            if (target.closest('[data-settings-tooltip-shell="true"]')) {
+                return
+            }
+
+            setActiveTooltip(null)
+        }
+
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setActiveTooltip(null)
+            }
+        }
+
+        document.addEventListener("pointerdown", handlePointerDown)
+        document.addEventListener("keydown", handleEscape)
+
+        return () => {
+            document.removeEventListener("pointerdown", handlePointerDown)
+            document.removeEventListener("keydown", handleEscape)
+        }
+    }, [activeTooltip])
 
     const setNumericPreference = (field: "salary" | "savingsGoal", next: string) => {
         const normalized = normalizeNumericInput(next)
@@ -318,6 +365,11 @@ function SettingsPage({
     }
 
     const handleSave = async () => {
+        const activeElement = document.activeElement
+        if (activeElement instanceof HTMLElement) {
+            activeElement.blur()
+        }
+
         setIsSaving(true)
         setSaveError("")
         setSaveSuccess("")
@@ -363,8 +415,7 @@ function SettingsPage({
                 },
             })
 
-            await refreshCurrentUser()
-            await refreshFinance()
+            setHasPendingDashboardRefresh(true)
             setSaveSuccess("Saved successfully.")
         } catch (error: any) {
             setSaveError(
@@ -382,6 +433,20 @@ function SettingsPage({
         onLogout()
     }
 
+    const handleReturnToDashboard = async () => {
+        if (hasPendingDashboardRefresh) {
+            try {
+                await refreshCurrentUser()
+                await refreshFinance()
+            } catch {
+                // Let the dashboard open even if the refresh request fails.
+            }
+        }
+
+        onBackToDashboard()
+        window.location.reload()
+    }
+
     const toggleTooltip = (tooltipId: "paydayAnchor" | "reminderLeadTime") => {
         setActiveTooltip((currentTooltip) => (
             currentTooltip === tooltipId ? null : tooltipId
@@ -393,13 +458,15 @@ function SettingsPage({
     return (
         <>
             <MainLayout
+                contentScrollable
+                layoutMode="document"
                 header={
                     <div className={styles.topBar} aria-label="Settings header">
                         <div className={styles.leftRail}>
                             <button
                                 type="button"
                                 className={`btnBase btnMatteDark ${styles.backButton}`}
-                                onClick={onBackToDashboard}
+                                onClick={handleReturnToDashboard}
                                 aria-label="Back to dashboard"
                                 title="Back to dashboard"
                             >
@@ -413,7 +480,7 @@ function SettingsPage({
                                 type="button"
                                 className={styles.logoWrapper}
                                 aria-label="Back to dashboard"
-                                onClick={onBackToDashboard}
+                                onClick={handleReturnToDashboard}
                             >
                                 <img
                                     src={logo}
@@ -431,9 +498,15 @@ function SettingsPage({
                     </div>
                 }
             content={
-                <section className={styles.settingsShell} aria-label="Account settings">
+                <section
+                    className={styles.settingsShell}
+                    aria-label="Account settings"
+                >
                     <div className={styles.grid}>
-                        <main className={styles.rightCol} aria-label="Settings editor">
+                        <main
+                            className={styles.rightCol}
+                            aria-label="Settings editor"
+                        >
                             <div className={styles.panelStack}>
                                 <div className={styles.panel}>
                                     <div className={styles.panelHeader}>
@@ -486,31 +559,34 @@ function SettingsPage({
                                             <div className={styles.profileFieldsColumn}>
                                                 <div className={styles.profileFieldRow}>
                                                     <label className={styles.fieldGroup}>
-                                                        <span>Username</span>
+                                                        <span className={styles.fieldHintRow}>
+                                                            <span>Username</span>
+                                                            <span className={styles.fieldHintInline}>3-24 chars, letters and numbers only</span>
+                                                        </span>
                                                         <input
                                                             className={styles.fieldInput}
                                                             value={form.name}
                                                             onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
                                                         />
-                                                        <span className={styles.fieldHint}>3-24 chars, letters and numbers only</span>
                                                     </label>
 
                                                     <label className={styles.fieldGroup}>
-                                                        <span>Email</span>
+                                                        <span className={styles.fieldHintRow}>
+                                                            <span>Email</span>
+                                                        </span>
                                                         <input
                                                             className={styles.fieldInput}
                                                             value={displayEmail}
                                                             readOnly
                                                         />
-                                                        <span className={styles.fieldHintSpacer} aria-hidden="true">
-                                                            spacer
-                                                        </span>
                                                     </label>
                                                 </div>
 
                                                 <div className={styles.profileFieldRow}>
                                                     <label className={styles.fieldGroup}>
-                                                        <span>Password</span>
+                                                        <span className={styles.fieldHintRow}>
+                                                            <span>Password</span>
+                                                        </span>
                                                         <button
                                                             type="button"
                                                             className={`btnBase btnMatteDark ${styles.passwordFieldButton}`}
@@ -518,13 +594,13 @@ function SettingsPage({
                                                         >
                                                             Change password
                                                         </button>
-                                                        <span className={styles.fieldHintSpacer} aria-hidden="true">
-                                                            spacer
-                                                        </span>
                                                     </label>
 
                                                     <label className={styles.fieldGroup}>
-                                                        <span>Phone Number</span>
+                                                        <span className={styles.fieldHintRow}>
+                                                            <span>Phone Number</span>
+                                                            <span className={styles.fieldHintInline}>Optional account contact</span>
+                                                        </span>
                                                         <input
                                                             className={styles.fieldInput}
                                                             inputMode="tel"
@@ -532,7 +608,6 @@ function SettingsPage({
                                                             onChange={(event) => setForm((current) => ({ ...current, phoneNumber: event.target.value }))}
                                                             placeholder="+63 9XX XXX XXXX"
                                                         />
-                                                        <span className={styles.fieldHint}>Optional account contact</span>
                                                     </label>
                                                 </div>
                                             </div>
@@ -573,10 +648,10 @@ function SettingsPage({
                                                     </select>
                                                 </label>
 
-                                                <label className={styles.fieldGroup}>
+                                                <div className={styles.fieldGroup}>
                                                     <span className={styles.labelRow}>
                                                         <span>Pay day anchor</span>
-                                                        <span className={styles.tooltipShell}>
+                                                        <span data-settings-tooltip-shell="true" className={styles.tooltipShell}>
                                                             <button
                                                                 type="button"
                                                                 className={styles.helpIcon}
@@ -591,16 +666,16 @@ function SettingsPage({
                                                             </span>
                                                         </span>
                                                     </span>
-                                                <button
-                                                    type="button"
-                                                    className={`btnBase btnMatteDark ${styles.fieldInput} ${styles.dateFieldButton}`}
-                                                    disabled={isDailyPayCycle}
-                                                    onClick={() => setIsPayDayAnchorPickerOpen(true)}
-                                                >
-                                                    <span>{isDailyPayCycle ? "Automatic for daily pay" : payDayAnchorLabel}</span>
-                                                    <Icons.calendar size={16} />
-                                                </button>
-                                            </label>
+                                                    <button
+                                                        type="button"
+                                                        className={`btnBase btnMatteDark ${styles.fieldInput} ${styles.dateFieldButton}`}
+                                                        disabled={isDailyPayCycle}
+                                                        onClick={() => setIsPayDayAnchorPickerOpen(true)}
+                                                    >
+                                                        <span>{isDailyPayCycle ? "Automatic for daily pay" : payDayAnchorLabel}</span>
+                                                        <Icons.calendar size={16} />
+                                                    </button>
+                                                </div>
 
                                                 <label className={styles.fieldGroup}>
                                                     <span>Salary</span>
@@ -647,7 +722,7 @@ function SettingsPage({
                                                 <label className={styles.fieldGroup}>
                                                     <span className={styles.labelRow}>
                                                         <span>Reminder lead time</span>
-                                                        <span className={styles.tooltipShell}>
+                                                        <span data-settings-tooltip-shell="true" className={styles.tooltipShell}>
                                                             <button
                                                                 type="button"
                                                                 className={styles.helpIcon}
@@ -704,8 +779,13 @@ function SettingsPage({
                                     </div>
 
                                     <div className={styles.actionsRow}>
-                                        {saveSuccess && <span className={styles.successText}>{saveSuccess}</span>}
-                                        {saveError && <span className={styles.errorText}>{saveError}</span>}
+                                        <div
+                                            className={styles.saveStatusSlot}
+                                            aria-live="polite"
+                                        >
+                                            {saveSuccess ? <span className={styles.successText}>{saveSuccess}</span> : null}
+                                            {!saveSuccess && saveError ? <span className={styles.errorText}>{saveError}</span> : null}
+                                        </div>
 
                                         <button
                                             type="button"
