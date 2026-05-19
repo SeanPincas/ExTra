@@ -60,7 +60,13 @@ function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps)
             return
         }
 
-        function handlePointerDown(event: MouseEvent) {
+        function handlePointerDown(event: PointerEvent) {
+            if (!hintContainerRef.current?.contains(event.target as Node)) {
+                setIsHintOpen(false)
+            }
+        }
+
+        function handleFocusIn(event: FocusEvent) {
             if (!hintContainerRef.current?.contains(event.target as Node)) {
                 setIsHintOpen(false)
             }
@@ -72,11 +78,13 @@ function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps)
             }
         }
 
-        document.addEventListener("mousedown", handlePointerDown)
+        document.addEventListener("pointerdown", handlePointerDown)
+        document.addEventListener("focusin", handleFocusIn)
         document.addEventListener("keydown", handleEscape)
 
         return () => {
-            document.removeEventListener("mousedown", handlePointerDown)
+            document.removeEventListener("pointerdown", handlePointerDown)
+            document.removeEventListener("focusin", handleFocusIn)
             document.removeEventListener("keydown", handleEscape)
         }
     }, [isHintOpen])
@@ -103,7 +111,7 @@ function RightPanel({ showPanelHandle = false, onTogglePanel }: RightPanelProps)
                         <button
                             type="button"
                             className={styles.insightsHintButton}
-                            aria-label="Show insights help"
+                            aria-label={isHintOpen ? "Hide insights help" : "Show insights help"}
                             aria-expanded={isHintOpen}
                             onClick={() => setIsHintOpen((isOpen) => !isOpen)}
                         >

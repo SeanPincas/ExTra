@@ -63,6 +63,11 @@ const financeSchema = new mongoose.Schema(
             type: Number,
             required: true,
             min: 0
+        },
+        systemKey: {
+            type: String,
+            trim: true,
+            default: null
         }
     },
     {
@@ -75,6 +80,7 @@ const financeSchema = new mongoose.Schema(
 // Used for today/week/month queries
 // ================================================================
 financeSchema.index({ user: 1, createdAt: -1 });
+financeSchema.index({ user: 1, systemKey: 1 }, { unique: true, sparse: true });
 
 // ================================================================
 // TEXT INDEX FOR SEARCHING TITLES

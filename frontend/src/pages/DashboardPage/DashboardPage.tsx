@@ -140,6 +140,7 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
                     onToggleLeftPanel={handleToggleLeftPanel}
                     showLeftPanelToggle
                     isLeftPanelOpen={isLeftPanelOpen}
+                    onNavigateDashboard={handleClosePanels}
                 />
             }
             content={

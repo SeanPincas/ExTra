@@ -193,12 +193,7 @@ function LoginPage({ onRegisterClick }: LoginPageProps) {
                                     <button
                                         className={styles.passwordToggle}
                                         type="button"
-                                        onMouseDown={() => setShowPassword(true)}
-                                        onMouseUp={() => setShowPassword(false)}
-                                        onMouseLeave={() => setShowPassword(false)}
-                                        onTouchStart={() => setShowPassword(true)}
-                                        onTouchEnd={() => setShowPassword(false)}
-                                        onTouchCancel={() => setShowPassword(false)}
+                                        onClick={() => setShowPassword((current) => !current)}
                                         aria-label={showPassword ? "Hide password" : "Show password"}
                                     >
                                         <Icons.eye size={16} />
