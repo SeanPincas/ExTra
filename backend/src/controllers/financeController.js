@@ -7,6 +7,10 @@ import { getDateRangeFilter } from "../utils/dateRange.js";
 import { validateFinanceEntry } from "../utils/requestValidation.js";
 import { ensurePaydayEntryForUser } from "../services/paydayService.js";
 
+function escapeRegex(value) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 // ================================================================
 // CREATE FINANCE ENTRY
 // ================================================================
@@ -85,9 +89,14 @@ export const getFinance = asyncHandler(async (req, res) => {
     // ----------- Search Filter -------------
     let searchFilter = {};
     if (search) {
-
+        const normalizedSearch = String(search).trim();
+        const safePattern = escapeRegex(normalizedSearch);
         searchFilter = {
-            $text: { $search: search }
+            $or: [
+                { title: { $regex: safePattern, $options: "i" } },
+                { category: { $regex: safePattern, $options: "i" } },
+                { "items.name": { $regex: safePattern, $options: "i" } }
+            ]
         };
     }
 

@@ -8,6 +8,8 @@ interface EntryListAreaProps {
     entries: FinanceDisplayEntry[]
     isLoading: boolean
     errorMessage: string
+    submittedSearchTerm: string
+    isSearchPending: boolean
     onEditEntry: (entry: FinanceDisplayEntry) => void
     onDeleteEntry: (entry: FinanceDisplayEntry) => Promise<void>
     isBatchDeleteMode: boolean
@@ -22,6 +24,8 @@ function EntryListArea({
     entries,
     isLoading,
     errorMessage,
+    submittedSearchTerm,
+    isSearchPending,
     onEditEntry,
     onDeleteEntry,
     isBatchDeleteMode,
@@ -176,6 +180,15 @@ function EntryListArea({
     }, [])
 
     if (isLoading) {
+        if (isSearchPending && submittedSearchTerm) {
+            return (
+                <div className={styles.emptyState}>
+                    <h3>Searching entries</h3>
+                    <p>Searching for Entries {submittedSearchTerm}. please wait patiently.</p>
+                </div>
+            )
+        }
+
         return (
             <div className={styles.emptyState}>
                 <h3>Loading entries</h3>
@@ -194,6 +207,15 @@ function EntryListArea({
     }
 
     if (!entries.length) {
+        if (submittedSearchTerm) {
+            return (
+                <div className={styles.emptyState}>
+                    <h3>No entries found</h3>
+                    <p>No Entries Found from searching {submittedSearchTerm}</p>
+                </div>
+            )
+        }
+
         return (
             <div className={styles.emptyState}>
                 <h3>No entries found</h3>

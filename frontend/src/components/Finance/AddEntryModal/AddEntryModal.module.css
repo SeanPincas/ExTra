@@ -312,6 +312,18 @@
     gap: 12px;
 }
 
+.itemsHeaderCopy {
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+}
+
+.itemsTitleRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .itemsTitle {
     font-size: 1.05rem;
     color: var(--text-primary);
@@ -321,6 +333,59 @@
     color: var(--text-secondary);
     font-size: 0.76rem;
     line-height: 1.45;
+}
+
+.tooltipShell {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+}
+
+.helpIcon {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    line-height: 1;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0;
+    cursor: pointer;
+}
+
+.tooltip {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(100% + 10px);
+    width: min(250px, 64vw);
+    padding: 10px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background:
+        radial-gradient(circle at center, rgba(92, 92, 92, 0.18) 0%, rgba(18, 18, 18, 0.96) 78%),
+        var(--panel-texture);
+    background-size: cover, 900px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 14px 26px rgba(0, 0, 0, 0.2);
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 140ms ease;
+    z-index: 10;
+}
+
+.tooltipVisible {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .itemColumnHeaders {
@@ -371,20 +436,28 @@
     display: grid;
     gap: 10px;
     min-height: 0;
+    max-height: 304px;
+    overflow-y: auto;
+    padding-right: 2px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.itemList::-webkit-scrollbar {
+    width: 4px;
+}
+
+.itemList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.itemList::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
 }
 
 .itemListScrollable {
     max-height: 304px;
-    overflow-y: auto;
-    padding-right: 2px;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.itemListScrollable::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-    display: none;
 }
 
 .itemRow {
@@ -543,7 +616,7 @@
 
     .totalShell {
         min-width: 132px;
-        padding: 7px 10px;
+        padding: 5px;
         text-align: right;
     }
 
@@ -594,8 +667,15 @@
         padding-right: 48px;
     }
 
-    .primaryGrid,
-    .secondaryGrid,
+    .primaryGrid {
+        grid-template-columns: minmax(0, 1.2fr) minmax(144px, 0.8fr);
+    }
+
+    .secondaryGrid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: end;
+    }
+
     .itemColumnHeaders {
         grid-template-columns: 1fr;
     }
@@ -631,6 +711,16 @@
 
     .categoryField {
         max-width: none;
+    }
+
+    .typeSwitch {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .typeButton {
+        flex: 1;
+        justify-content: center;
     }
 
     .removeItemButton {
@@ -689,23 +779,30 @@
         padding: 7px 10px;
     }
 
-    .typeSwitch {
-        width: 100%;
-        justify-content: stretch;
-        padding: 3px;
-    }
-
     .subListButton {
         width: 100%;
         min-height: 34px;
         font-size: 0.76rem;
     }
 
+    .primaryGrid {
+        grid-template-columns: minmax(0, 1.08fr) minmax(112px, 0.72fr);
+        gap: 8px;
+    }
+
+    .secondaryGrid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    .typeSwitch {
+        padding: 3px;
+    }
+
     .typeButton {
-        flex: 1;
-        justify-content: center;
-        padding: 7px 10px;
-        font-size: 0.76rem;
+        padding: 5px 6px;
+        font-size: 0.72rem;
+        gap: 4px;
     }
 
     .footer {
@@ -742,6 +839,13 @@
 
     .itemsTitle {
         font-size: 0.96rem;
+    }
+
+    .tooltip {
+        left: 0;
+        right: auto;
+        transform: none;
+        width: min(220px, calc(100vw - 56px));
     }
 
     .addItemButton {
