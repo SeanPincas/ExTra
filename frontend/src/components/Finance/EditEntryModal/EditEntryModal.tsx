@@ -35,6 +35,7 @@ function formatCurrencyPreview(amount: number) {
 function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
     const { updateFinanceEntry } = useFinance()
     const itemListRef = useRef<HTMLDivElement | null>(null)
+    const tooltipShellRef = useRef<HTMLSpanElement | null>(null)
     const previousItemCountRef = useRef(entry.items.length)
     const initialType = entry.tone === "income"
         ? FINANCE_ENTRY_TYPES.income
@@ -51,6 +52,7 @@ function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
             : getDefaultFinanceCategory(initialType)
     )
     const [showSubList, setShowSubList] = useState(initialShowSubList)
+    const [isSubListHintOpen, setIsSubListHintOpen] = useState(false)
     const [items, setItems] = useState<DraftItem[]>(
         entry.items.length
             ? entry.items.map((item, index) => ({
@@ -90,6 +92,40 @@ function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
             window.clearTimeout(timeoutId)
         }
     }, [errorMessage])
+
+    useEffect(() => {
+        if (!isSubListHintOpen) {
+            return
+        }
+
+        const handlePointerDown = (event: PointerEvent) => {
+            const target = event.target
+
+            if (!(target instanceof Element)) {
+                return
+            }
+
+            if (tooltipShellRef.current?.contains(target)) {
+                return
+            }
+
+            setIsSubListHintOpen(false)
+        }
+
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setIsSubListHintOpen(false)
+            }
+        }
+
+        document.addEventListener("pointerdown", handlePointerDown)
+        document.addEventListener("keydown", handleEscape)
+
+        return () => {
+            document.removeEventListener("pointerdown", handlePointerDown)
+            document.removeEventListener("keydown", handleEscape)
+        }
+    }, [isSubListHintOpen])
 
     useEffect(() => {
         setCategory((currentCategory) => {
@@ -385,8 +421,24 @@ function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
                     {showSubList && (
                         <div className={styles.itemsSection}>
                             <div className={styles.itemsHeader}>
-                                <div>
-                                    <h3 className={styles.itemsTitle}>Sub List Items</h3>
+                                <div className={styles.itemsHeaderCopy}>
+                                    <div className={styles.itemsTitleRow}>
+                                        <h3 className={styles.itemsTitle}>Sub List Items</h3>
+                                        <span ref={tooltipShellRef} className={styles.tooltipShell}>
+                                            <button
+                                                type="button"
+                                                className={styles.helpIcon}
+                                                aria-label="Show sub list items help"
+                                                aria-expanded={isSubListHintOpen}
+                                                onClick={() => setIsSubListHintOpen((current) => !current)}
+                                            >
+                                                ?
+                                            </button>
+                                            <span className={`${styles.tooltip} ${isSubListHintOpen ? styles.tooltipVisible : ""}`}>
+                                                Use sub list items when one finance entry needs multiple lines. The running total updates automatically from the amounts below.
+                                            </span>
+                                        </span>
+                                    </div>
                                     <p className={styles.itemsHint}>
                                         Update the item lines that make up this entry amount.
                                     </p>

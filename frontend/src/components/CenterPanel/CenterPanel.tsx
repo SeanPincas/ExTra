@@ -37,6 +37,8 @@ function CenterPanel({ onOpenStatsPanel, showStatsButton = false, isStatsPanelOp
         categories,
         typeFilter,
         searchDraft,
+        submittedSearchTerm,
+        isSearchPending,
         navigatorDateLabel,
         canNavigateBackward,
         canNavigateForward,
@@ -47,6 +49,7 @@ function CenterPanel({ onOpenStatsPanel, showStatsButton = false, isStatsPanelOp
         setCategoryFilter,
         setTypeFilter,
         setSearchDraft,
+        submitSearch,
         resetFilters,
         jumpToToday,
         financeEntries,
@@ -205,7 +208,10 @@ function CenterPanel({ onOpenStatsPanel, showStatsButton = false, isStatsPanelOp
                transaction data so other dashboard areas can reuse it later. */}
             <CenterHeaderArea
                 searchDraft={searchDraft}
+                submittedSearchTerm={submittedSearchTerm}
+                isSearchPending={isSearchPending}
                 onSearchChange={setSearchDraft}
+                onSearchSubmit={submitSearch}
                 onOpenStatsPanel={onOpenStatsPanel}
                 showStatsButton={showStatsButton}
                 isStatsPanelOpen={isStatsPanelOpen}
@@ -274,6 +280,8 @@ function CenterPanel({ onOpenStatsPanel, showStatsButton = false, isStatsPanelOp
                 entries={sortedFinanceEntries}
                 isLoading={isFinanceLoading}
                 errorMessage={financeErrorMessage}
+                submittedSearchTerm={submittedSearchTerm}
+                isSearchPending={isSearchPending}
                 onEditEntry={handleEditEntry}
                 onDeleteEntry={handleDeleteEntry}
                 isBatchDeleteMode={isBatchDeleteMode}

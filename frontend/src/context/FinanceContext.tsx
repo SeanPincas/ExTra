@@ -40,6 +40,8 @@ interface FinanceContextValue {
     categories: ("ALL" | FinanceCategory)[]
     typeFilter: EntryTypeFilter
     searchDraft: string
+    submittedSearchTerm: string
+    isSearchPending: boolean
     navigatorDateLabel: string
     effectiveMode: "DATE" | RangeFilter
     canNavigateBackward: boolean
@@ -53,6 +55,7 @@ interface FinanceContextValue {
     setCategoryFilter: (nextCategory: "ALL" | FinanceCategory) => void
     setTypeFilter: (nextType: EntryTypeFilter) => void
     setSearchDraft: (nextSearch: string) => void
+    submitSearch: () => void
     setRangeFilter: (nextRange: RangeFilter) => void
     setSelectedDate: (nextDate: string | null) => void
     navigateToPreviousDateContext: () => void
@@ -321,7 +324,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
     const [categoryFilter, setCategoryFilter] = useState<"ALL" | FinanceCategory>(() => getInitialCategoryFilter())
     const [typeFilter, setTypeFilter] = useState<EntryTypeFilter>(() => getInitialTypeFilter())
     const [searchDraft, setSearchDraft] = useState(() => getInitialSearchDraft())
-    const [debouncedSearch, setDebouncedSearch] = useState(() => getInitialSearchDraft().trim())
+    const [submittedSearchTerm, setSubmittedSearchTerm] = useState(() => getInitialSearchDraft().trim())
     const [currentPage, setCurrentPage] = useState(1)
     const [todayKey, setTodayKey] = useState(() => toDateKey(new Date()))
     const [rawFinanceEntries, setRawFinanceEntries] = useState<FinanceEntry[]>([])
@@ -329,10 +332,13 @@ function FinanceProvider({ children }: FinanceProviderProps) {
     const [totalPages, setTotalPages] = useState(1)
     const [isFinanceLoading, setIsFinanceLoading] = useState(false)
     const [financeErrorMessage, setFinanceErrorMessage] = useState("")
+    const [isSearchPending, setIsSearchPending] = useState(false)
 
     useEffect(() => {
         const timeoutId = window.setTimeout(() => {
-            setDebouncedSearch(searchDraft.trim())
+            const nextSearchTerm = searchDraft.trim()
+            setSubmittedSearchTerm(nextSearchTerm)
+            setIsSearchPending(Boolean(nextSearchTerm))
         }, 5000)
 
         return () => {
@@ -382,7 +388,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
 
     useEffect(() => {
         setCurrentPage(1)
-    }, [rangeFilter, selectedDate, rangeAnchorDate, debouncedSearch, categoryFilter, typeFilter])
+    }, [rangeFilter, selectedDate, rangeAnchorDate, submittedSearchTerm, categoryFilter, typeFilter])
 
     useEffect(() => {
         if (categoryFilter === "ALL") {
@@ -444,7 +450,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
                     : activeRangeWindow
                         ? activeRangeWindow.end.toISOString()
                         : undefined,
-                search: debouncedSearch || undefined,
+                search: submittedSearchTerm || undefined,
                 page: currentPage,
             })
 
@@ -461,6 +467,18 @@ function FinanceProvider({ children }: FinanceProviderProps) {
             setFinanceErrorMessage(message)
         } finally {
             setIsFinanceLoading(false)
+            setIsSearchPending(false)
+        }
+    }
+
+    const submitSearch = () => {
+        const nextSearchTerm = searchDraft.trim()
+
+        setSubmittedSearchTerm(nextSearchTerm)
+        setIsSearchPending(Boolean(nextSearchTerm))
+
+        if (nextSearchTerm === submittedSearchTerm) {
+            void refreshFinance()
         }
     }
 
@@ -510,7 +528,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
 
     useEffect(() => {
         refreshFinance()
-    }, [token, currentPage, debouncedSearch, rangeFilter, rangeAnchorDate, selectedDate])
+    }, [token, currentPage, submittedSearchTerm, rangeFilter, rangeAnchorDate, selectedDate])
 
     const categories = useMemo(() => {
         if (typeFilter === "INCOME") {
@@ -660,7 +678,8 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         setCategoryFilter("ALL")
         setTypeFilter("ALL")
         setSearchDraft("")
-        setDebouncedSearch("")
+        setSubmittedSearchTerm("")
+        setIsSearchPending(false)
     }
 
     const jumpToToday = () => {
@@ -668,7 +687,8 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         setSelectedDateState(null)
         setRangeAnchorDate(todayKey)
         setSearchDraft("")
-        setDebouncedSearch("")
+        setSubmittedSearchTerm("")
+        setIsSearchPending(false)
     }
 
     const goToPreviousPage = () => {
@@ -711,6 +731,8 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         categories,
         typeFilter,
         searchDraft,
+        submittedSearchTerm,
+        isSearchPending,
         navigatorDateLabel,
         effectiveMode,
         canNavigateBackward,
@@ -724,6 +746,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         setCategoryFilter,
         setTypeFilter,
         setSearchDraft,
+        submitSearch,
         setRangeFilter,
         setSelectedDate,
         navigateToPreviousDateContext,
@@ -747,6 +770,8 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         categories,
         typeFilter,
         searchDraft,
+        submittedSearchTerm,
+        isSearchPending,
         navigatorDateLabel,
         effectiveMode,
         canNavigateBackward,
@@ -757,6 +782,7 @@ function FinanceProvider({ children }: FinanceProviderProps) {
         currentPage,
         isFinanceLoading,
         financeErrorMessage,
+        submitSearch,
         setRangeFilter,
         setSelectedDate,
         navigateToPreviousDateContext,
