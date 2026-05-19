@@ -67,6 +67,10 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
         setIsRightPanelOpen(false)
     }
 
+    const handleRefreshDashboard = () => {
+        window.location.reload()
+    }
+
     const handleOpenSavingsTracker = () => {
         setIsLeftPanelOpen(false)
         setIsRightPanelOpen(true)
@@ -140,7 +144,7 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
                     onToggleLeftPanel={handleToggleLeftPanel}
                     showLeftPanelToggle
                     isLeftPanelOpen={isLeftPanelOpen}
-                    onNavigateDashboard={handleClosePanels}
+                    onNavigateDashboard={handleRefreshDashboard}
                 />
             }
             content={
