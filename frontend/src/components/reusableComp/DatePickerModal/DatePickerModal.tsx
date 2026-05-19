@@ -4,10 +4,14 @@ import styles from "./DatePickerModal.module.css"
 
 interface DatePickerModalProps {
     title: string
+    subtitle?: string
     initialDate: string | null
     maxDate?: string
     onClose: () => void
     onSelect: (dateKey: string) => void
+    selectionMode?: "instant" | "confirm"
+    saveLabel?: string
+    getPreviewDateKeys?: (selectedDateKey: string, viewMonthDateKey: string) => string[]
 }
 
 function normalizeDateKey(value: string | null | undefined) {
@@ -47,10 +51,21 @@ function addMonths(date: Date, amount: number) {
     return next
 }
 
-function DatePickerModal({ title, initialDate, maxDate, onClose, onSelect }: DatePickerModalProps) {
+function DatePickerModal({
+    title,
+    subtitle = "Pick a date for this reminder.",
+    initialDate,
+    maxDate,
+    onClose,
+    onSelect,
+    selectionMode = "instant",
+    saveLabel = "Save",
+    getPreviewDateKeys,
+}: DatePickerModalProps) {
     const normalizedInitialDate = useMemo(() => normalizeDateKey(initialDate), [initialDate])
     const normalizedMaxDate = useMemo(() => normalizeDateKey(maxDate), [maxDate])
     const maxDateValue = useMemo(() => (normalizedMaxDate ? new Date(`${normalizedMaxDate}T00:00:00`) : null), [normalizedMaxDate])
+    const [pendingDateKey, setPendingDateKey] = useState<string | null>(normalizedInitialDate)
     const [viewDate, setViewDate] = useState(() => {
         const fallback = normalizedInitialDate ? new Date(`${normalizedInitialDate}T00:00:00`) : new Date()
         return startOfMonth(fallback)
@@ -59,9 +74,12 @@ function DatePickerModal({ title, initialDate, maxDate, onClose, onSelect }: Dat
     useEffect(() => {
         const base = normalizedInitialDate ? new Date(`${normalizedInitialDate}T00:00:00`) : new Date()
         setViewDate(startOfMonth(base))
+        setPendingDateKey(normalizedInitialDate)
     }, [normalizedInitialDate])
 
-    const activeDateKey = normalizedInitialDate ?? ""
+    const activeDateKey = selectionMode === "confirm"
+        ? (pendingDateKey ?? "")
+        : (normalizedInitialDate ?? "")
 
     useEffect(() => {
         const handleEscape = (event: KeyboardEvent) => {
@@ -90,6 +108,14 @@ function DatePickerModal({ title, initialDate, maxDate, onClose, onSelect }: Dat
         })
     }, [maxDateValue, viewDate])
 
+    const previewDateKeys = useMemo(() => {
+        if (!pendingDateKey || !getPreviewDateKeys) {
+            return new Set<string>()
+        }
+
+        return new Set(getPreviewDateKeys(pendingDateKey, toDateKey(viewDate)))
+    }, [getPreviewDateKeys, pendingDateKey, viewDate])
+
     return (
         <div className={styles.overlay} role="presentation" onClick={onClose}>
             <section
@@ -108,7 +134,7 @@ function DatePickerModal({ title, initialDate, maxDate, onClose, onSelect }: Dat
                 <div className={styles.header}>
                     <div className={styles.headerCopy}>
                         <h2 id="date-picker-title" className={styles.title}>{title}</h2>
-                        <p className={styles.subtitle}>Pick a date for this reminder.</p>
+                        <p className={styles.subtitle}>{subtitle}</p>
                     </div>
                 </div>
 
@@ -149,16 +175,51 @@ function DatePickerModal({ title, initialDate, maxDate, onClose, onSelect }: Dat
                                 className={[
                                     styles.dayCell,
                                     !cell.isCurrentMonth ? styles.dayCellMuted : "",
+                                    previewDateKeys.has(cell.dateKey) ? styles.dayCellPreview : "",
                                     cell.dateKey === activeDateKey ? styles.dayCellSelected : "",
                                 ].filter(Boolean).join(" ")}
                                 disabled={cell.isDisabled}
-                                onClick={() => onSelect(cell.dateKey)}
+                                onClick={() => {
+                                    if (selectionMode === "confirm") {
+                                        setPendingDateKey(cell.dateKey)
+                                        return
+                                    }
+
+                                    onSelect(cell.dateKey)
+                                }}
                             >
                                 {cell.day}
                             </button>
                         ))}
                     </div>
                 </div>
+
+                {selectionMode === "confirm" && (
+                    <div className={styles.actionsRow}>
+                        <button
+                            type="button"
+                            className={`btnBase btnMatteDark ${styles.actionButton}`}
+                            onClick={onClose}
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="button"
+                            className={`btnBase ${styles.actionButton} ${styles.saveButton}`}
+                            disabled={!pendingDateKey}
+                            onClick={() => {
+                                if (!pendingDateKey) {
+                                    return
+                                }
+
+                                onSelect(pendingDateKey)
+                            }}
+                        >
+                            {saveLabel}
+                        </button>
+                    </div>
+                )}
             </section>
         </div>
     )

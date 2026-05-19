@@ -4,7 +4,7 @@ import Reminder from "../models/reminderModel.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { successResponse } from "../utils/response.js";
 import { isReminderDue } from "../utils/dateLogic.js";
-import { shouldShowPaydayPopup } from "../services/paydayService.js";
+import { ensurePaydayEntryForUser } from "../services/paydayService.js";
 import {
     getIncomeThisWeek,
     getIncomeThisMonth,
@@ -16,19 +16,28 @@ import {
 export const getNotifications = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const notifications = [];
+    const todayLabel = new Date().toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+    });
+
+    const paydayEntryState = await ensurePaydayEntryForUser(req.user);
 
     // --------------------------------------------------
     // PAYDAY ALERT
     // --------------------------------------------------
-    const paydayAlert = await shouldShowPaydayPopup(
-        userId,
-        req.user.preferences?.payDay
-    );
+    const salaryAmount = Number(req.user.preferences?.salary);
+    const paydayAlert = paydayEntryState.paydayToday
+        && Number.isFinite(salaryAmount)
+        && salaryAmount > 0;
 
     if (paydayAlert) {
         notifications.push({
             type: "payday",
-            message: "Today is your payday. Did you receive it?"
+            message: paydayEntryState.created
+                ? `Today is your payday (${todayLabel}). Your salary entry was added automatically.`
+                : `Today is your payday (${todayLabel}).`
         });
     }
 
@@ -138,4 +147,3 @@ export const getNotifications = asyncHandler(async (req, res) => {
 
     successResponse(res, notifications);
 })
-

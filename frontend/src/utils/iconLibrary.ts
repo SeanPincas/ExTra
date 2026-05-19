@@ -33,7 +33,10 @@ import {
     PenLine,
     Trash2,
     Camera,
-    PiggyBank
+    PiggyBank,
+    Github,
+    Facebook,
+    Mail
 } from "lucide-react"
 
 function TripleChevronLeft(props: SVGProps<SVGSVGElement>) {
@@ -278,6 +281,9 @@ export const Icons = {
     edit: PenLine,
     delete: Trash2,
     camera: Camera,
+    github: Github,
+    facebook: Facebook,
+    mail: Mail,
 
     // USER
     user: User,

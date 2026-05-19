@@ -15,7 +15,7 @@
 }
 
 .summaryFilterRow {
-    min-height: 30px;
+    min-height: 26px;
 }
 
 .summaryFilterRow > * {
@@ -98,8 +98,24 @@
 
 @media (max-width: 900px) {
     .summarySection {
-        min-height: 122px;
-        padding: 8px 7px;
-        gap: 4px;
+        min-height: 116px;
+        padding: 7px 6px;
+        gap: 3px;
+    }
+
+    .summaryFilterRow {
+        min-height: 24px;
+    }
+}
+
+@media (max-width: 1440px) {
+    .summarySection {
+        min-height: 118px;
+        padding: 7px;
+        gap: 3px;
+    }
+
+    .summaryFilterRow {
+        min-height: 24px;
     }
 }

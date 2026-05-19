@@ -10,6 +10,7 @@ import {
     isValidFinanceCategory,
 } from "../../../utils/financeConstants"
 import { Icons } from "../../../utils/iconLibrary"
+import { formatNumericInput, normalizeNumericInput, parseNumericInput } from "../../../utils/numberFormat"
 import styles from "./AddEntryModal.module.css"
 
 interface AddEntryModalProps {
@@ -113,7 +114,7 @@ function AddEntryModal({ onClose }: AddEntryModalProps) {
 
     const subListTotalAmount = useMemo(() => {
         return items.reduce((sum, item) => {
-            const numericAmount = Number(item.amount)
+            const numericAmount = parseNumericInput(item.amount)
             return Number.isFinite(numericAmount) ? sum + numericAmount : sum
         }, 0)
     }, [items])
@@ -124,8 +125,8 @@ function AddEntryModal({ onClose }: AddEntryModalProps) {
 
     const currentDisplayTotal = showSubList
         ? subListTotalAmount
-        : Number(primaryAmount) > 0
-            ? Number(primaryAmount)
+        : parseNumericInput(primaryAmount) > 0
+            ? parseNumericInput(primaryAmount)
             : 0
 
     const handleItemChange = (itemId: number, field: "name" | "amount", value: string) => {
@@ -138,7 +139,7 @@ function AddEntryModal({ onClose }: AddEntryModalProps) {
                 return {
                     ...item,
                     [field]: field === "amount"
-                        ? value.replace(/[^\d.]/g, "")
+                        ? normalizeNumericInput(value)
                         : value,
                 }
             })
@@ -170,7 +171,7 @@ function AddEntryModal({ onClose }: AddEntryModalProps) {
         const normalizedSubItems = items
             .map((item) => ({
                 name: item.name.trim(),
-                amount: Number(item.amount),
+                amount: parseNumericInput(item.amount),
             }))
             .filter((item) => item.name || item.amount > 0)
 
@@ -197,7 +198,7 @@ function AddEntryModal({ onClose }: AddEntryModalProps) {
                 return
             }
         } else {
-            const numericAmount = Number(primaryAmount)
+            const numericAmount = parseNumericInput(primaryAmount)
 
             if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
                 setErrorMessage("Enter an amount greater than zero.")
@@ -293,8 +294,8 @@ function AddEntryModal({ onClose }: AddEntryModalProps) {
                                     type="text"
                                     inputMode="decimal"
                                     placeholder="0.00"
-                                    value={visibleAmountValue}
-                                    onChange={(event) => setPrimaryAmount(event.target.value.replace(/[^\d.]/g, ""))}
+                                    value={formatNumericInput(visibleAmountValue)}
+                                    onChange={(event) => setPrimaryAmount(normalizeNumericInput(event.target.value))}
                                     disabled={isSubmitting}
                                 />
                             </label>
@@ -412,7 +413,7 @@ function AddEntryModal({ onClose }: AddEntryModalProps) {
                                                 type="text"
                                                 inputMode="decimal"
                                                 placeholder="0.00"
-                                                value={item.amount}
+                                                value={formatNumericInput(item.amount)}
                                                 aria-label={`Amount for item ${index + 1}`}
                                                 onChange={(event) => handleItemChange(item.id, "amount", event.target.value)}
                                                 disabled={isSubmitting}

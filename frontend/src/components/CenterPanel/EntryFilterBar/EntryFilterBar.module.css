@@ -45,7 +45,6 @@
     background: rgba(255, 255, 255, 0.055);
     font: inherit;
     font-size: 0.74rem;
-    line-height: 1;
     cursor: pointer;
     transition:
         filter 160ms ease,
@@ -305,7 +304,7 @@
 @media (max-width: 1080px) {
     .filterBar {
         gap: 6px;
-        padding: 8px 10px;
+        padding: 8px 9px;
     }
 
     .topRow,
@@ -342,7 +341,7 @@
 @media (max-width: 860px) {
     .filterBar {
         gap: 6px;
-        padding: 8px 10px;
+        padding: 7px 8px;
     }
 
     .topRow,
@@ -388,7 +387,7 @@
 @media (max-width: 640px) {
     .filterBar {
         gap: 5px;
-        padding: 8px 9px;
+        padding: 6px 7px;
     }
 
     .topRow {
@@ -417,7 +416,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: flex-end;
-        gap: 6px;
+        gap: 4px;
         order: 1;
         margin-left: auto;
     }
@@ -433,6 +432,17 @@
     .modeActionButton span,
     .utilityButton span {
         display: none;
+    }
+
+    .compactUtilityActions .utilityButton {
+        min-width: 58px;
+        padding: 0 7px;
+        gap: 4px;
+    }
+
+    .compactUtilityActions .utilityButton span {
+        display: inline;
+        font-size: 0.66rem;
     }
 
     .bottomLeft,
@@ -478,7 +488,7 @@
         min-height: 26px;
         padding: 2px;
         border-radius: 9px;
-        gap: 4px;
+        gap: 5px;
         margin-left: 2px;
     }
 
@@ -509,7 +519,7 @@
 
 @media (max-width: 420px) {
     .filterBar {
-        padding: 8px 9px;
+        padding: 5px 6px;
     }
 
     .topActions {
@@ -541,8 +551,8 @@
 
     .rangeShell,
     .categoryShell {
-        --range-shell-width: 112px;
-        --category-shell-width: 112px;
+        --range-shell-width: 122px;
+        --category-shell-width: 122px;
     }
 
     .typeSwitch :global(.switchOption) {

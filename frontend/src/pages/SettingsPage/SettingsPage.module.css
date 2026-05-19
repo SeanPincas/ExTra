@@ -321,10 +321,23 @@
 .formGrid {
      min-width: 0;
      display: grid;
-     grid-template-columns: repeat(2, minmax(0, 1fr));
      gap: 6px;
      align-content: start;
  }
+
+.preferencePrimaryRow {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.preferenceSecondaryGrid {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+}
 
 .profileFieldsColumn {
     display: grid;
@@ -383,6 +396,20 @@
     box-shadow: 0 0 0 2px rgba(218, 165, 32, 0.08);
 }
 
+.dateFieldButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dateFieldButton:disabled {
+    cursor: default;
+    opacity: 0.72;
+}
+
 .fieldHint {
     font-size: 0.68rem;
     color: color-mix(in srgb, var(--text-secondary) 86%, var(--text-primary));
@@ -418,6 +445,8 @@
     font-size: 0.72rem;
     line-height: 1;
     background: rgba(255, 255, 255, 0.03);
+    padding: 0;
+    cursor: pointer;
 }
 
 .tooltip {
@@ -446,6 +475,11 @@
 
 .tooltipShell:hover .tooltip {
     opacity: 1;
+}
+
+.tooltipVisible {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .actionsRow {
@@ -593,6 +627,11 @@
      .profileFieldRow {
          grid-template-columns: minmax(0, 1fr);
      }
+
+     .preferencePrimaryRow,
+     .preferenceSecondaryGrid {
+         grid-template-columns: minmax(0, 1fr);
+     }
  }
 
  @media (max-width: 720px) {
@@ -679,12 +718,20 @@
      }
 
      .actionsRow {
+         flex-direction: column;
+         align-items: stretch;
          justify-content: stretch;
      }
 
      .saveButton {
          width: 100%;
          justify-content: center;
+     }
+
+     .successText,
+     .errorText {
+         width: 100%;
+         text-align: left;
      }
 
      .sessionActionBar {

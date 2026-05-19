@@ -1,5 +1,9 @@
+export type UserPayCycle = "daily" | "weekly" | "biweekly" | "semimonthly" | "monthly"
+
 export interface UserPreferences {
     payDay: number
+    payCycle: UserPayCycle
+    payDayAnchor: string | null
     salary: number
     currency: string
     savingsGoal: number | null
