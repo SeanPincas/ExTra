@@ -409,13 +409,18 @@ function SettingsPage({
                         </div>
 
                         <div className={styles.centerRail} aria-hidden="true">
-                            <span className={styles.logoWrapper}>
+                            <button
+                                type="button"
+                                className={styles.logoWrapper}
+                                aria-label="Back to dashboard"
+                                onClick={onBackToDashboard}
+                            >
                                 <img
                                     src={logo}
                                     alt="ExTra Logo"
                                     className={styles.logoImage}
                                 />
-                            </span>
+                            </button>
                         </div>
 
                         <div className={styles.rightRail}>

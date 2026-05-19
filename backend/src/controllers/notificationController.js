@@ -3,8 +3,8 @@
 import Reminder from "../models/reminderModel.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { successResponse } from "../utils/response.js";
-import { isReminderDue } from "../utils/dateLogic.js";
-import { ensurePaydayEntryForUser } from "../services/paydayService.js";
+import { isPayDay, isReminderDue } from "../utils/dateLogic.js";
+import { findExistingPaydayEntryForToday } from "../services/paydayService.js";
 import {
     getIncomeThisWeek,
     getIncomeThisMonth,
@@ -22,20 +22,22 @@ export const getNotifications = asyncHandler(async (req, res) => {
         year: "numeric"
     });
 
-    const paydayEntryState = await ensurePaydayEntryForUser(req.user);
-
     // --------------------------------------------------
     // PAYDAY ALERT
     // --------------------------------------------------
     const salaryAmount = Number(req.user.preferences?.salary);
-    const paydayAlert = paydayEntryState.paydayToday
+    const paydayToday = isPayDay(req.user.preferences);
+    const existingPaydayEntry = paydayToday
+        ? await findExistingPaydayEntryForToday(userId)
+        : null;
+    const paydayAlert = paydayToday
         && Number.isFinite(salaryAmount)
         && salaryAmount > 0;
 
     if (paydayAlert) {
         notifications.push({
             type: "payday",
-            message: paydayEntryState.created
+            message: existingPaydayEntry
                 ? `Today is your payday (${todayLabel}). Your salary entry was added automatically.`
                 : `Today is your payday (${todayLabel}).`
         });

@@ -6,6 +6,7 @@ import { CATEGORIES, ENTRY_TYPES } from "../utils/financeConstants.js";
 
 const PAYDAY_ENTRY_TITLE = "PayDay Today";
 const LEGACY_PAYDAY_ENTRY_TITLE = "PayDay";
+const paydayCreationLocks = new Map();
 
 const getTodayRange = () => {
     const now = new Date();
@@ -29,6 +30,7 @@ const getTodayKey = () => {
 };
 
 const getPaydaySystemKey = () => `payday:${getTodayKey()}`;
+const getPaydayLockKey = (userId) => `${String(userId)}:${getTodayKey()}`;
 
 const findExistingPaydayEntry = async (userId) => {
     const { startOfDay, endOfDay } = getTodayRange();
@@ -49,6 +51,10 @@ const findExistingPaydayEntry = async (userId) => {
             }
         ]
     });
+};
+
+export const findExistingPaydayEntryForToday = async (userId) => {
+    return findExistingPaydayEntry(userId);
 };
 
 export const ensurePaydayEntryForUser = async (user) => {
@@ -83,6 +89,12 @@ export const ensurePaydayEntryForUser = async (user) => {
         };
     }
 
+    const lockKey = getPaydayLockKey(userId);
+    if (paydayCreationLocks.has(lockKey)) {
+        return paydayCreationLocks.get(lockKey);
+    }
+
+    const creationTask = (async () => {
     const existingPayday = await findExistingPaydayEntry(userId);
 
     if (existingPayday) {
@@ -126,6 +138,15 @@ export const ensurePaydayEntryForUser = async (user) => {
         }
 
         throw error;
+    }
+    })();
+
+    paydayCreationLocks.set(lockKey, creationTask);
+
+    try {
+        return await creationTask;
+    } finally {
+        paydayCreationLocks.delete(lockKey);
     }
 };
 
