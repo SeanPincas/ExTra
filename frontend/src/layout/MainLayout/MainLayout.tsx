@@ -5,13 +5,21 @@ interface MainLayoutProps {
     header: ReactNode
     content: ReactNode
     footer: ReactNode
+    contentScrollable?: boolean
+    layoutMode?: "app" | "document"
 }
 
-function MainLayout({ header, content, footer }: MainLayoutProps) {
+function MainLayout({
+    header,
+    content,
+    footer,
+    contentScrollable = false,
+    layoutMode = "app",
+}: MainLayoutProps) {
 
     return (
-        <div className={styles.dashboardWrapper}>
-            <div className={styles.dashboardContainer}>
+        <div className={`${styles.dashboardWrapper} ${layoutMode === "document" ? styles.dashboardWrapperDocument : ""}`}>
+            <div className={`${styles.dashboardContainer} ${layoutMode === "document" ? styles.dashboardContainerDocument : ""}`}>
 
                 {/* HEADER */}
                 <div className={styles.headerArea}>
@@ -19,7 +27,7 @@ function MainLayout({ header, content, footer }: MainLayoutProps) {
                 </div>
 
                 {/* MAIN GRID */}
-                <div className={styles.mainGrid}>
+                <div className={`${styles.mainGrid} ${contentScrollable ? styles.mainGridScrollable : ""} ${layoutMode === "document" ? styles.mainGridDocument : ""}`}>
                     {content}
                 </div>
 
