@@ -1,13 +1,20 @@
 .footer {
+    position: relative;
     min-height: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
     padding: 4px 6px;
     font-size: 11px;
     line-height: 1;
     color: var(--text-secondary);
+}
+
+.footerCenter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
 }
 
 .footerLogo {
@@ -20,4 +27,48 @@
 .footerText {
     display: inline-flex;
     align-items: center;
+}
+
+.socialLinks {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.socialButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 22px;
+    min-width: 22px;
+    padding: 0 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.035);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition:
+        color 160ms ease,
+        border-color 160ms ease,
+        background-color 160ms ease;
+}
+
+.socialButton:hover {
+    color: var(--text-primary);
+    border-color: rgba(218, 165, 32, 0.22);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 480px) {
+    .socialLinks {
+        gap: 4px;
+    }
+
+    .socialButton {
+        padding: 0 6px;
+    }
 }

@@ -3,6 +3,21 @@
 import User from '../models/userModel.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 
+const ALLOWED_QUOTE_CHANGE_HOURS = new Set([
+  1 / 60,
+  5 / 60,
+  10 / 60,
+  20 / 60,
+  30 / 60,
+  1,
+  2,
+  3,
+  5,
+  6,
+  12,
+  24
+]);
+
 function normalizeSavingsGoal(value) {
   if (value === null) {
     return null;
@@ -54,6 +69,64 @@ function normalizeSavingsGoalStartedAt(value) {
   return parsedDate;
 }
 
+function normalizePayDayAnchor(value) {
+  if (value === null || value === "") {
+    return null;
+  }
+
+  const normalized = String(value).trim();
+
+  const match = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (!match) {
+    throw new Error('Pay day anchor must be a valid YYYY-MM-DD date.');
+  }
+
+  const [, year, month, day] = match;
+  const parsedDate = new Date(Number(year), Number(month) - 1, Number(day));
+
+  if (
+    parsedDate.getFullYear() !== Number(year)
+    || parsedDate.getMonth() !== Number(month) - 1
+    || parsedDate.getDate() !== Number(day)
+  ) {
+    throw new Error('Pay day anchor must be a valid YYYY-MM-DD date.');
+  }
+
+  return normalized;
+}
+
+function getMonthDayFromDateKey(dateKey) {
+  const [, , day] = String(dateKey).split("-");
+  return Number(day);
+}
+
+function normalizePayPreferences(preferencesInput = {}, existingPreferences = {}) {
+  const nextPayCycle = preferencesInput.payCycle !== undefined
+    ? String(preferencesInput.payCycle)
+    : String(existingPreferences.payCycle ?? "monthly");
+
+  if (!["daily", "weekly", "biweekly", "semimonthly", "monthly"].includes(nextPayCycle)) {
+    throw new Error("Pay cycle is invalid");
+  }
+
+  const nextPayDayAnchor = preferencesInput.payDayAnchor !== undefined
+    ? normalizePayDayAnchor(preferencesInput.payDayAnchor)
+    : existingPreferences.payDayAnchor ?? null;
+
+  if (nextPayCycle !== "daily" && !nextPayDayAnchor) {
+    throw new Error("Pay day anchor is required for the selected pay cycle.");
+  }
+
+  return {
+    payCycle: nextPayCycle,
+    payDayAnchor: nextPayCycle === "daily" ? null : nextPayDayAnchor,
+    payDay: nextPayCycle === "monthly" && nextPayDayAnchor
+      ? getMonthDayFromDateKey(nextPayDayAnchor)
+      : 0
+  };
+}
+
 function serializeUser(userDocument) {
   const user = userDocument.toJSON ? userDocument.toJSON() : userDocument.toObject();
   const preferences = user.preferences ?? {};
@@ -62,6 +135,8 @@ function serializeUser(userDocument) {
     ...user,
     preferences: {
       ...preferences,
+      payCycle: preferences.payCycle ?? "monthly",
+      payDayAnchor: preferences.payDayAnchor ?? null,
       savingsGoal: preferences.savingsGoal ?? null,
       savingsGoalStartedAt: preferences.savingsGoalStartedAt ?? null
     }
@@ -133,8 +208,24 @@ export const updateProfile = asyncHandler(async (req, res) => {
   if (preferences !== undefined) {
     user.preferences = user.preferences ?? {};
 
-    if (preferences.payDay !== undefined) {
-      user.preferences.payDay = Number(preferences.payDay);
+    if (
+      preferences.payDay !== undefined
+      || preferences.payCycle !== undefined
+      || preferences.payDayAnchor !== undefined
+    ) {
+      try {
+        const normalizedPayPreferences = normalizePayPreferences(
+          preferences,
+          user.preferences
+        );
+
+        user.preferences.payCycle = normalizedPayPreferences.payCycle;
+        user.preferences.payDayAnchor = normalizedPayPreferences.payDayAnchor;
+        user.preferences.payDay = normalizedPayPreferences.payDay;
+      } catch (error) {
+        res.status(400);
+        throw error;
+      }
     }
 
     if (preferences.salary !== undefined) {
@@ -170,9 +261,9 @@ export const updateProfile = asyncHandler(async (req, res) => {
     if (preferences.quoteChangeHours !== undefined) {
       const normalizedQuoteHours = Number(preferences.quoteChangeHours);
 
-      if (!Number.isInteger(normalizedQuoteHours) || normalizedQuoteHours < 1 || normalizedQuoteHours > 168) {
+      if (!Number.isFinite(normalizedQuoteHours) || !ALLOWED_QUOTE_CHANGE_HOURS.has(normalizedQuoteHours)) {
         res.status(400);
-        throw new Error("Quote change hours must be between 1 and 168");
+        throw new Error("Quote change time is invalid");
       }
 
       user.preferences.quoteChangeHours = normalizedQuoteHours;

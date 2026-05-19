@@ -55,6 +55,15 @@ const userSchema = new mongoose.Schema(
                 type: Number,
                 default: 0
             },
+            payCycle: {
+                type: String,
+                enum: ["daily", "weekly", "biweekly", "semimonthly", "monthly"],
+                default: "monthly"
+            },
+            payDayAnchor: {
+                type: String,
+                default: null
+            },
             salary: {
                 type: Number,
                 default: 0
@@ -88,8 +97,8 @@ const userSchema = new mongoose.Schema(
             quoteChangeHours: {
                 type: Number,
                 default: 24,
-                min: 1,
-                max: 168
+                min: 1 / 60,
+                max: 24
             }
         }
     },

@@ -1,11 +1,35 @@
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import styles from "./ProfileArea.module.css"
 import { Icons } from "../../../utils/iconLibrary"
 import { useAuth } from "../../../context/AuthContext"
 
 function ProfileArea() {
-    // This stays local for now because the dashboard is still using placeholder UI data.
-    const now = new Date()
+    const [now, setNow] = useState(() => new Date())
+
+    useEffect(() => {
+        const syncClock = () => {
+            setNow(new Date())
+        }
+
+        const currentTime = new Date()
+        const millisecondsUntilNextMinute = 60_000 - (
+            currentTime.getSeconds() * 1000 + currentTime.getMilliseconds()
+        )
+
+        let intervalId: number | undefined
+
+        const timeoutId = window.setTimeout(() => {
+            syncClock()
+            intervalId = window.setInterval(syncClock, 60_000)
+        }, millisecondsUntilNextMinute)
+
+        return () => {
+            window.clearTimeout(timeoutId)
+            if (intervalId !== undefined) {
+                window.clearInterval(intervalId)
+            }
+        }
+    }, [])
 
     const today = now.toLocaleDateString("en-US", {
         month: "long",

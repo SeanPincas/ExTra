@@ -59,3 +59,48 @@
 .optionDivider {
     color: rgba(255, 255, 255, 0.28);
 }
+
+@media (max-width: 1440px) {
+    .filterWrapper {
+        gap: 14px;
+        min-height: 26px;
+    }
+
+    .filterLabel {
+        font-size: 0.67rem;
+    }
+
+    .filterOptions,
+    .filterOption {
+        min-height: 24px;
+    }
+
+    .filterOption {
+        gap: 5px;
+        font-size: 0.7rem;
+    }
+
+    .filterOption + .filterOption {
+        margin-left: 5px;
+    }
+}
+
+@media (max-width: 900px) {
+    .filterWrapper {
+        gap: 12px;
+        min-height: 24px;
+    }
+
+    .filterOptions,
+    .filterOption {
+        min-height: 22px;
+    }
+
+    .filterOption {
+        font-size: 0.68rem;
+    }
+
+    .filterOption + .filterOption {
+        margin-left: 4px;
+    }
+}

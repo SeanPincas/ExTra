@@ -30,6 +30,15 @@ interface EntryFilterBarProps {
 const rangeOptions: RangeFilter[] = ["TODAY", "WEEK", "MONTH", "ALL"]
 const PHONE_MEDIA_QUERY = "(max-width: 640px)"
 
+function getRangeLabel(option: RangeFilter) {
+    switch (option) {
+        case "TODAY":
+            return "DAILY"
+        default:
+            return option
+    }
+}
+
 function EntryFilterBar({
     rangeFilter,
     selectedDate,
@@ -57,7 +66,7 @@ function EntryFilterBar({
         return window.matchMedia(PHONE_MEDIA_QUERY).matches
     })
     const isRangeDisabled = Boolean(selectedDate)
-    const rangeDisplayValue = isRangeDisabled ? "~~~" : rangeFilter
+    const rangeDisplayValue = isRangeDisabled ? "~~~" : getRangeLabel(rangeFilter)
     const safeRangeValue = isRangeDisabled && rangeFilter === "ALL" ? "TODAY" : rangeFilter
     const categoryLabel = isPhoneLayout && categoryFilter !== "ALL" ? "" : "Category"
     const typeFilterOptions: FinanceTypeSwitchOption[] = isPhoneLayout
@@ -100,7 +109,7 @@ function EntryFilterBar({
                     selectValue={safeRangeValue}
                     options={rangeOptions.map((option) => ({
                         value: option,
-                        label: option,
+                        label: getRangeLabel(option),
                         disabled: isRangeDisabled && option === "ALL",
                     }))}
                     onChange={(nextValue) => {
