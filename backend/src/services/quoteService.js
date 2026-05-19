@@ -19,14 +19,14 @@ function getQuoteChangeHours(preferredHours) {
         return 24;
     }
 
-    const normalizedHours = Math.trunc(preferredHours);
+    const normalizedHours = Number(preferredHours);
 
-    if (normalizedHours < 1) {
-        return 1;
+    if (normalizedHours < (1 / 60)) {
+        return 1 / 60;
     }
 
-    if (normalizedHours > 168) {
-        return 168;
+    if (normalizedHours > 24) {
+        return 24;
     }
 
     return normalizedHours;

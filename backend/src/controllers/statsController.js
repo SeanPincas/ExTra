@@ -10,7 +10,7 @@ import {
     getLastNDaysTrend,
 } from "../utils/financeMath.js";
 import { successResponse } from "../utils/response.js";
-import { shouldShowPaydayPopup } from "../services/paydayService.js";
+import { ensurePaydayEntryForUser, shouldShowPaydayPopup } from "../services/paydayService.js";
 import {
     buildDailyInsightPayload,
     buildDailyTotals,
@@ -19,6 +19,8 @@ import {
 
 export const getDashboardStats = asyncHandler(async (req, res) => {
     const { range, month } = req.query;
+
+    await ensurePaydayEntryForUser(req.user);
 
     let monthStart;
     let monthEnd;
@@ -70,7 +72,7 @@ export const getDashboardStats = asyncHandler(async (req, res) => {
 
     const isPayDay = await shouldShowPaydayPopup(
         userId,
-        req.user.preferences?.payDay,
+        req.user.preferences,
     );
 
     successResponse(

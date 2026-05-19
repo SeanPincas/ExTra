@@ -10,6 +10,7 @@ import {
     type FinanceCategory,
     type FinanceEntryType,
 } from "../../../../utils/financeConstants"
+import { formatNumericInput, normalizeNumericInput, parseNumericInput } from "../../../../utils/numberFormat"
 
 interface AddReminderModalProps {
     onClose: () => void
@@ -80,7 +81,7 @@ function AddReminderModal({ onClose, onCreated }: AddReminderModalProps) {
         event.preventDefault()
 
         const normalizedTitle = title.trim()
-        const normalizedAmount = Number(amount || 0)
+        const normalizedAmount = parseNumericInput(amount)
         const normalizedNotes = notes.trim()
         const normalizedDueDate = normalizeDateKey(dueDate)
 
@@ -176,8 +177,8 @@ function AddReminderModal({ onClose, onCreated }: AddReminderModalProps) {
                                 type="text"
                                 inputMode="decimal"
                                 placeholder="0.00"
-                                value={amount}
-                                onChange={(event) => setAmount(event.target.value.replace(/[^\d.]/g, ""))}
+                                value={formatNumericInput(amount)}
+                                onChange={(event) => setAmount(normalizeNumericInput(event.target.value))}
                                 disabled={isSubmitting}
                             />
                         </label>

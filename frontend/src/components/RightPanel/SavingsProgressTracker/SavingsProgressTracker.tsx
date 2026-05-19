@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
+import { createPortal } from "react-dom"
 import { getFinanceList } from "../../../api/financeAPI"
 import { updateCurrentUser } from "../../../api/userAPI"
 import { useAuth } from "../../../context/AuthContext"
 import { useFinance } from "../../../context/FinanceContext"
 import { formatCurrency } from "../../../utils/formatCurrency"
 import { Icons } from "../../../utils/iconLibrary"
+import { formatNumericInput, normalizeNumericInput, parseNumericInput } from "../../../utils/numberFormat"
 import styles from "./SavingsProgressTracker.module.css"
 
 function clampProgress(value: number) {
@@ -139,6 +141,7 @@ function SavingsProgressTracker() {
     const hasValidGoalStartedDate = !!goalStartedDate && Number.isFinite(goalStartedDate.getTime())
 
     const actionLabel = !hasGoal || isGoalCompleted ? "New Goal" : "Add Savings Progress"
+    const isGoalModalOpen = isGoalEditorOpen || isGoalCycleChoiceOpen
 
     const openGoalEditor = (mode: "new" | "edit" = "new") => {
         setGoalDraft(hasGoal ? String(savingsGoal) : "")
@@ -181,7 +184,7 @@ function SavingsProgressTracker() {
             return
         }
 
-        const parsedGoal = Number(trimmedDraft.replace(/,/g, ""))
+        const parsedGoal = parseNumericInput(trimmedDraft)
 
         if (!Number.isFinite(parsedGoal) || parsedGoal <= 0) {
             setGoalFormError("Savings goal must be a positive number.")
@@ -246,7 +249,7 @@ function SavingsProgressTracker() {
             return
         }
 
-        const parsedAmount = Number(trimmedDraft.replace(/,/g, ""))
+        const parsedAmount = parseNumericInput(trimmedDraft)
 
         if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
             setProgressFormError("Savings progress amount must be a positive number.")
@@ -297,185 +300,263 @@ function SavingsProgressTracker() {
     }
 
     return (
-        <section id="savings-progress-tracker" className={styles.trackerCard} aria-label="Savings progress tracker">
-            <div className={styles.headerRow}>
-                <div className={styles.titleGroup}>
-                    <Icons.savings width={16} height={16} />
-                    <h3 className={styles.title}>Savings Progress Tracker</h3>
+        <>
+            <section id="savings-progress-tracker" className={styles.trackerCard} aria-label="Savings progress tracker">
+                <div className={styles.headerRow}>
+                    <div className={styles.titleGroup}>
+                        <Icons.savings width={16} height={16} />
+                        <h3 className={styles.title}>Savings Progress Tracker</h3>
+                    </div>
+                    {hasGoal ? (
+                        <button
+                            type="button"
+                            className={styles.editGoalButton}
+                            onClick={() => openGoalEditor("edit")}
+                            aria-label="Edit savings goal"
+                            title="Edit savings goal"
+                        >
+                            <Icons.edit width={12} height={12} />
+                        </button>
+                    ) : null}
                 </div>
-                {hasGoal ? (
-                    <button
-                        type="button"
-                        className={styles.editGoalButton}
-                        onClick={() => openGoalEditor("edit")}
-                        aria-label="Edit savings goal"
-                        title="Edit savings goal"
-                    >
-                        <Icons.edit width={12} height={12} />
-                    </button>
+
+                {trackerError ? (
+                    <p className={styles.errorText}>{trackerError}</p>
                 ) : null}
-            </div>
 
-            {trackerError ? (
-                <p className={styles.errorText}>{trackerError}</p>
-            ) : null}
+                {!hasGoal ? (
+                    <div className={styles.noGoalState}>
+                        <p className={styles.noGoalText}>No savings goal set yet.</p>
+                        <button type="button" className={styles.primaryAction} onClick={() => openGoalEditor("new")}>
+                            New Goal
+                        </button>
+                    </div>
+                ) : (
+                    <>
+                        <div className={styles.amountRow}>
+                            <strong className={styles.currentAmount}>
+                                {formatCurrency(currentSavingsProgress, currency)}
+                            </strong>
+                            <span className={styles.goalAmount}>
+                                / {formatCurrency(savingsGoal, currency)}
+                            </span>
+                            <span className={styles.percentText}>{Math.round(progressPercent)}%</span>
+                        </div>
 
-            {isGoalEditorOpen ? (
-                <form
-                    className={styles.goalEditor}
-                    autoComplete="off"
-                    onSubmit={(event) => {
-                        event.preventDefault()
-                        void handleGoalDraftSubmit()
-                    }}
-                >
-                    <label className={styles.goalEditorLabel} htmlFor="savings-goal-input">
-                        Savings goal amount
-                    </label>
-                    <input
-                        id="savings-goal-input"
-                        aria-label="Savings goal amount"
-                        type="text"
-                        inputMode="decimal"
-                        autoComplete="off"
-                        value={goalDraft}
-                        onChange={(event) => setGoalDraft(event.target.value)}
-                        className={styles.goalInput}
-                        placeholder="Enter goal amount"
-                        disabled={isSavingGoal}
-                    />
-                    {goalFormError ? <p className={styles.formErrorText}>{goalFormError}</p> : null}
-                    <div className={styles.goalEditorActions}>
-                        <button type="submit" className={styles.primaryAction} disabled={isSavingGoal}>
-                            {isSavingGoal ? "Saving..." : "Save"}
-                        </button>
-                        <button type="button" className={styles.secondaryAction} onClick={closeGoalEditor} disabled={isSavingGoal}>
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            ) : isGoalCycleChoiceOpen ? (
-                <div className={styles.goalChoiceState}>
-                    <p className={styles.goalChoiceTitle}>How should we handle your current progress?</p>
-                    <div className={styles.goalModeGroup}>
-                        <label className={styles.goalModeOption}>
-                            <input
-                                type="radio"
-                                name="goal-edit-mode"
-                                value="keep"
-                                checked={goalEditMode === "keep"}
-                                onChange={() => setGoalEditMode("keep")}
-                                disabled={isSavingGoal}
-                            />
-                            <span>Keep progress</span>
-                        </label>
-                        <label className={styles.goalModeOption}>
-                            <input
-                                type="radio"
-                                name="goal-edit-mode"
-                                value="reset"
-                                checked={goalEditMode === "reset"}
-                                onChange={() => setGoalEditMode("reset")}
-                                disabled={isSavingGoal}
-                            />
-                            <span>Reset goal cycle</span>
-                        </label>
-                    </div>
-                    {goalFormError ? <p className={styles.formErrorText}>{goalFormError}</p> : null}
-                    <div className={styles.goalEditorActions}>
-                        <button type="button" className={styles.primaryAction} onClick={() => void handleGoalCycleSave()} disabled={isSavingGoal}>
-                            {isSavingGoal ? "Saving..." : "Save"}
-                        </button>
-                        <button type="button" className={styles.secondaryAction} onClick={closeGoalEditor} disabled={isSavingGoal}>
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            ) : isAddProgressOpen ? (
-                <form
-                    className={styles.goalEditor}
-                    autoComplete="off"
-                    onSubmit={(event) => {
-                        event.preventDefault()
-                        void handleAddProgressSave()
-                    }}
-                >
-                    <label className={styles.goalEditorLabel} htmlFor="savings-progress-input">
-                        Savings progress amount
-                    </label>
-                    <input
-                        id="savings-progress-input"
-                        aria-label="Savings progress amount"
-                        type="text"
-                        inputMode="decimal"
-                        autoComplete="off"
-                        value={progressAmountDraft}
-                        onChange={(event) => setProgressAmountDraft(event.target.value)}
-                        className={styles.goalInput}
-                        placeholder="Enter progress amount"
-                        disabled={isSavingProgress}
-                    />
-                    {progressFormError ? <p className={styles.formErrorText}>{progressFormError}</p> : null}
-                    <div className={styles.goalEditorActions}>
-                        <button type="submit" className={styles.primaryAction} disabled={isSavingProgress}>
-                            {isSavingProgress ? "Saving..." : "Add Progress"}
-                        </button>
-                        <button type="button" className={styles.secondaryAction} onClick={closeAddProgressEditor} disabled={isSavingProgress}>
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            ) : !hasGoal ? (
-                <div className={styles.noGoalState}>
-                    <p className={styles.noGoalText}>No savings goal set yet.</p>
-                    <button type="button" className={styles.primaryAction} onClick={() => openGoalEditor("new")}>
-                        New Goal
-                    </button>
-                </div>
-            ) : (
-                <>
-                    <div className={styles.amountRow}>
-                        <strong className={styles.currentAmount}>
-                            {formatCurrency(currentSavingsProgress, currency)}
-                        </strong>
-                        <span className={styles.goalAmount}>
-                            / {formatCurrency(savingsGoal, currency)}
-                        </span>
-                        <span className={styles.percentText}>{Math.round(progressPercent)}%</span>
-                    </div>
+                        <div className={styles.progressTrack} aria-hidden="true">
+                            <span className={styles.progressFill} style={{ width: `${visualProgressPercent}%` }} />
+                        </div>
 
-                    <div className={styles.progressTrack} aria-hidden="true">
-                        <span className={styles.progressFill} style={{ width: `${visualProgressPercent}%` }} />
-                    </div>
+                        <div className={styles.metaRow}>
+                            {hasValidGoalStartedDate ? (
+                                <p className={styles.goalStartedHint}>
+                                    Goal started {goalStartedDate.toLocaleDateString("en-US", {
+                                        month: "short",
+                                        day: "numeric",
+                                        year: "numeric",
+                                    })}
+                                </p>
+                            ) : (
+                                <span />
+                            )}
+                            <span className={styles.remainingText}>
+                                {isGoalCompleted ? "Goal reached" : `${formatCurrency(remainingAmount, currency)} remaining`}
+                            </span>
+                        </div>
 
-                    <div className={styles.metaRow}>
-                        {hasValidGoalStartedDate ? (
-                            <p className={styles.goalStartedHint}>
-                                Goal started {goalStartedDate.toLocaleDateString("en-US", {
-                                    month: "short",
-                                    day: "numeric",
-                                    year: "numeric",
-                                })}
-                            </p>
-                        ) : (
-                            <span />
-                        )}
-                        <span className={styles.remainingText}>
-                            {isGoalCompleted ? "Goal reached" : `${formatCurrency(remainingAmount, currency)} remaining`}
-                        </span>
-                    </div>
+                        <button
+                            type="button"
+                            className={styles.primaryAction}
+                            onClick={isGoalCompleted ? () => openGoalEditor("new") : openAddProgressEditor}
+                            title={isGoalCompleted ? "Set a new savings goal." : "Add savings progress."}
+                        >
+                            {actionLabel}
+                        </button>
+                    </>
+                )}
+            </section>
 
-                    <button
-                        type="button"
-                        className={styles.primaryAction}
-                        onClick={isGoalCompleted ? () => openGoalEditor("new") : openAddProgressEditor}
-                        title={isGoalCompleted ? "Set a new savings goal." : "Add savings progress."}
-                    >
-                        {actionLabel}
-                    </button>
-                </>
-            )}
-        </section>
+            {typeof document !== "undefined" && isGoalModalOpen
+                ? createPortal(
+                    <div className={styles.modalOverlay} role="presentation" onClick={closeGoalEditor}>
+                        <section
+                            className={styles.modalCard}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="spt-goal-modal-title"
+                            onClick={(event) => event.stopPropagation()}
+                        >
+                            <div className={styles.modalTopCornerActions}>
+                                <button
+                                    type="button"
+                                    className={styles.modalCloseButton}
+                                    aria-label="Close savings goal modal"
+                                    onClick={closeGoalEditor}
+                                >
+                                    <Icons.close size={18} />
+                                </button>
+                            </div>
+
+                            <div className={styles.modalHeader}>
+                                <div className={styles.modalHeaderCopy}>
+                                    <h3 id="spt-goal-modal-title" className={styles.modalTitle}>
+                                        {goalEditorMode === "edit" ? "Edit Savings Goal" : "Set Savings Goal"}
+                                    </h3>
+                                    <p className={styles.modalSubtitle}>
+                                        {isGoalCycleChoiceOpen
+                                            ? "Choose how your current progress should behave before saving the updated goal."
+                                            : "Set a target amount for your savings progress tracker."}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {isGoalEditorOpen ? (
+                                <form
+                                    className={styles.goalEditor}
+                                    autoComplete="off"
+                                    onSubmit={(event) => {
+                                        event.preventDefault()
+                                        void handleGoalDraftSubmit()
+                                    }}
+                                >
+                                    <label className={styles.goalEditorLabel} htmlFor="savings-goal-input">
+                                        Savings goal amount
+                                    </label>
+                                    <input
+                                        id="savings-goal-input"
+                                        aria-label="Savings goal amount"
+                                        type="text"
+                                        inputMode="decimal"
+                                        autoComplete="off"
+                                        value={formatNumericInput(goalDraft)}
+                                        onChange={(event) => setGoalDraft(normalizeNumericInput(event.target.value))}
+                                        className={styles.goalInput}
+                                        placeholder="Enter goal amount"
+                                        disabled={isSavingGoal}
+                                    />
+                                    {goalFormError ? <p className={styles.formErrorText}>{goalFormError}</p> : null}
+                                    <div className={styles.goalEditorActions}>
+                                        <button type="submit" className={styles.primaryAction} disabled={isSavingGoal}>
+                                            {isSavingGoal ? "Saving..." : "Save"}
+                                        </button>
+                                        <button type="button" className={styles.secondaryAction} onClick={closeGoalEditor} disabled={isSavingGoal}>
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            ) : (
+                                <div className={styles.goalChoiceState}>
+                                    <p className={styles.goalChoiceTitle}>How should we handle your current progress?</p>
+                                    <div className={styles.goalModeGroup}>
+                                        <label className={styles.goalModeOption}>
+                                            <input
+                                                type="radio"
+                                                name="goal-edit-mode"
+                                                value="keep"
+                                                checked={goalEditMode === "keep"}
+                                                onChange={() => setGoalEditMode("keep")}
+                                                disabled={isSavingGoal}
+                                            />
+                                            <span>Keep progress</span>
+                                        </label>
+                                        <label className={styles.goalModeOption}>
+                                            <input
+                                                type="radio"
+                                                name="goal-edit-mode"
+                                                value="reset"
+                                                checked={goalEditMode === "reset"}
+                                                onChange={() => setGoalEditMode("reset")}
+                                                disabled={isSavingGoal}
+                                            />
+                                            <span>Reset goal cycle</span>
+                                        </label>
+                                    </div>
+                                    {goalFormError ? <p className={styles.formErrorText}>{goalFormError}</p> : null}
+                                    <div className={styles.goalEditorActions}>
+                                        <button type="button" className={styles.primaryAction} onClick={() => void handleGoalCycleSave()} disabled={isSavingGoal}>
+                                            {isSavingGoal ? "Saving..." : "Save"}
+                                        </button>
+                                        <button type="button" className={styles.secondaryAction} onClick={closeGoalEditor} disabled={isSavingGoal}>
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </section>
+                    </div>,
+                    document.body
+                )
+                : null}
+
+            {typeof document !== "undefined" && isAddProgressOpen
+                ? createPortal(
+                    <div className={styles.modalOverlay} role="presentation" onClick={closeAddProgressEditor}>
+                        <section
+                            className={styles.modalCard}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="spt-progress-modal-title"
+                            onClick={(event) => event.stopPropagation()}
+                        >
+                            <div className={styles.modalTopCornerActions}>
+                                <button
+                                    type="button"
+                                    className={styles.modalCloseButton}
+                                    aria-label="Close savings progress modal"
+                                    onClick={closeAddProgressEditor}
+                                >
+                                    <Icons.close size={18} />
+                                </button>
+                            </div>
+
+                            <div className={styles.modalHeader}>
+                                <div className={styles.modalHeaderCopy}>
+                                    <h3 id="spt-progress-modal-title" className={styles.modalTitle}>Add Savings Progress</h3>
+                                    <p className={styles.modalSubtitle}>
+                                        Add a savings income entry and ExTra will fold it into your current goal progress.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <form
+                                className={styles.goalEditor}
+                                autoComplete="off"
+                                onSubmit={(event) => {
+                                    event.preventDefault()
+                                    void handleAddProgressSave()
+                                }}
+                            >
+                                <label className={styles.goalEditorLabel} htmlFor="savings-progress-input">
+                                    Savings progress amount
+                                </label>
+                                <input
+                                    id="savings-progress-input"
+                                    aria-label="Savings progress amount"
+                                    type="text"
+                                    inputMode="decimal"
+                                    autoComplete="off"
+                                    value={formatNumericInput(progressAmountDraft)}
+                                    onChange={(event) => setProgressAmountDraft(normalizeNumericInput(event.target.value))}
+                                    className={styles.goalInput}
+                                    placeholder="Enter progress amount"
+                                    disabled={isSavingProgress}
+                                />
+                                {progressFormError ? <p className={styles.formErrorText}>{progressFormError}</p> : null}
+                                <div className={styles.goalEditorActions}>
+                                    <button type="submit" className={styles.primaryAction} disabled={isSavingProgress}>
+                                        {isSavingProgress ? "Saving..." : "Add Progress"}
+                                    </button>
+                                    <button type="button" className={styles.secondaryAction} onClick={closeAddProgressEditor} disabled={isSavingProgress}>
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </section>
+                    </div>,
+                    document.body
+                )
+                : null}
+        </>
     )
 }
 

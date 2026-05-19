@@ -138,6 +138,24 @@
         border-radius 220ms ease;
 }
 
+.entryCenteredToggle {
+    position: absolute;
+    left: 50%;
+    top: 62%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 36px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--accent-gold);
+    padding: 0;
+    cursor: pointer;
+}
+
 .income .entrySurface {
     border-color: color-mix(in srgb, var(--text-income) 35%, rgba(255, 255, 255, 0.08));
 }
@@ -218,7 +236,7 @@
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
-    gap: 9px;
+    gap: 5px;
 }
 
 .entryMain {
@@ -617,6 +635,11 @@
 
     .actionButton {
         font-size: 0.6rem;
+    }
+
+    .entryCenteredToggle {
+        width: 40px;
+        height: 30px;
     }
 }
 

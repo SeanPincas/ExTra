@@ -7,6 +7,7 @@
 }
 
 .title {
+    margin: 0;
     font-size: 1.05rem;
     line-height: 1.12;
     font-weight: 600;
@@ -15,13 +16,20 @@
 }
 
 .headerTools {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: flex-end;
+    gap: 5px;
+    margin-left: auto;
+    flex-shrink: 0;
+    width: fit-content;
+    max-width: 100%;
 }
 
 .searchShell {
+    box-sizing: border-box;
     width: 30px;
+    flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     min-height: 30px;
@@ -38,7 +46,7 @@
 }
 
 .searchShellOpen {
-    width: min(164px, 100%);
+    width: 164px;
     justify-content: flex-start;
     padding: 5px 9px;
     gap: 6px;
@@ -79,6 +87,7 @@
 
 .statsButton {
     display: inline-flex;
+    flex: 0 0 auto;
     width: 30px;
     height: 30px;
     align-items: center;
@@ -114,7 +123,7 @@
     }
 
     .searchShellOpen {
-        width: min(148px, 100%);
+        width: 148px;
     }
 
 }
@@ -130,7 +139,8 @@
     }
 
     .searchShellOpen {
-        width: min(100%, 148px);
+        width: 148px;
+        max-width: calc(100vw - 120px);
     }
 
     .headerTools {
