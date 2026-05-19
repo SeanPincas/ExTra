@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type KeyboardEvent } from "react"
 import { Icons } from "../../../utils/iconLibrary"
 import styles from "./CenterHeaderArea.module.css"
 
 interface CenterHeaderAreaProps {
     searchDraft: string
+    submittedSearchTerm: string
+    isSearchPending: boolean
     onSearchChange: (nextSearch: string) => void
+    onSearchSubmit: () => void
     onOpenStatsPanel?: () => void
     showStatsButton?: boolean
     isStatsPanelOpen?: boolean
@@ -12,19 +15,22 @@ interface CenterHeaderAreaProps {
 
 function CenterHeaderArea({
     searchDraft,
+    submittedSearchTerm,
+    isSearchPending,
     onSearchChange,
+    onSearchSubmit,
     onOpenStatsPanel,
     showStatsButton = false,
     isStatsPanelOpen = false,
 }: CenterHeaderAreaProps) {
-    const [isSearchOpen, setIsSearchOpen] = useState(Boolean(searchDraft))
+    const [isSearchOpen, setIsSearchOpen] = useState(Boolean(searchDraft || submittedSearchTerm))
     const searchInputRef = useRef<HTMLInputElement | null>(null)
 
     useEffect(() => {
-        if (searchDraft) {
+        if (searchDraft || submittedSearchTerm) {
             setIsSearchOpen(true)
         }
-    }, [searchDraft])
+    }, [searchDraft, submittedSearchTerm])
 
     useEffect(() => {
         if (!isSearchOpen) {
@@ -39,9 +45,18 @@ function CenterHeaderArea({
     }
 
     const handleSearchBlur = () => {
-        if (!searchDraft.trim()) {
+        if (!searchDraft.trim() && !submittedSearchTerm.trim()) {
             setIsSearchOpen(false)
         }
+    }
+
+    const handleSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key !== "Enter") {
+            return
+        }
+
+        event.preventDefault()
+        onSearchSubmit()
     }
 
     return (
@@ -68,8 +83,9 @@ function CenterHeaderArea({
                             type="search"
                             className={styles.searchInput}
                             value={searchDraft}
-                            placeholder="Search entries"
+                            placeholder={isSearchPending ? "Searching entries..." : "Search entries"}
                             onChange={(event) => onSearchChange(event.target.value)}
+                            onKeyDown={handleSearchKeyDown}
                             onBlur={handleSearchBlur}
                         />
                     )}
