@@ -4,7 +4,10 @@
 
 .dashboardWrapper {
     width: 100vw;
-    height: 100dvh;
+    min-height: 100vh;
+    min-height: 100svh;
+    height: 100vh;
+    height: 100svh;
     box-sizing: border-box;
     padding: 4px 6px;
     display: flex;
@@ -33,6 +36,10 @@
     z-index: 10;
 }
 
+.dashboardContainerDocument {
+    grid-template-rows: auto auto auto;
+}
+
 /* =====================================================
    HEADER
 ===================================================== */
@@ -57,6 +64,17 @@
     min-height: 0;
     padding: 9px;
     overflow: hidden;
+}
+
+.mainGridScrollable {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+}
+
+.mainGridDocument {
+    overflow: visible;
 }
 
 /* =====================================================
@@ -90,6 +108,26 @@
     .mainGrid {
         padding: 8px;
     }
+
+    .dashboardWrapperDocument {
+        min-height: 100svh;
+        height: auto;
+        align-items: stretch;
+        padding: 0;
+    }
+
+    .dashboardContainerDocument {
+        width: 100%;
+        min-height: 100svh;
+        height: auto;
+        border-radius: 0;
+        overflow: visible;
+        grid-template-rows: auto auto auto;
+    }
+
+    .mainGridDocument {
+        overflow: visible;
+    }
 }
 
 @media (max-width: 720px) {
@@ -111,8 +149,23 @@
 
     .dashboardContainer {
         width: 100%;
-        height: 100dvh;
+        min-height: 100vh;
+        min-height: 100svh;
+        height: 100vh;
+        height: 100svh;
         border-radius: 0;
+    }
+
+    .dashboardWrapperDocument {
+        min-height: 100svh;
+        height: auto;
+    }
+
+    .dashboardContainerDocument {
+        min-height: 100svh;
+        height: auto;
+        overflow: visible;
+        grid-template-rows: auto auto auto;
     }
 
     .headerArea {

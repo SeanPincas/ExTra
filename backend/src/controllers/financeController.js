@@ -5,6 +5,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { successResponse } from "../utils/response.js";
 import { getDateRangeFilter } from "../utils/dateRange.js";
 import { validateFinanceEntry } from "../utils/requestValidation.js";
+import { ensurePaydayEntryForUser } from "../services/paydayService.js";
 
 // ================================================================
 // CREATE FINANCE ENTRY
@@ -33,6 +34,7 @@ export const createFinance = asyncHandler(async (req, res) => {
 // GET FINANCE LIST (with optional filters)
 // ================================================================
 export const getFinance = asyncHandler(async (req, res) => {
+    await ensurePaydayEntryForUser(req.user);
 
     const { range, date, search, startDate, endDate } = req.query;
     // page validation
