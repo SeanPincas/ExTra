@@ -13,9 +13,16 @@ interface HeaderProps {
     showLeftPanelToggle?: boolean
     isLeftPanelOpen?: boolean
     onOpenSettings?: () => void
+    onNavigateDashboard?: () => void
 }
 
-function Header({ onToggleLeftPanel, showLeftPanelToggle = false, isLeftPanelOpen = false, onOpenSettings }: HeaderProps) {
+function Header({
+    onToggleLeftPanel,
+    showLeftPanelToggle = false,
+    isLeftPanelOpen = false,
+    onOpenSettings,
+    onNavigateDashboard,
+}: HeaderProps) {
     const [isAddEntryOpen, setIsAddEntryOpen] = useState(false)
 
     const openAddEntryModal = () => {
@@ -40,18 +47,30 @@ function Header({ onToggleLeftPanel, showLeftPanelToggle = false, isLeftPanelOpe
                 >
                     <Icons.menu size={16} />
                 </button>
-                <span className={styles.headerBrandTitle} aria-hidden="true">ExTra</span>
+                <button
+                    type="button"
+                    className={styles.headerBrandTitle}
+                    aria-label="Go to dashboard"
+                    onClick={onNavigateDashboard}
+                >
+                    ExTra
+                </button>
             </div>
 
             {/* CENTER: LOGO */}
             <div className={styles.centerSection}>
-                <span className={styles.logoWrapper}>
+                <button
+                    type="button"
+                    className={styles.logoWrapper}
+                    aria-label="Go to dashboard"
+                    onClick={onNavigateDashboard}
+                >
                     <img
                         src={logo}
                         alt="Extra Logo"
                         className={styles.logoImage}
                     />
-                </span>
+                </button>
             </div>
 
             {/* RIGHT: ACTIONS */}

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import Footer from "../../components/Footer/Footer"
 import MainLayout from "../../layout/MainLayout/MainLayout"
 import { useAuth } from "../../context/AuthContext"
+import { useFinance } from "../../context/FinanceContext"
 import { updateCurrentUser } from "../../api/userAPI"
 import { Icons } from "../../utils/iconLibrary"
 import { CURRENCY_OPTIONS, PAY_CYCLE_OPTIONS, QUOTE_CHANGE_HOURS_OPTIONS, REMINDER_LEAD_TIME_OPTIONS } from "../../utils/preferencesOptions"
@@ -185,6 +186,7 @@ function SettingsPage({
     onLogout,
 }: SettingsPageProps) {
     const { user, clearAuth, refreshCurrentUser } = useAuth()
+    const { refreshFinance } = useFinance()
     const fileInputRef = useRef<HTMLInputElement | null>(null)
     const [isSaving, setIsSaving] = useState(false)
     const [saveError, setSaveError] = useState("")
@@ -362,6 +364,7 @@ function SettingsPage({
             })
 
             await refreshCurrentUser()
+            await refreshFinance()
             setSaveSuccess("Saved successfully.")
         } catch (error: any) {
             setSaveError(

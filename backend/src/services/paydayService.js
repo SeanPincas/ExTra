@@ -19,18 +19,35 @@ const getTodayRange = () => {
     return { startOfDay, endOfDay };
 };
 
+const getTodayKey = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+};
+
+const getPaydaySystemKey = () => `payday:${getTodayKey()}`;
+
 const findExistingPaydayEntry = async (userId) => {
     const { startOfDay, endOfDay } = getTodayRange();
+    const systemKey = getPaydaySystemKey();
 
     return Finance.findOne({
         user: userId,
-        title: {
-            $in: [PAYDAY_ENTRY_TITLE, LEGACY_PAYDAY_ENTRY_TITLE]
-        },
-        createdAt: {
-            $gte: startOfDay,
-            $lte: endOfDay
-        }
+        $or: [
+            { systemKey },
+            {
+                title: {
+                    $in: [PAYDAY_ENTRY_TITLE, LEGACY_PAYDAY_ENTRY_TITLE]
+                },
+                createdAt: {
+                    $gte: startOfDay,
+                    $lte: endOfDay
+                }
+            }
+        ]
     });
 };
 
@@ -76,24 +93,40 @@ export const ensurePaydayEntryForUser = async (user) => {
         };
     }
 
-    const paydayEntry = await Finance.create({
-        user: userId,
-        title: PAYDAY_ENTRY_TITLE,
-        type: ENTRY_TYPES.INCOME,
-        category: CATEGORIES.INCOME.includes("Salary") ? "Salary" : CATEGORIES.INCOME[0],
-        items: [
-            {
-                name: PAYDAY_ENTRY_TITLE,
-                amount: salaryAmount
-            }
-        ]
-    });
+    try {
+        const paydayEntry = await Finance.create({
+            user: userId,
+            title: PAYDAY_ENTRY_TITLE,
+            type: ENTRY_TYPES.INCOME,
+            category: CATEGORIES.INCOME.includes("Salary") ? "Salary" : CATEGORIES.INCOME[0],
+            items: [
+                {
+                    name: PAYDAY_ENTRY_TITLE,
+                    amount: salaryAmount
+                }
+            ],
+            totalAmount: salaryAmount,
+            systemKey: getPaydaySystemKey()
+        });
 
-    return {
-        paydayToday: true,
-        created: true,
-        entry: paydayEntry
-    };
+        return {
+            paydayToday: true,
+            created: true,
+            entry: paydayEntry
+        };
+    } catch (error) {
+        if (error?.code === 11000) {
+            const concurrentPaydayEntry = await findExistingPaydayEntry(userId);
+
+            return {
+                paydayToday: true,
+                created: false,
+                entry: concurrentPaydayEntry
+            };
+        }
+
+        throw error;
+    }
 };
 
 // ================================================================
