@@ -84,13 +84,18 @@
 }
 
 .insightsHintButton {
-    width: 19px;
-    height: 19px;
+    width: 16px;
+    height: 16px;
     border: 1px solid rgba(218, 165, 32, 0.28);
     border-radius: 50%;
     background: rgba(218, 165, 32, 0.08);
     color: color-mix(in srgb, var(--accent-gold) 74%, white);
-    font-size: 0.7rem;
+    font-size: 0.58rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
     cursor: pointer;
 }
 
