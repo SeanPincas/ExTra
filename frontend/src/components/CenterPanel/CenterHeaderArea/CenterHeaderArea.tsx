@@ -11,6 +11,7 @@ interface CenterHeaderAreaProps {
     onOpenStatsPanel?: () => void
     showStatsButton?: boolean
     isStatsPanelOpen?: boolean
+    isBatchDeleteMode?: boolean
 }
 
 function CenterHeaderArea({
@@ -22,6 +23,7 @@ function CenterHeaderArea({
     onOpenStatsPanel,
     showStatsButton = false,
     isStatsPanelOpen = false,
+    isBatchDeleteMode = false,
 }: CenterHeaderAreaProps) {
     const [isSearchOpen, setIsSearchOpen] = useState(Boolean(searchDraft || submittedSearchTerm))
     const searchInputRef = useRef<HTMLInputElement | null>(null)
@@ -65,6 +67,7 @@ function CenterHeaderArea({
                Search lives on the far right so the top row has a clear
                title-left / search-right dashboard structure. */}
             <h2 className={styles.title}>Entry List</h2>
+            {isBatchDeleteMode ? <h3 className={styles.deleteModeTitle}>Delete Mode</h3> : null}
 
             <div className={styles.headerTools}>
                 <div className={`${styles.searchShell} ${isSearchOpen ? styles.searchShellOpen : ""}`}>

@@ -9,8 +9,8 @@
     --bar-track-width: 80%;
     --bar-meta-min-height: 23px;
     --bar-baseline-offset: calc(var(--bar-meta-min-height) + 1px);
-    --bar-name-size: 0.64rem;
-    --bar-value-size: 0.62rem;
+    --bar-name-size: 0.72rem;
+    --bar-value-size: 0.7rem;
     display: grid;
     grid-template-rows: auto 1fr;
     gap: var(--bar-shell-gap);
@@ -31,7 +31,7 @@
 
 .title {
     margin: 0;
-    font-size: 0.64rem;
+    font-size: 0.72rem;
     font-weight: 600;
     line-height: 1;
     text-transform: uppercase;
@@ -43,7 +43,7 @@
     padding: 0;
     background: transparent;
     color: var(--text-secondary);
-    font-size: 0.58rem;
+    font-size: 0.64rem;
     line-height: 1;
     cursor: pointer;
     text-decoration: none;
@@ -82,7 +82,7 @@
     max-width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
-    padding-bottom: 2px;
+    padding-bottom: 0;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
 }
@@ -121,7 +121,7 @@
     height: 100%;
     min-width: 0;
     min-height: 0;
-    padding-bottom: 0;
+    padding-bottom: 2px;
 }
 
 .sharedBaseline {
@@ -140,7 +140,8 @@
     grid-auto-columns: minmax(var(--bar-preview-column-min), calc((100% - (var(--bar-preview-gap) * (var(--bar-preview-columns) - 1))) / var(--bar-preview-columns)));
     gap: var(--bar-preview-gap);
     position: relative;
-    height: 100%;
+    height: calc(100% + 8px);
+    margin-top: -8px;
     align-items: end;
     width: max-content;
     min-width: max-content;
@@ -209,7 +210,8 @@
     gap: 0;
     text-align: center;
     min-height: var(--bar-meta-min-height);
-    padding-top: 1px;
+    padding-top: 0;
+    padding-bottom: 2px;
     align-content: start;
 }
 
@@ -236,11 +238,11 @@
 }
 
 .barRowExpanded .barName {
-    font-size: 0.48rem;
+    font-size: 0.54rem;
 }
 
 .barRowExpanded .barValue {
-    font-size: 0.46rem;
+    font-size: 0.52rem;
 }
 
 .barRowExpanded .barTrack {
@@ -269,7 +271,7 @@
 
 .emptyState {
     margin: 0;
-    font-size: 0.6rem;
+    font-size: 0.66rem;
     color: var(--text-secondary);
 }
 
@@ -291,17 +293,17 @@
         --bar-track-width: 78%;
         --bar-meta-min-height: 18px;
         --bar-baseline-offset: calc(var(--bar-meta-min-height) + 3px);
-        --bar-name-size: 0.58rem;
-        --bar-value-size: 0.58rem;
+        --bar-name-size: 0.64rem;
+        --bar-value-size: 0.64rem;
         padding: 2px 3px;
     }
 
     .title {
-        font-size: 0.6rem;
+        font-size: 0.66rem;
     }
 
     .seeMoreButton {
-        font-size: 0.54rem;
+        font-size: 0.6rem;
     }
 
     .barRowExpanded .barCanvas {
@@ -318,8 +320,8 @@
         --bar-preview-column-min: 48px;
         --bar-canvas-height: 52px;
         --bar-track-height: 54px;
-        --bar-name-size: 0.54rem;
-        --bar-value-size: 0.54rem;
+        --bar-name-size: 0.6rem;
+        --bar-value-size: 0.6rem;
     }
 }
 

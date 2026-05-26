@@ -290,7 +290,7 @@ function EditEntryModal({ entry, onClose }: EditEntryModalProps) {
             onClick={onClose}
         >
             <section
-                className={styles.modal}
+                className={`${styles.modal} ${styles.modalEditAccent}`}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="edit-entry-title"

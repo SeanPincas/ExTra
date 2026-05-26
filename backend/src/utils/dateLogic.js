@@ -66,6 +66,9 @@ export const isPayDay = ({ payCycle = "monthly", payDayAnchor = null, payDay = 0
     if (normalizedPayCycle === "daily") {
         return true;
     }
+    if (normalizedPayCycle === "none") {
+        return false;
+    }
 
     const anchorDate = parseDateKey(payDayAnchor);
 
