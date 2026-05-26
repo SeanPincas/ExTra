@@ -4,12 +4,12 @@
     --line-chip-gap: 4px;
     --line-chip-height: 16px;
     --line-chip-pad-x: 6px;
-    --line-chip-font: 0.52rem;
+    --line-chip-font: 0.6rem;
     --line-chart-pad-top: 4px;
     --line-chart-pad-side: 2px;
     --line-chart-pad-bottom: 3px;
     --line-viewport-height: 78px;
-    --line-month-font: 0.5rem;
+    --line-month-font: 0.56rem;
     --line-tooltip-min-width: 92px;
     --line-tooltip-max-width: 142px;
     --line-tooltip-pad-y: 5px;
@@ -42,14 +42,14 @@
 
 .title {
     margin: 0;
-    font-size: 0.64rem;
+    font-size: 0.72rem;
     font-weight: 600;
     text-transform: uppercase;
     color: var(--text-secondary);
 }
 
 .subtitle {
-    font-size: 0.56rem;
+    font-size: 0.62rem;
     line-height: 1;
     color: rgba(255, 255, 255, 0.42);
 }
@@ -214,13 +214,13 @@
 }
 
 .tooltipDate {
-    font-size: 0.53rem;
+    font-size: 0.6rem;
     line-height: 1.1;
     color: rgba(255, 255, 255, 0.58);
 }
 
 .tooltipValue {
-    font-size: 0.56rem;
+    font-size: 0.62rem;
     line-height: 1.15;
     color: var(--text-primary);
 }
@@ -256,7 +256,7 @@
 
 .stateText {
     margin: 0;
-    font-size: 0.56rem;
+    font-size: 0.62rem;
     line-height: 1.15;
     color: var(--text-secondary);
 }
@@ -267,12 +267,12 @@
         --line-chip-gap: 3px;
         --line-chip-height: 15px;
         --line-chip-pad-x: 5px;
-        --line-chip-font: 0.48rem;
+        --line-chip-font: 0.54rem;
         --line-chart-pad-top: 3px;
         --line-chart-pad-side: 2px;
         --line-chart-pad-bottom: 3px;
         --line-viewport-height: 70px;
-        --line-month-font: 0.46rem;
+        --line-month-font: 0.5rem;
         --line-tooltip-min-width: 86px;
         --line-tooltip-pad-y: 4px;
         --line-tooltip-pad-x: 6px;
@@ -280,11 +280,11 @@
     }
 
     .title {
-        font-size: 0.6rem;
+        font-size: 0.66rem;
     }
 
     .stateText {
-        font-size: 0.52rem;
+        font-size: 0.58rem;
     }
 }
 
@@ -292,9 +292,9 @@
     .block {
         --line-chip-height: 14px;
         --line-chip-pad-x: 4px;
-        --line-chip-font: 0.46rem;
+        --line-chip-font: 0.5rem;
         --line-viewport-height: 66px;
-        --line-month-font: 0.44rem;
+        --line-month-font: 0.48rem;
         --line-tooltip-max-width: 124px;
         --line-tooltip-pad-x: 5px;
     }
@@ -319,7 +319,7 @@
         --line-chip-gap: 2px;
         --line-chip-height: 13px;
         --line-chip-pad-x: 4px;
-        --line-chip-font: 0.44rem;
+        --line-chip-font: 0.48rem;
     }
 
     .summaryChip {

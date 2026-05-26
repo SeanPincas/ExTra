@@ -100,6 +100,37 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
         }
     }
 
+    const beginCenterEdgeSwipe = (event: React.TouchEvent<HTMLDivElement>) => {
+        if (!isRightPanelOverlayMode || isLeftPanelOpen || isRightPanelOpen) {
+            return
+        }
+
+        const touch = event.touches[0]
+        if (!touch) {
+            return
+        }
+
+        const viewportWidth = window.innerWidth
+        const edgeActivationWidth = Math.min(112, Math.max(56, Math.round(viewportWidth * 0.18)))
+        const panel = touch.clientX <= edgeActivationWidth
+            ? "left"
+            : touch.clientX >= viewportWidth - edgeActivationWidth
+                ? "right"
+                : null
+
+        if (!panel) {
+            return
+        }
+
+        swipeStateRef.current = {
+            panel,
+            startX: touch.clientX,
+            startY: touch.clientY,
+            currentX: touch.clientX,
+            currentY: touch.clientY,
+        }
+    }
+
     const trackPanelSwipe = (event: React.TouchEvent<HTMLDivElement>) => {
         const touch = event.touches[0]
         if (!touch || !swipeStateRef.current.panel) {
@@ -127,12 +158,20 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
             return
         }
 
-        if (panel === "left" && deltaX < 0) {
-            setIsLeftPanelOpen(false)
+        if (panel === "left") {
+            if (isLeftPanelOpen && deltaX < 0) {
+                setIsLeftPanelOpen(false)
+            } else if (!isLeftPanelOpen && !isRightPanelOpen && deltaX > 0) {
+                setIsLeftPanelOpen(true)
+            }
         }
 
-        if (panel === "right" && deltaX > 0) {
-            setIsRightPanelOpen(false)
+        if (panel === "right") {
+            if (isRightPanelOpen && deltaX > 0) {
+                setIsRightPanelOpen(false)
+            } else if (!isRightPanelOpen && !isLeftPanelOpen && deltaX < 0) {
+                setIsRightPanelOpen(true)
+            }
         }
     }
 
@@ -165,7 +204,12 @@ function DashboardPage({ onLogout, onOpenSettings }: DashboardPageProps) {
                         <LeftPanel />
                     </div>
 
-                    <div className={styles.centerShell}>
+                    <div
+                        className={styles.centerShell}
+                        onTouchStart={beginCenterEdgeSwipe}
+                        onTouchMove={trackPanelSwipe}
+                        onTouchEnd={endPanelSwipe}
+                    >
                         <CenterPanel
                             onOpenStatsPanel={handleToggleRightPanel}
                             showStatsButton={isRightPanelOverlayMode && !isRightPanelOpen}

@@ -1,9 +1,25 @@
 .headerArea {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
     padding: 7px 10px 6px;
+}
+
+.deleteModeTitle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    font-size: 0.84rem;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--text-expense);
+    pointer-events: none;
+    text-transform: uppercase;
 }
 
 .title {
