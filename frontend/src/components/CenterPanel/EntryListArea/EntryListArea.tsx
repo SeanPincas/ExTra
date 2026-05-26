@@ -136,8 +136,16 @@ function EntryListArea({
             return
         }
 
-        if (isBatchDeleteMode && Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
-            onToggleEntrySelected(entryId)
+        if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
+            if (isBatchDeleteMode) {
+                onToggleEntrySelected(entryId)
+                return
+            }
+
+            if (isTouchActionLayout) {
+                toggleEntryActions(entryId)
+            }
+
             return
         }
 
@@ -225,7 +233,7 @@ function EntryListArea({
     }
 
     return (
-        <div className={styles.listArea}>
+        <div className={`${styles.listArea} ${isBatchDeleteMode ? styles.listAreaDeleteMode : ""}`}>
             {/* Once financeAPI is connected, this component becomes a pure
                renderer for backend-backed entry data plus local refinements. */}
             {entries.map((entry) => {

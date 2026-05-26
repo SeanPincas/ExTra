@@ -57,7 +57,7 @@ const userSchema = new mongoose.Schema(
             },
             payCycle: {
                 type: String,
-                enum: ["daily", "weekly", "biweekly", "semimonthly", "monthly"],
+                enum: ["none", "daily", "weekly", "biweekly", "semimonthly", "monthly"],
                 default: "monthly"
             },
             payDayAnchor: {

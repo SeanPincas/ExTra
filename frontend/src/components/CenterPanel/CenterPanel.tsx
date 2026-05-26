@@ -215,6 +215,7 @@ function CenterPanel({ onOpenStatsPanel, showStatsButton = false, isStatsPanelOp
                 onOpenStatsPanel={onOpenStatsPanel}
                 showStatsButton={showStatsButton}
                 isStatsPanelOpen={isStatsPanelOpen}
+                isBatchDeleteMode={isBatchDeleteMode}
             />
 
             <div className={styles.filterStack}>

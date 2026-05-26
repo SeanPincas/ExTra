@@ -3,7 +3,7 @@
     --ring-header-gap: 8px;
     --ring-total-chip-height: 18px;
     --ring-total-chip-pad-x: 6px;
-    --ring-total-chip-font: 0.54rem;
+    --ring-total-chip-font: 0.6rem;
     --ring-content-chart-min: 98px;
     --ring-content-chart-max: 108px;
     --ring-content-gap: 6px;
@@ -15,8 +15,8 @@
     --ring-row-gap: 5px;
     --ring-row-min-height: 12px;
     --ring-swatch-size: 8px;
-    --ring-name-font: 0.54rem;
-    --ring-meta-font: 0.48rem;
+    --ring-name-font: 0.6rem;
+    --ring-meta-font: 0.54rem;
     display: grid;
     grid-template-rows: auto 1fr;
     gap: var(--ring-shell-gap);
@@ -37,7 +37,7 @@
 
 .title {
     margin: 0;
-    font-size: 0.64rem;
+    font-size: 0.72rem;
     font-weight: 600;
     line-height: 1;
     text-transform: uppercase;
@@ -184,7 +184,7 @@
 
 .emptyState {
     margin: 0;
-    font-size: 0.6rem;
+    font-size: 0.66rem;
     color: var(--text-secondary);
 }
 
@@ -201,7 +201,7 @@
         --ring-shell-gap: 2px;
         --ring-total-chip-height: 16px;
         --ring-total-chip-pad-x: 5px;
-        --ring-total-chip-font: 0.48rem;
+        --ring-total-chip-font: 0.54rem;
         --ring-content-chart-min: 88px;
         --ring-content-chart-max: 96px;
         --ring-content-gap: 5px;
@@ -211,13 +211,13 @@
         --ring-svg-size: 92px;
         --ring-row-gap: 4px;
         --ring-row-min-height: 11px;
-        --ring-name-font: 0.5rem;
-        --ring-meta-font: 0.46rem;
+        --ring-name-font: 0.56rem;
+        --ring-meta-font: 0.5rem;
         padding: 2px 3px;
     }
 
     .title {
-        font-size: 0.6rem;
+        font-size: 0.66rem;
     }
 }
 

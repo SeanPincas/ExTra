@@ -107,6 +107,8 @@ function getLegacyPayDayFromCycle(payCycle: UserPayCycle, payDayAnchor: string |
 
 function getPayCycleHelperText(payCycle: UserPayCycle) {
     switch (payCycle) {
+        case "none":
+            return "Pay cycle is disabled. Pay day anchor and salary are turned off."
         case "daily":
             return "Daily pay is automatic, so no anchor date is needed."
         case "weekly":
@@ -132,7 +134,7 @@ function getPayCyclePreviewDateKeys(payCycle: UserPayCycle, selectedDateKey: str
         return previewDateKeys
     }
 
-    if (payCycle === "daily") {
+    if (payCycle === "none" || payCycle === "daily") {
         return previewDateKeys
     }
 
@@ -328,7 +330,9 @@ function SettingsPage({
     }, [form.preferences, initialPreferencesSnapshot])
 
     const hasAnyEdits = hasProfileEdits || hasPreferenceEdits
+    const isPayCycleDisabled = form.preferences.payCycle === "none"
     const isDailyPayCycle = form.preferences.payCycle === "daily"
+    const isAnchorDisabled = isPayCycleDisabled || isDailyPayCycle
     const payDayAnchorLabel = formatPayDayAnchorLabel(form.preferences.payDayAnchor)
     const payCycleHelperText = getPayCycleHelperText(form.preferences.payCycle)
     const getPayDayAnchorPreviewDateKeys = (selectedDateKey: string, viewMonthDateKey: string) =>
@@ -377,7 +381,7 @@ function SettingsPage({
 
         const normalizedSalary = Number(form.preferences.salary || 0)
         const normalizedSavingsGoal = Number(form.preferences.savingsGoal || 0)
-        const normalizedPayDayAnchor = isDailyPayCycle ? null : normalizeDateKey(form.preferences.payDayAnchor)
+        const normalizedPayDayAnchor = isAnchorDisabled ? null : normalizeDateKey(form.preferences.payDayAnchor)
         const legacyPayDay = getLegacyPayDayFromCycle(form.preferences.payCycle, normalizedPayDayAnchor)
 
         if (!Number.isFinite(normalizedSalary) || normalizedSalary < 0) {
@@ -392,7 +396,7 @@ function SettingsPage({
             return
         }
 
-        if (!isDailyPayCycle && !normalizedPayDayAnchor) {
+        if (!isAnchorDisabled && !normalizedPayDayAnchor) {
             setIsSaving(false)
             setWarningMessage("Please select a payday anchor for the chosen pay cycle.")
             return
@@ -633,7 +637,7 @@ function SettingsPage({
                                                                 preferences: {
                                                                     ...current.preferences,
                                                                     payCycle: event.target.value as UserPayCycle,
-                                                                    payDayAnchor: event.target.value === "daily"
+                                                                    payDayAnchor: event.target.value === "none" || event.target.value === "daily"
                                                                         ? null
                                                                         : current.preferences.payDayAnchor,
                                                                 },
@@ -668,8 +672,8 @@ function SettingsPage({
                                                     </span>
                                                     <button
                                                         type="button"
-                                                        className={`btnBase btnMatteDark ${styles.fieldInput} ${styles.dateFieldButton}`}
-                                                        disabled={isDailyPayCycle}
+                                                        className={`btnBase btnMatteDark ${styles.fieldInput} ${styles.dateFieldButton} ${isPayCycleDisabled ? styles.disabledFieldVisual : ""}`}
+                                                        disabled={isAnchorDisabled}
                                                         onClick={() => setIsPayDayAnchorPickerOpen(true)}
                                                     >
                                                         <span>{isDailyPayCycle ? "Automatic for daily pay" : payDayAnchorLabel}</span>
@@ -684,6 +688,8 @@ function SettingsPage({
                                                             inputMode="decimal"
                                                             value={formatNumericInput(form.preferences.salary)}
                                                             onChange={(event) => setNumericPreference("salary", event.target.value)}
+                                                            disabled={isPayCycleDisabled}
+                                                            className={`${styles.fieldInput} ${isPayCycleDisabled ? styles.disabledFieldVisual : ""}`}
                                                         />
                                                 </label>
                                             </div>
@@ -866,7 +872,7 @@ function SettingsPage({
                 />
             )}
 
-            {isPayDayAnchorPickerOpen && !isDailyPayCycle && (
+            {isPayDayAnchorPickerOpen && !isAnchorDisabled && (
                 <DatePickerModal
                     title="Select payday anchor"
                     subtitle="Pick one anchor date, review the highlighted recurring pattern, then save it."

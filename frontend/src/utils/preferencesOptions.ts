@@ -16,6 +16,7 @@ export const QUOTE_CHANGE_HOURS_OPTIONS = [
 ] as const
 
 export const PAY_CYCLE_OPTIONS = [
+    { value: "none", label: "N/A" },
     { value: "daily", label: "Daily pay / Daily wage" },
     { value: "weekly", label: "Weekly pay" },
     { value: "biweekly", label: "Biweekly pay" },

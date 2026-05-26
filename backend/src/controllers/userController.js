@@ -106,7 +106,7 @@ function normalizePayPreferences(preferencesInput = {}, existingPreferences = {}
     ? String(preferencesInput.payCycle)
     : String(existingPreferences.payCycle ?? "monthly");
 
-  if (!["daily", "weekly", "biweekly", "semimonthly", "monthly"].includes(nextPayCycle)) {
+  if (!["none", "daily", "weekly", "biweekly", "semimonthly", "monthly"].includes(nextPayCycle)) {
     throw new Error("Pay cycle is invalid");
   }
 
@@ -114,13 +114,13 @@ function normalizePayPreferences(preferencesInput = {}, existingPreferences = {}
     ? normalizePayDayAnchor(preferencesInput.payDayAnchor)
     : existingPreferences.payDayAnchor ?? null;
 
-  if (nextPayCycle !== "daily" && !nextPayDayAnchor) {
+  if (!["none", "daily"].includes(nextPayCycle) && !nextPayDayAnchor) {
     throw new Error("Pay day anchor is required for the selected pay cycle.");
   }
 
   return {
     payCycle: nextPayCycle,
-    payDayAnchor: nextPayCycle === "daily" ? null : nextPayDayAnchor,
+    payDayAnchor: ["none", "daily"].includes(nextPayCycle) ? null : nextPayDayAnchor,
     payDay: nextPayCycle === "monthly" && nextPayDayAnchor
       ? getMonthDayFromDateKey(nextPayDayAnchor)
       : 0

@@ -1,4 +1,4 @@
-export type UserPayCycle = "daily" | "weekly" | "biweekly" | "semimonthly" | "monthly"
+export type UserPayCycle = "none" | "daily" | "weekly" | "biweekly" | "semimonthly" | "monthly"
 
 export interface UserPreferences {
     payDay: number
