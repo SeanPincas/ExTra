@@ -684,7 +684,6 @@ function SettingsPage({
                                                 <label className={styles.fieldGroup}>
                                                     <span>Salary</span>
                                                         <input
-                                                            className={styles.fieldInput}
                                                             inputMode="decimal"
                                                             value={formatNumericInput(form.preferences.salary)}
                                                             onChange={(event) => setNumericPreference("salary", event.target.value)}
